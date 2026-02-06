@@ -1,0 +1,25 @@
+<div class="search-box">
+  <div class="search-input-wrapper">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-input"
+      [(ngModel)]="searchValue"
+      [placeholder]="placeholder"
+      (input)="onInput()"
+      (keydown)="onKeydown($event)"
+    />
+    <span class="search-loading" *ngIf="loading">
+      <span class="spinner"></span>
+    </span>
+    <button
+      type="button"
+      class="search-clear"
+      *ngIf="showClearButton && !loading"
+      (click)="clearSearch()"
+      title="Clear search"
+    >
+      ×
+    </button>
+  </div>
+</div>

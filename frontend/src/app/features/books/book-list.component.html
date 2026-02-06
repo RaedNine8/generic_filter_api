@@ -1,0 +1,53 @@
+<div class="book-list-page">
+  <header class="page-header">
+    <h1 class="page-title">Books</h1>
+    <p class="page-description">
+      Browse and filter the book collection using the Odoo-style advanced search
+      panel.
+    </p>
+  </header>
+
+  <!-- Advanced Search Panel (Odoo-style) -->
+  <section class="search-section">
+    <app-advanced-search-panel
+      [modelName]="entityName"
+      [fields]="filterableFields"
+      [quickFilters]="quickFilters"
+      [groupByOptions]="groupByOptions"
+      [activeFilters]="filters"
+      [searchQuery]="search"
+      [sortBy]="sortField"
+      [sortOrder]="sortOrder"
+      [savedFilters]="savedFilters"
+      placeholder="Search books by title, author, genre..."
+      (filtersChange)="onFiltersChange($event)"
+      (searchChange)="onSearchChange($event)"
+      (groupByChange)="onGroupByChange($event)"
+      (saveFilter)="onSaveFilter($event)"
+      (applySavedFilter)="onApplySavedFilter($event)"
+      (deleteSavedFilter)="onDeleteSavedFilter($event)"
+    ></app-advanced-search-panel>
+  </section>
+
+  <!-- Data Table -->
+  <section class="table-section">
+    <app-data-table
+      [data]="books"
+      [columns]="tableColumns"
+      [loading]="loading"
+      [pagination]="pagination"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      [showPagination]="true"
+      [hoverRows]="true"
+      [clickableRows]="true"
+      [striped]="true"
+      [emptyMessage]="'No books found matching your criteria'"
+      (sortChange)="onSortChange($event)"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+      (rowClick)="onRowClick($event)"
+    ></app-data-table>
+  </section>
+</div>

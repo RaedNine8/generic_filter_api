@@ -1,0 +1,328 @@
+<div class="advanced-search-container">
+  <!-- Search Bar with Filter Tags -->
+  <div class="search-bar">
+    <div class="search-bar-content">
+      <!-- Filter Icon -->
+      <span class="filter-icon">🔍</span>
+
+      <!-- Active Filter Tags -->
+      <div class="filter-tags">
+        @for (filter of activeFilters; track $index) {
+          <span class="filter-tag">
+            {{ getFilterTagLabel(filter) }}
+            <button
+              type="button"
+              class="tag-remove"
+              (click)="removeFilterTag($index)"
+            >
+              ×
+            </button>
+          </span>
+        }
+
+        @if (searchQuery) {
+          <span class="filter-tag search-tag">
+            Search: {{ searchQuery }}
+            <button
+              type="button"
+              class="tag-remove"
+              (click)="searchChange.emit('')"
+            >
+              ×
+            </button>
+          </span>
+        }
+      </div>
+
+      <!-- Search Input -->
+      <input
+        type="text"
+        class="search-input"
+        [value]="searchQuery"
+        [placeholder]="placeholder"
+        (input)="onSearchInput($event)"
+        (keydown)="onSearchKeydown($event)"
+      />
+
+      <!-- Clear All Button -->
+      @if (hasActiveFilters) {
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="clearAllFilters()"
+          title="Clear all filters"
+        >
+          ×
+        </button>
+      }
+    </div>
+
+    <!-- Dropdown Toggle Button -->
+    <button
+      type="button"
+      class="dropdown-toggle"
+      [class.active]="isPanelOpen"
+      (click)="togglePanel()"
+    >
+      <span class="toggle-icon">▼</span>
+    </button>
+  </div>
+
+  <!-- Dropdown Panel -->
+  @if (isPanelOpen) {
+    <div class="dropdown-panel">
+      <div class="panel-columns">
+        <!-- Left Column: Filters -->
+        <div class="panel-column filters-column">
+          <div class="column-header">
+            <span class="column-icon">🔍</span>
+            <span class="column-title">Filters</span>
+          </div>
+
+          <div class="column-content">
+            @for (filter of quickFilters; track filter.id) {
+              @if (filter.isHeader) {
+                <div class="filter-header">{{ filter.label }}</div>
+              } @else {
+                <button
+                  type="button"
+                  class="filter-item"
+                  [class.active]="isQuickFilterActive(filter.id)"
+                  (click)="toggleQuickFilter(filter)"
+                >
+                  @if (filter.icon) {
+                    <span class="item-icon">{{ filter.icon }}</span>
+                  }
+                  <span class="item-label">{{ filter.label }}</span>
+                  @if (filter.hasSubmenu) {
+                    <span class="submenu-arrow">▶</span>
+                  }
+                </button>
+              }
+            }
+
+            <!-- Add Custom Filter -->
+            <button
+              type="button"
+              class="filter-item add-custom"
+              (click)="toggleCustomFilterBuilder()"
+            >
+              <span class="item-icon">➕</span>
+              <span class="item-label">Add Custom Filter</span>
+            </button>
+          </div>
+
+          <!-- Custom Filter Builder (Inline) -->
+          @if (showCustomFilterBuilder) {
+            <div class="custom-filter-builder">
+              <div class="builder-row">
+                <select class="builder-select" [(ngModel)]="customFilter.field">
+                  @for (field of fields; track field.name) {
+                    <option [value]="field.name">{{ field.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="builder-row">
+                <select
+                  class="builder-select"
+                  [(ngModel)]="customFilter.operation"
+                >
+                  @for (op of getAvailableOperations(); track op) {
+                    <option [value]="op">{{ operationLabels[op] }}</option>
+                  }
+                </select>
+              </div>
+
+              @if (
+                customFilter.operation !== "is_null" &&
+                customFilter.operation !== "is_not_null"
+              ) {
+                <div class="builder-row">
+                  <input
+                    type="text"
+                    class="builder-input"
+                    [(ngModel)]="customFilter.value"
+                    placeholder="Value"
+                  />
+                </div>
+              }
+
+              <div class="builder-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  (click)="addCustomFilter()"
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-secondary"
+                  (click)="showCustomFilterBuilder = false"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Middle Column: Group By -->
+        <div class="panel-column groupby-column">
+          <div class="column-header">
+            <span class="column-icon">📊</span>
+            <span class="column-title">Group By</span>
+          </div>
+
+          <div class="column-content">
+            @for (option of groupByOptions; track option.field) {
+              <button
+                type="button"
+                class="filter-item"
+                [class.active]="currentGroupBy === option.field"
+                (click)="setGroupBy(option.field)"
+              >
+                <span class="item-label">{{ option.label }}</span>
+                @if (option.hasSubmenu) {
+                  <span class="submenu-arrow">▶</span>
+                }
+              </button>
+            }
+
+            @if (currentGroupBy) {
+              <button
+                type="button"
+                class="filter-item clear-groupby"
+                (click)="setGroupBy(null)"
+              >
+                <span class="item-label">Clear Grouping</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Right Column: Favorites (Saved Filters) -->
+        <div class="panel-column favorites-column">
+          <div class="column-header">
+            <span class="column-icon">⭐</span>
+            <span class="column-title">Favorites</span>
+          </div>
+
+          <div class="column-content">
+            <!-- Save Current Search Button -->
+            <button
+              type="button"
+              class="save-current-btn"
+              [disabled]="!hasActiveFilters"
+              (click)="openSaveDialog()"
+            >
+              Save current search
+              <span class="dropdown-arrow">▼</span>
+            </button>
+
+            <!-- Saved Filters List -->
+            @if (savedFilters.length > 0) {
+              <div class="saved-filters-list">
+                @for (saved of savedFilters; track saved.id) {
+                  <div
+                    class="saved-filter-item"
+                    (click)="onApplySavedFilter(saved)"
+                  >
+                    <span class="saved-icon">⭐</span>
+                    <span class="saved-name">{{ saved.name }}</span>
+                    <button
+                      type="button"
+                      class="saved-delete"
+                      (click)="onDeleteSavedFilter($event, saved.id)"
+                      title="Delete"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-favorites">
+                <p>No saved filters yet</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Save Filter Dialog -->
+  @if (showSaveDialog) {
+    <div class="dialog-overlay" (click)="closeSaveDialog()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Save Filter</h3>
+          <button
+            type="button"
+            class="dialog-close"
+            (click)="closeSaveDialog()"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="dialog-body">
+          <div class="form-group">
+            <label for="filterName">Name *</label>
+            <input
+              type="text"
+              id="filterName"
+              class="form-control"
+              [(ngModel)]="newFilterName"
+              placeholder="e.g., My Open Tasks"
+              autofocus
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="filterDesc">Description</label>
+            <textarea
+              id="filterDesc"
+              class="form-control"
+              [(ngModel)]="newFilterDescription"
+              placeholder="Optional description..."
+              rows="2"
+            ></textarea>
+          </div>
+
+          <div class="current-filters-preview">
+            <strong>Current filters:</strong>
+            <ul>
+              @for (filter of activeFilters; track $index) {
+                <li>{{ getFilterTagLabel(filter) }}</li>
+              }
+              @if (searchQuery) {
+                <li>Search: "{{ searchQuery }}"</li>
+              }
+            </ul>
+          </div>
+        </div>
+
+        <div class="dialog-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeSaveDialog()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!newFilterName.trim()"
+            (click)="saveCurrentFilter()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

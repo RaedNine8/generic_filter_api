@@ -1,0 +1,90 @@
+<div class="pagination-container" *ngIf="meta && meta.total_items > 0">
+  <!-- Items Info -->
+  <div class="pagination-info" *ngIf="showItemsInfo">
+    <span>{{ itemsInfo }}</span>
+  </div>
+
+  <!-- Page Navigation -->
+  <div class="pagination-nav">
+    <!-- First Page -->
+    <button
+      type="button"
+      class="pagination-btn"
+      [disabled]="isFirstPage"
+      (click)="goToFirstPage()"
+      title="First page"
+    >
+      <span class="pagination-icon">««</span>
+    </button>
+
+    <!-- Previous Page -->
+    <button
+      type="button"
+      class="pagination-btn"
+      [disabled]="isFirstPage"
+      (click)="goToPreviousPage()"
+      title="Previous page"
+    >
+      <span class="pagination-icon">«</span>
+    </button>
+
+    <!-- Ellipsis Before -->
+    <span class="pagination-ellipsis" *ngIf="showEllipsisBefore">...</span>
+
+    <!-- Page Numbers -->
+    <button
+      *ngFor="let page of pageNumbers"
+      type="button"
+      class="pagination-btn pagination-page"
+      [class.active]="page === meta.page"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+
+    <!-- Ellipsis After -->
+    <span class="pagination-ellipsis" *ngIf="showEllipsisAfter">...</span>
+
+    <!-- Next Page -->
+    <button
+      type="button"
+      class="pagination-btn"
+      [disabled]="isLastPage"
+      (click)="goToNextPage()"
+      title="Next page"
+    >
+      <span class="pagination-icon">»</span>
+    </button>
+
+    <!-- Last Page -->
+    <button
+      type="button"
+      class="pagination-btn"
+      [disabled]="isLastPage"
+      (click)="goToLastPage()"
+      title="Last page"
+    >
+      <span class="pagination-icon">»»</span>
+    </button>
+  </div>
+
+  <!-- Page Size Selector -->
+  <div class="pagination-size" *ngIf="showPageSizeSelector">
+    <label for="pageSize" class="pagination-size-label">Items per page:</label>
+    <select
+      id="pageSize"
+      class="pagination-size-select"
+      [(ngModel)]="currentPageSize"
+      (change)="onPageSizeChanged()"
+    >
+      <option *ngFor="let size of pageSizeOptions" [value]="size">
+        {{ size }}
+      </option>
+    </select>
+  </div>
+</div>
+
+<!-- Empty State -->
+<div class="pagination-empty" *ngIf="!meta || meta.total_items === 0">
+  <span>No items to display</span>
+</div>

@@ -1,0 +1,119 @@
+<div class="data-table-container">
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">Loading...</span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper" [class.loading]="loading">
+    <table
+      class="data-table"
+      [class.striped]="striped"
+      [class.hover]="hoverRows"
+    >
+      <!-- Header -->
+      <thead>
+        <tr>
+          <th
+            *ngFor="let column of columns; trackBy: trackByColumn"
+            [style.width]="column.width"
+            [class]="column.cssClass"
+          >
+            <ng-container *ngIf="column.sortable; else plainHeader">
+              <app-sort-header
+                [field]="column.field"
+                [label]="column.header"
+                [currentSortField]="sortField"
+                [currentSortOrder]="sortOrder"
+                (sortChange)="onSortChange($event)"
+              ></app-sort-header>
+            </ng-container>
+            <ng-template #plainHeader>
+              {{ column.header }}
+            </ng-template>
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Body -->
+      <tbody>
+        <!-- Empty State -->
+        <tr *ngIf="data.length === 0 && !loading" class="empty-row">
+          <td [attr.colspan]="columns.length" class="empty-cell">
+            <div class="empty-state">
+              <span class="empty-icon">📭</span>
+              <span class="empty-message">{{ emptyMessage }}</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Data Rows -->
+        <ng-container *ngIf="data.length > 0">
+          <!-- Use custom row template if provided -->
+          <ng-container *ngIf="rowTemplate; else defaultRows">
+            <tr
+              *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+              [class.clickable]="clickableRows"
+              (click)="onRowClick(row)"
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  rowTemplate;
+                  context: { $implicit: row, index: i, columns: columns }
+                "
+              ></ng-container>
+            </tr>
+          </ng-container>
+
+          <!-- Default row rendering -->
+          <ng-template #defaultRows>
+            <tr
+              *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+              [class.clickable]="clickableRows"
+              (click)="onRowClick(row)"
+            >
+              <td
+                *ngFor="let column of columns; trackBy: trackByColumn"
+                [class]="column.cssClass"
+              >
+                <!-- Use custom cell template if provided and type is 'custom' -->
+                <ng-container
+                  *ngIf="
+                    column.type === 'custom' && cellTemplate;
+                    else defaultCell
+                  "
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      cellTemplate;
+                      context: {
+                        $implicit: getCellValue(row, column),
+                        row: row,
+                        column: column,
+                      }
+                    "
+                  ></ng-container>
+                </ng-container>
+
+                <!-- Default cell rendering -->
+                <ng-template #defaultCell>
+                  {{ formatCellValue(getCellValue(row, column), column) }}
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    *ngIf="showPagination && pagination"
+    [meta]="pagination"
+    [pageSizeOptions]="pageSizeOptions"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  ></app-pagination>
+</div>

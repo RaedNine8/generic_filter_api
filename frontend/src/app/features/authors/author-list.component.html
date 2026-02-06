@@ -1,0 +1,53 @@
+<div class="author-list-page">
+  <header class="page-header">
+    <h1 class="page-title">Authors</h1>
+    <p class="page-description">
+      Browse and filter authors using the generic filtering system.
+    </p>
+  </header>
+
+  <!-- Search Bar -->
+  <section class="search-section">
+    <app-search-box
+      [placeholder]="'Search by name, email, country...'"
+      [debounceMs]="400"
+      [loading]="loading"
+      (searchChange)="onSearchChange($event)"
+    ></app-search-box>
+  </section>
+
+  <!-- Filter Builder -->
+  <section class="filter-section">
+    <app-filter-builder
+      [fields]="filterableFields"
+      [filters]="filters"
+      [applyButtonLabel]="'Apply Filters'"
+      [showApplyButton]="true"
+      [autoApply]="false"
+      (apply)="onFiltersApply($event)"
+      (clear)="onFiltersClear()"
+    ></app-filter-builder>
+  </section>
+
+  <!-- Data Table -->
+  <section class="table-section">
+    <app-data-table
+      [data]="authors"
+      [columns]="tableColumns"
+      [loading]="loading"
+      [pagination]="pagination"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      [showPagination]="true"
+      [hoverRows]="true"
+      [clickableRows]="true"
+      [striped]="true"
+      [emptyMessage]="'No authors found matching your criteria'"
+      (sortChange)="onSortChange($event)"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+      (rowClick)="onRowClick($event)"
+    ></app-data-table>
+  </section>
+</div>

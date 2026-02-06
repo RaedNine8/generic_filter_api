@@ -1,0 +1,144 @@
+<div class="filter-builder">
+  <div class="filter-header">
+    <h4 class="filter-title">Filters</h4>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary"
+      (click)="clearAllRules()"
+    >
+      Clear All
+    </button>
+  </div>
+
+  <form [formGroup]="form">
+    <div formArrayName="rules" class="filter-rules">
+      @for (rule of rules.controls; track $index; let i = $index) {
+        <div class="filter-rule" [formGroupName]="i">
+          <!-- Field Select -->
+          <div class="filter-field">
+            <label class="filter-label">Field</label>
+            <select
+              formControlName="field"
+              class="form-control"
+              (change)="onFieldChange(i)"
+            >
+              @for (field of fields; track field.name) {
+                <option [value]="field.name">{{ field.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Operation Select -->
+          <div class="filter-operation">
+            <label class="filter-label">Operation</label>
+            <select
+              formControlName="operation"
+              class="form-control"
+              (change)="onOperationChange(i)"
+            >
+              @for (
+                op of getAvailableOperations(rule.get("field")?.value);
+                track op
+              ) {
+                <option [value]="op">{{ operationLabels[op] }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Value Input -->
+          @if (needsValue(rule.get("operation")?.value)) {
+            <div class="filter-value">
+              <label class="filter-label">Value</label>
+
+              @if (needsMultipleValues(rule.get("operation")?.value)) {
+                <!-- Multiple values (comma-separated) -->
+                <input
+                  type="text"
+                  formControlName="value"
+                  class="form-control"
+                  placeholder="value1, value2, ..."
+                />
+              } @else if (needsRange(rule.get("operation")?.value)) {
+                <!-- Range (two inputs) -->
+                <div class="range-inputs">
+                  <input
+                    [type]="getInputType(rule.get('field')?.value)"
+                    formControlName="value"
+                    class="form-control"
+                    placeholder="From"
+                  />
+                  <span class="range-separator">to</span>
+                  <input
+                    [type]="getInputType(rule.get('field')?.value)"
+                    formControlName="valueEnd"
+                    class="form-control"
+                    placeholder="To"
+                  />
+                </div>
+              } @else if (
+                getFieldConfig(rule.get("field")?.value)?.type === "boolean"
+              ) {
+                <!-- Boolean select -->
+                <select formControlName="value" class="form-control">
+                  <option [ngValue]="true">True</option>
+                  <option [ngValue]="false">False</option>
+                </select>
+              } @else if (
+                getFieldConfig(rule.get("field")?.value)?.type === "select" ||
+                getFieldConfig(rule.get("field")?.value)?.type === "enum"
+              ) {
+                <!-- Select from options -->
+                <select formControlName="value" class="form-control">
+                  <option value="">-- Select --</option>
+                  @for (
+                    opt of getFieldConfig(rule.get("field")?.value)?.options;
+                    track opt.value
+                  ) {
+                    <option [ngValue]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+              } @else {
+                <!-- Standard input -->
+                <input
+                  [type]="getInputType(rule.get('field')?.value)"
+                  formControlName="value"
+                  class="form-control"
+                  placeholder="Enter value"
+                />
+              }
+            </div>
+          }
+
+          <!-- Remove Button -->
+          <div class="filter-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="removeRule(i)"
+              [disabled]="rules.length <= 1"
+              title="Remove filter"
+            >
+              <span class="remove-icon">×</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </form>
+
+  <div class="filter-footer">
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary"
+      (click)="addRule()"
+    >
+      + Add Filter
+    </button>
+
+    @if (showApplyButton) {
+      <button type="button" class="btn btn-primary" (click)="applyFilters()">
+        {{ applyButtonLabel }}
+      </button>
+    }
+  </div>
+</div>
