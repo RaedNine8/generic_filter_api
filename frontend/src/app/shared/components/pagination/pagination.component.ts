@@ -131,13 +131,13 @@ export class PaginationComponent implements OnChanges {
   }
 
   goToPreviousPage(): void {
-    if (this.meta && this.meta.has_previous) {
+    if (this.meta && this.meta.page > 1) {
       this.goToPage(this.meta.page - 1);
     }
   }
 
   goToNextPage(): void {
-    if (this.meta && this.meta.has_next) {
+    if (this.meta && this.meta.page < this.meta.total_pages) {
       this.goToPage(this.meta.page + 1);
     }
   }
@@ -165,11 +165,11 @@ export class PaginationComponent implements OnChanges {
   }
 
   get isFirstPage(): boolean {
-    return !this.meta?.has_previous;
+    return !this.meta || this.meta.page <= 1;
   }
 
   get isLastPage(): boolean {
-    return !this.meta?.has_next;
+    return !this.meta || this.meta.page >= this.meta.total_pages;
   }
 
   get showEllipsisBefore(): boolean {

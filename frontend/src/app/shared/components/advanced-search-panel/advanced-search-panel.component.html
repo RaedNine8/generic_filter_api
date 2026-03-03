@@ -19,6 +19,18 @@
             </button>
           </span>
         }
+        @if (activeTree) {
+          <span class="filter-tag advanced-tag">
+            Advanced Filter
+            <button
+              type="button"
+              class="tag-remove"
+              (click)="onClearTree()"
+            >
+              ×
+            </button>
+          </span>
+        }
 
         @if (searchQuery) {
           <span class="filter-tag search-tag">
@@ -34,15 +46,39 @@
         }
       </div>
 
-      <!-- Search Input -->
-      <input
-        type="text"
-        class="search-input"
-        [value]="searchQuery"
-        [placeholder]="placeholder"
-        (input)="onSearchInput($event)"
-        (keydown)="onSearchKeydown($event)"
-      />
+      <!-- Search Input & Autocomplete -->
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          class="search-input"
+          [value]="searchQuery"
+          [placeholder]="placeholder"
+          (input)="onSearchInput($event)"
+          (keydown)="onSearchKeydown($event)"
+          (focus)="showSearchDropdown()"
+          (blur)="hideSearchDropdown()"
+        />
+
+        <!-- Smart Search Dropdown -->
+        @if (isSearchDropdownOpen) {
+          <div class="search-dropdown">
+            @for (option of searchOptions; track option.label) {
+              @if (option.field === '__custom__') {
+                <div class="search-option custom-filter-option" (mousedown)="selectSearchOption(option)">
+                  <span class="option-label">Custom Filter...</span>
+                </div>
+              } @else {
+                <div class="search-option" (mousedown)="selectSearchOption(option)">
+                  @if (option.field.includes('.')) {
+                    <span class="option-arrow">►</span>
+                  }
+                  <span class="option-label">{{ option.label }}</span>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
 
       <!-- Clear All Button -->
       @if (hasActiveFilters) {
@@ -105,64 +141,30 @@
             <button
               type="button"
               class="filter-item add-custom"
-              (click)="toggleCustomFilterBuilder()"
+              (click)="toggleCustomFilterTree()"
             >
               <span class="item-icon">➕</span>
-              <span class="item-label">Add Custom Filter</span>
+              <span class="item-label">Advanced Custom Filter</span>
             </button>
           </div>
 
-          <!-- Custom Filter Builder (Inline) -->
-          @if (showCustomFilterBuilder) {
-            <div class="custom-filter-builder">
-              <div class="builder-row">
-                <select class="builder-select" [(ngModel)]="customFilter.field">
-                  @for (field of fields; track field.name) {
-                    <option [value]="field.name">{{ field.label }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="builder-row">
-                <select
-                  class="builder-select"
-                  [(ngModel)]="customFilter.operation"
-                >
-                  @for (op of getAvailableOperations(); track op) {
-                    <option [value]="op">{{ operationLabels[op] }}</option>
-                  }
-                </select>
-              </div>
-
-              @if (
-                customFilter.operation !== "is_null" &&
-                customFilter.operation !== "is_not_null"
-              ) {
-                <div class="builder-row">
-                  <input
-                    type="text"
-                    class="builder-input"
-                    [(ngModel)]="customFilter.value"
-                    placeholder="Value"
-                  />
+          <!-- Advanced Custom Filter Builder Modal -->
+          @if (showCustomFilterTree) {
+            <div class="filter-builder-modal-overlay" (click)="showCustomFilterTree = false">
+              <div class="filter-builder-modal" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                  <h3>Advanced Filter Builder</h3>
+                  <button type="button" class="close-btn" (click)="showCustomFilterTree = false">×</button>
                 </div>
-              }
-
-              <div class="builder-actions">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  (click)="addCustomFilter()"
-                >
-                  Add
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-secondary"
-                  (click)="showCustomFilterBuilder = false"
-                >
-                  Cancel
-                </button>
+                <div class="modal-body">
+                  <app-filter-builder
+                    [fields]="fields"
+                    [tree]="activeTree"
+                    (treeChange)="onTreeChange($event)"
+                    (apply)="onApplyTree($event)"
+                    (clear)="onClearTree()"
+                  ></app-filter-builder>
+                </div>
               </div>
             </div>
           }

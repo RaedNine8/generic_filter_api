@@ -11,6 +11,7 @@ class SavedFilter(Base):
     description = Column(Text, nullable=True)
     model_name = Column(String(100), nullable=False, index=True)
     filters = Column(JSON, nullable=False, default=list)
+    filter_tree = Column(JSON, nullable=True)
     sort_by = Column(String(100), nullable=True)
     sort_order = Column(String(4), default="asc")
     page_size = Column(Integer, default=10)

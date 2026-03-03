@@ -5,9 +5,14 @@ import {
   HttpErrorResponse,
 } from "@angular/common/http";
 import { Observable, throwError, BehaviorSubject } from "rxjs";
-import { catchError, map, tap } from "rxjs/operators";
+import { catchError, tap } from "rxjs/operators";
 
-import { FilterRule, FilterRuleWithMeta } from "../interfaces/filter.interface";
+import { FilterRule } from "../interfaces/filter.interface";
+import {
+  FilterTreeNode,
+  toBackendPayload,
+  createOperatorNode,
+} from "../interfaces/filter-tree.interface";
 import {
   PaginatedResponse,
   QueryParams,
@@ -16,30 +21,9 @@ import {
 } from "../interfaces/pagination.interface";
 import { FilterOperation } from "../enums/filter-operation.enum";
 import { SortOrder } from "../enums/sort-order.enum";
+import { ApiError, QueryState } from "../interfaces/query-state.interface";
 
-/**
- * Custom error class for API operations
- */
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    public detail: string,
-    public originalError?: any,
-  ) {
-    super(detail);
-    this.name = "ApiError";
-  }
-}
 
-/**
- * Query state for tracking current filter/pagination/sort state
- */
-export interface QueryState {
-  filters: FilterRule[];
-  pagination: PaginationParams;
-  sort: SortParams;
-  search: string | null;
-}
 
 /**
  * Generic Query Service
@@ -47,21 +31,9 @@ export interface QueryState {
  * A reusable service for querying any API endpoint with filtering,
  * pagination, sorting, and search capabilities.
  *
- * Features:
- * - URL grammar filter building (field_operation=value)
- * - Pagination with page/size
- * - Sorting with field and order
- * - Full-text search
- * - State management for current query
- *
- * Usage:
- * ```typescript
- * @Injectable({ providedIn: 'root' })
- * export class BookService extends GenericQueryService<Book> {
- *   protected baseUrl = '/api/books';
- *   constructor(http: HttpClient) { super(http); }
- * }
- * ```
+ * Supports two filter modes:
+ *   1. Tree-based (POST /filter) — boolean expression tree
+ *   2. URL grammar (GET) — flat field_operation=value params
  */
 @Injectable({
   providedIn: "root",
@@ -69,25 +41,22 @@ export interface QueryState {
 export abstract class GenericQueryService<T> {
   protected abstract baseUrl: string;
 
-  // Default query state
   protected defaultState: QueryState = {
+    filterTree: null,
     filters: [],
     pagination: { page: 1, size: 20 },
-    sort: { sort_by: null, order: SortOrder.DESC },
+    sort: { sort_by: "created_at", order: SortOrder.ASC },
     search: null,
   };
 
-  // Current query state as observable
   private _queryState = new BehaviorSubject<QueryState>({
     ...this.defaultState,
   });
   public queryState$ = this._queryState.asObservable();
 
-  // Loading state
   private _loading = new BehaviorSubject<boolean>(false);
   public loading$ = this._loading.asObservable();
 
-  // Current data
   private _data = new BehaviorSubject<PaginatedResponse<T> | null>(null);
   public data$ = this._data.asObservable();
 
@@ -98,16 +67,77 @@ export abstract class GenericQueryService<T> {
   // ===========================================================================
 
   /**
-   * Execute query with current state
+   * Execute query with current state.
+   * If filterTree is set, uses POST /filter endpoint.
+   * Otherwise falls back to GET with URL grammar.
    */
   query(): Observable<PaginatedResponse<T>> {
     const state = this._queryState.value;
-    return this.queryWithParams(state);
+
+    if (state.filterTree) {
+      return this.queryWithTree(state);
+    }
+    return this.queryWithUrlGrammar(state);
   }
 
   /**
-   * Execute query with specific parameters
+   * Fetch model metadata (fields, types, relationships) for dynamic UI generation.
    */
+  getMetadata(): Observable<any> {
+    return this.http
+      .get<any>(`${this.baseUrl}/metadata`)
+      .pipe(
+        catchError((error) => this.handleError(error)),
+      );
+  }
+
+  /**
+   * POST-based query using the filter tree.
+   */
+  private queryWithTree(state: QueryState): Observable<PaginatedResponse<T>> {
+    const httpParams = this.buildPaginationSortParams(state);
+    const body = toBackendPayload(state.filterTree!);
+
+    this._loading.next(true);
+    return this.http
+      .post<PaginatedResponse<T>>(`${this.baseUrl}/filter`, body, {
+        params: httpParams,
+      })
+      .pipe(
+        tap((response) => {
+          this._data.next(response);
+          this._loading.next(false);
+        }),
+        catchError((error) => {
+          this._loading.next(false);
+          return this.handleError(error);
+        }),
+      );
+  }
+
+  /**
+   * GET-based query using URL grammar.
+   */
+  private queryWithUrlGrammar(
+    state: QueryState,
+  ): Observable<PaginatedResponse<T>> {
+    const httpParams = this.buildHttpParams(state);
+    this._loading.next(true);
+
+    return this.http
+      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .pipe(
+        tap((response) => {
+          this._data.next(response);
+          this._loading.next(false);
+        }),
+        catchError((error) => {
+          this._loading.next(false);
+          return this.handleError(error);
+        }),
+      );
+  }
+
   queryWithParams(
     params: Partial<QueryState>,
   ): Observable<PaginatedResponse<T>> {
@@ -128,20 +158,14 @@ export abstract class GenericQueryService<T> {
       );
   }
 
-  /**
-   * Execute query with raw query params object
-   */
   queryWithRawParams(params: QueryParams): Observable<PaginatedResponse<T>> {
     let httpParams = new HttpParams();
-
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         httpParams = httpParams.set(key, String(value));
       }
     });
-
     this._loading.next(true);
-
     return this.http
       .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
       .pipe(
@@ -160,16 +184,27 @@ export abstract class GenericQueryService<T> {
   // STATE MANAGEMENT
   // ===========================================================================
 
-  /**
-   * Get current query state
-   */
   getState(): QueryState {
     return { ...this._queryState.value };
   }
 
-  /**
-   * Update filters and optionally re-query
-   */
+  /** Set the filter tree and optionally re-query. */
+  setFilterTree(
+    tree: FilterTreeNode | null,
+    autoQuery = false,
+  ): Observable<PaginatedResponse<T>> | void {
+    const state = this._queryState.value;
+    this._queryState.next({
+      ...state,
+      filterTree: tree,
+      filters: [], // clear flat filters when tree is set
+      pagination: { ...state.pagination, page: 1 },
+    });
+    if (autoQuery) {
+      return this.query();
+    }
+  }
+
   setFilters(
     filters: FilterRule[],
     autoQuery = false,
@@ -178,17 +213,14 @@ export abstract class GenericQueryService<T> {
     this._queryState.next({
       ...state,
       filters,
-      pagination: { ...state.pagination, page: 1 }, // Reset to page 1 on filter change
+      filterTree: null, // clear tree when flat filters are set
+      pagination: { ...state.pagination, page: 1 },
     });
-
     if (autoQuery) {
       return this.query();
     }
   }
 
-  /**
-   * Add a single filter
-   */
   addFilter(filter: FilterRule): void {
     const state = this._queryState.value;
     this._queryState.next({
@@ -198,9 +230,6 @@ export abstract class GenericQueryService<T> {
     });
   }
 
-  /**
-   * Remove a filter by field name
-   */
   removeFilter(field: string): void {
     const state = this._queryState.value;
     this._queryState.next({
@@ -210,21 +239,16 @@ export abstract class GenericQueryService<T> {
     });
   }
 
-  /**
-   * Clear all filters
-   */
   clearFilters(): void {
     const state = this._queryState.value;
     this._queryState.next({
       ...state,
       filters: [],
+      filterTree: null,
       pagination: { ...state.pagination, page: 1 },
     });
   }
 
-  /**
-   * Set pagination
-   */
   setPagination(pagination: Partial<PaginationParams>): void {
     const state = this._queryState.value;
     this._queryState.next({
@@ -233,25 +257,16 @@ export abstract class GenericQueryService<T> {
     });
   }
 
-  /**
-   * Go to a specific page
-   */
   goToPage(page: number): Observable<PaginatedResponse<T>> {
     this.setPagination({ page });
     return this.query();
   }
 
-  /**
-   * Change page size
-   */
   setPageSize(size: number): Observable<PaginatedResponse<T>> {
     this.setPagination({ page: 1, size });
     return this.query();
   }
 
-  /**
-   * Set sorting
-   */
   setSort(sort: Partial<SortParams>): void {
     const state = this._queryState.value;
     this._queryState.next({
@@ -260,23 +275,16 @@ export abstract class GenericQueryService<T> {
     });
   }
 
-  /**
-   * Toggle sort order for a field
-   */
   toggleSort(field: string): Observable<PaginatedResponse<T>> {
     const state = this._queryState.value;
     const newOrder =
       state.sort.sort_by === field && state.sort.order === SortOrder.ASC
         ? SortOrder.DESC
         : SortOrder.ASC;
-
     this.setSort({ sort_by: field, order: newOrder });
     return this.query();
   }
 
-  /**
-   * Set search query
-   */
   setSearch(search: string | null): void {
     const state = this._queryState.value;
     this._queryState.next({
@@ -286,9 +294,6 @@ export abstract class GenericQueryService<T> {
     });
   }
 
-  /**
-   * Reset state to defaults
-   */
   resetState(): void {
     this._queryState.next({ ...this.defaultState });
     this._data.next(null);
@@ -298,23 +303,14 @@ export abstract class GenericQueryService<T> {
   // URL GRAMMAR HELPERS
   // ===========================================================================
 
-  /**
-   * Build URL parameter key from field and operation
-   * Example: buildUrlParamKey('title', 'ilike') => 'title_ilike'
-   */
   buildUrlParamKey(field: string, operation: FilterOperation | string): string {
     return `${field}_${operation}`;
   }
 
-  /**
-   * Convert filter rules to URL grammar parameters
-   */
   filterRulesToParams(rules: FilterRule[]): Record<string, string> {
     const params: Record<string, string> = {};
-
     for (const rule of rules) {
       const key = this.buildUrlParamKey(rule.field, rule.operation);
-
       if (Array.isArray(rule.value)) {
         params[key] = rule.value.join(",");
       } else if (typeof rule.value === "boolean") {
@@ -323,32 +319,12 @@ export abstract class GenericQueryService<T> {
         params[key] = String(rule.value);
       }
     }
-
     return params;
   }
 
-  /**
-   * Build HttpParams from query state
-   */
+  /** Build HttpParams with pagination, sort, search, and URL grammar filters. */
   protected buildHttpParams(params: Partial<QueryState>): HttpParams {
-    let httpParams = new HttpParams();
-
-    // Pagination
-    if (params.pagination) {
-      httpParams = httpParams.set("page", String(params.pagination.page));
-      httpParams = httpParams.set("size", String(params.pagination.size));
-    }
-
-    // Sorting
-    if (params.sort?.sort_by) {
-      httpParams = httpParams.set("sort_by", params.sort.sort_by);
-      httpParams = httpParams.set("order", params.sort.order);
-    }
-
-    // Search
-    if (params.search) {
-      httpParams = httpParams.set("search", params.search);
-    }
+    let httpParams = this.buildPaginationSortParams(params);
 
     // Filters (URL grammar)
     if (params.filters && params.filters.length > 0) {
@@ -357,7 +333,24 @@ export abstract class GenericQueryService<T> {
         httpParams = httpParams.set(key, value);
       });
     }
+    return httpParams;
+  }
 
+  /** Build HttpParams for pagination, sort, and search only. */
+  protected buildPaginationSortParams(params: Partial<QueryState>): HttpParams {
+    let httpParams = new HttpParams();
+
+    if (params.pagination) {
+      httpParams = httpParams.set("page", String(params.pagination.page));
+      httpParams = httpParams.set("size", String(params.pagination.size));
+    }
+    if (params.sort?.sort_by) {
+      httpParams = httpParams.set("sort_by", params.sort.sort_by);
+      httpParams = httpParams.set("order", params.sort.order);
+    }
+    if (params.search) {
+      httpParams = httpParams.set("search", params.search);
+    }
     return httpParams;
   }
 
@@ -370,10 +363,8 @@ export abstract class GenericQueryService<T> {
     const status: number = error.status || 0;
 
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = `Client Error: ${error.error.message}`;
     } else {
-      // Server-side error
       if (error.error?.detail) {
         errorMessage = error.error.detail;
       } else if (error.error?.message) {
@@ -382,13 +373,7 @@ export abstract class GenericQueryService<T> {
         errorMessage = `Server Error: ${error.message}`;
       }
     }
-
-    console.error("API Error:", {
-      status,
-      message: errorMessage,
-      error: error.error,
-    });
-
+    console.error("API Error:", { status, message: errorMessage, error: error.error });
     return throwError(() => new ApiError(status, errorMessage, error));
   };
 }

@@ -1,0 +1,47 @@
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                    [2m | [22m [1mRaw size[22m
+[32mchunk-YKFVUN5K.js[39m  [2m | [22m[2m-[22m                        [2m | [22m  [36m1.28 MB[39m[2m | [22m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m                [2m | [22m [36m90.20 kB[39m[2m | [22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                     [2m | [22m  [36m4.79 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m                   [2m | [22m[36m767 bytes[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m            [2m | [22m  [1m1.38 MB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                    [2m | [22m [1mRaw size[22m
+[32mchunk-RVE4OOOQ.js[39m  [2m | [22m[2m-[22m                        [2m | [22m[36m342.00 kB[39m[2m | [22m
+[32mchunk-MAJB5WSX.js[39m  [2m | [22m[2mbook-list-new-component[22m  [2m | [22m  [36m6.51 kB[39m[2m | [22m
+[32mchunk-6ZPQRT2F.js[39m  [2m | [22m[2mauthor-list-new-component[22m[2m | [22m  [36m4.00 kB[39m[2m | [22m
+
+Application bundle generation complete. [2.858 seconds]
+
+Ôû▓ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/shared/components/entity-list/entity-list.component.ts:60:42:
+      60 Ôöé         <h1 class="page-title">{{ config?.pluralLabel }}</h1>
+         ÔòÁ                                           ~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/shared/components/entity-list/entity-list.component.ts:66:31:
+      66 Ôöé           [modelName]="config?.name || ''"
+         ÔòÁ                                ~~~~
+
+
+Ôû▓ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/shared/components/entity-list/entity-list.component.ts:76:33:
+      76 Ôöé           [placeholder]="config?.searchPlaceholder || 'Search...'"
+         ÔòÁ                                  ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/shared/components/entity-list/entity-list.component.ts:100:34:
+      100 Ôöé           [emptyMessage]="config?.emptyMessage || 'No items found'"
+          ÔòÁ                                   ~~~~~~~~~~~~
+
+
+Output location: C:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\PROJECT\filter_test_project\frontend\dist\generic-filter-frontend
+

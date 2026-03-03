@@ -9,19 +9,14 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
 
 import { FilterRule } from "../../../core/interfaces/filter.interface";
-import {
-  SavedFilter,
-  SavedFilterCreate,
-} from "../../../core/interfaces/saved-filter.interface";
-import { FilterableField } from "../../../core/interfaces/field-config.interface";
-import {
-  FilterOperation,
-  FILTER_OPERATION_LABELS,
-} from "../../../core/enums/filter-operation.enum";
+import { FilterOperation, FILTER_OPERATION_LABELS } from "../../../core/enums/filter-operation.enum";
 import { SortOrder } from "../../../core/enums/sort-order.enum";
+import { FilterableField } from "../../../core/interfaces/field-config.interface";
+import { SavedFilter, SavedFilterCreate } from "../../../core/interfaces/saved-filter.interface";
+import { FilterTreeNode, createOperatorNode, generateNodeId, toBackendPayload } from "../../../core/interfaces/filter-tree.interface";
+import { FilterBuilderComponent } from "../filter-builder/filter-builder.component";
 
 /**
  * Predefined quick filter configuration
@@ -31,11 +26,8 @@ export interface QuickFilter {
   label: string;
   icon?: string;
   filters: FilterRule[];
-  /** Category to group filters (e.g., 'Genre', 'Author') */
   category?: string;
-  /** If true, this is a separator/header in the list */
   isHeader?: boolean;
-  /** If true, shows a dropdown arrow for date filters etc */
   hasSubmenu?: boolean;
 }
 
@@ -50,121 +42,71 @@ export interface GroupByOption {
 }
 
 /**
- * Advanced Search Panel Component
- *
- * A comprehensive search/filter panel similar to Odoo's search view.
- * Features:
- * - Search bar with active filter tags
- * - Quick filters sidebar (predefined filters)
- * - Group by options
- * - Favorites (saved filters)
- * - Custom filter builder
+ * Smart search option (Odoo style)
  */
+export interface SearchOption {
+  label: string;
+  field: string;
+  operation: FilterOperation;
+  value: any;
+}
+
 @Component({
   selector: "app-advanced-search-panel",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FilterBuilderComponent],
   templateUrl: "./advanced-search-panel.component.html",
   styleUrls: ["./advanced-search-panel.component.scss"],
 })
 export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
   // ============ INPUTS ============
 
-  /** Model name for saved filters */
   @Input() modelName = "";
-
-  /** Available fields for filtering */
   @Input() fields: FilterableField[] = [];
-
-  /** Predefined quick filters */
   @Input() quickFilters: QuickFilter[] = [];
-
-  /** Group by options */
   @Input() groupByOptions: GroupByOption[] = [];
-
-  /** Current active filters */
   @Input() activeFilters: FilterRule[] = [];
-
-  /** Current search query */
   @Input() searchQuery = "";
-
-  /** Saved filters from database */
   @Input() savedFilters: SavedFilter[] = [];
-
-  /** Current sort field */
   @Input() sortBy: string | null = null;
-
-  /** Current sort order */
   @Input() sortOrder: SortOrder = SortOrder.DESC;
-
-  /** Current page size */
   @Input() pageSize = 20;
-
-  /** Placeholder text for search input */
   @Input() placeholder = "Search...";
+
+  /** Current active tree filter */
+  @Input() activeTree: FilterTreeNode | null = null;
 
   // ============ OUTPUTS ============
 
-  /** Emitted when filters change */
   @Output() filtersChange = new EventEmitter<FilterRule[]>();
-
-  /** Emitted when search query changes */
+  @Output() treeChange = new EventEmitter<FilterTreeNode | null>();
   @Output() searchChange = new EventEmitter<string>();
-
-  /** Emitted when group by changes */
   @Output() groupByChange = new EventEmitter<string | null>();
-
-  /** Emitted when a saved filter should be applied */
   @Output() applySavedFilter = new EventEmitter<SavedFilter>();
-
-  /** Emitted when user wants to save current filter */
   @Output() saveFilter = new EventEmitter<SavedFilterCreate>();
-
-  /** Emitted when user wants to delete a saved filter */
   @Output() deleteSavedFilter = new EventEmitter<number>();
-
-  /** Emitted when apply is clicked */
   @Output() apply = new EventEmitter<void>();
 
   // ============ STATE ============
 
-  /** Is the dropdown panel open */
   isPanelOpen = false;
-
-  /** Currently active quick filter IDs */
   activeQuickFilters: Set<string> = new Set();
-
-  /** Current group by field */
   currentGroupBy: string | null = null;
-
-  /** Show save filter dialog */
   showSaveDialog = false;
-
-  /** New filter name for save dialog */
   newFilterName = "";
-
-  /** New filter description */
   newFilterDescription = "";
+  
+  /** Show custom tree filter builder modal */
+  showCustomFilterTree = false;
 
-  /** Show custom filter builder */
-  showCustomFilterBuilder = false;
-
-  /** Custom filter being built */
-  customFilter: { field: string; operation: FilterOperation; value: any } = {
-    field: "",
-    operation: FilterOperation.EQUALS,
-    value: "",
-  };
+  // Smart Search State
+  searchOptions: SearchOption[] = [];
+  isSearchDropdownOpen = false;
 
   operationLabels = FILTER_OPERATION_LABELS;
-
   private destroy$ = new Subject<void>();
 
-  ngOnInit(): void {
-    if (this.fields.length > 0) {
-      this.customFilter.field = this.fields[0].name;
-    }
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -185,7 +127,134 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
 
   onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
+    this.searchQuery = value;
     this.searchChange.emit(value);
+    
+    if (value.trim().length > 0) {
+      this.generateSearchOptions(value.trim());
+    } else {
+      this.searchOptions = [];
+      this.isSearchDropdownOpen = false;
+    }
+  }
+
+  generateSearchOptions(query: string): void {
+    const options: SearchOption[] = [];
+    
+    this.fields.forEach(field => {
+      // Skip non-searchable fields: IDs, FK IDs, booleans
+      if (field.name === 'id' || field.name.endsWith('_id') || field.type === 'boolean') {
+        return;
+      }
+      
+      // Infer operator based on field type (Odoo rules)
+      let operation = FilterOperation.EQUALS;
+      let isRelationship = field.name.includes('.');
+      
+      if (field.type === 'text' || field.type === 'select') {
+        operation = FilterOperation.ILIKE;
+      } else if (field.type === 'number') {
+        operation = FilterOperation.EQUALS;
+      } else if (isRelationship) {
+        operation = FilterOperation.ILIKE;
+      }
+      
+      // Build Odoo-style label: "Search Title for: dede"
+      const label = field.label || field.name;
+      
+      options.push({
+        label: `Search ${label} for: ${query}`,
+        field: field.name,
+        operation: operation,
+        value: query
+      });
+    });
+
+    // Add a "Custom Filter..." option at the end
+    options.push({
+      label: 'Custom Filter...',
+      field: '__custom__',
+      operation: FilterOperation.EQUALS,
+      value: query
+    });
+
+    this.searchOptions = options;
+    this.isSearchDropdownOpen = options.length > 0;
+  }
+
+  selectSearchOption(option: SearchOption): void {
+    // Handle "Custom Filter..." option
+    if (option.field === '__custom__') {
+      this.toggleCustomFilterTree();
+      this.searchQuery = "";
+      this.searchOptions = [];
+      this.isSearchDropdownOpen = false;
+      return;
+    }
+    
+    // Create a new condition node for the tree
+    const conditionNode: FilterTreeNode = {
+      id: generateNodeId(),
+      nodeType: 'condition',
+      field: option.field,
+      operation: option.operation,
+      value: option.value
+    };
+    
+    // Merge into the existing tree: wrap in AND if tree exists, or create new AND root
+    if (this.activeTree && this.activeTree.nodeType === 'operator' && this.activeTree.operator === 'AND') {
+      // Append to existing AND root
+      const updatedTree: FilterTreeNode = {
+        ...this.activeTree,
+        children: [...(this.activeTree.children || []), conditionNode]
+      };
+      this.activeTree = updatedTree;
+      this.treeChange.emit(updatedTree);
+    } else if (this.activeTree) {
+      // Wrap existing tree + new condition in AND
+      const andRoot: FilterTreeNode = {
+        id: generateNodeId(),
+        nodeType: 'operator',
+        operator: 'AND',
+        children: [this.activeTree, conditionNode],
+        expanded: true
+      };
+      this.activeTree = andRoot;
+      this.treeChange.emit(andRoot);
+    } else {
+      // No tree yet — create AND root with single condition
+      const andRoot: FilterTreeNode = {
+        id: generateNodeId(),
+        nodeType: 'operator',
+        operator: 'AND',
+        children: [conditionNode],
+        expanded: true
+      };
+      this.activeTree = andRoot;
+      this.treeChange.emit(andRoot);
+    }
+    
+    // Clear search bar
+    this.searchQuery = "";
+    this.searchChange.emit("");
+    this.searchOptions = [];
+    this.isSearchDropdownOpen = false;
+    
+    // Apply immediately
+    this.apply.emit();
+  }
+  
+  hideSearchDropdown(): void {
+    // Slight delay to allow clicks on the dropdown items to register
+    setTimeout(() => {
+      this.isSearchDropdownOpen = false;
+    }, 150);
+  }
+
+  showSearchDropdown(): void {
+    if (this.searchOptions.length > 0) {
+      this.isSearchDropdownOpen = true;
+    }
   }
 
   onSearchKeydown(event: KeyboardEvent): void {
@@ -201,21 +270,15 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
 
     if (this.activeQuickFilters.has(filter.id)) {
       this.activeQuickFilters.delete(filter.id);
-      // Remove the filters associated with this quick filter
       const newFilters = this.activeFilters.filter(
-        (af) =>
-          !filter.filters.some(
-            (qf) => qf.field === af.field && qf.operation === af.operation,
-          ),
+        (af) => !filter.filters.some((qf) => qf.field === af.field && qf.operation === af.operation),
       );
       this.filtersChange.emit(newFilters);
     } else {
       this.activeQuickFilters.add(filter.id);
-      // Add the filters
       const newFilters = [...this.activeFilters, ...filter.filters];
       this.filtersChange.emit(newFilters);
     }
-
     this.apply.emit();
   }
 
@@ -242,6 +305,7 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
   clearAllFilters(): void {
     this.activeQuickFilters.clear();
     this.filtersChange.emit([]);
+    this.treeChange.emit(null);
     this.searchChange.emit("");
     this.apply.emit();
   }
@@ -249,14 +313,9 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
   getFilterTagLabel(filter: FilterRule): string {
     const field = this.fields.find((f) => f.name === filter.field);
     const fieldLabel = field?.label || filter.field;
-    const opLabel =
-      this.operationLabels[filter.operation as FilterOperation] ||
-      filter.operation;
+    const opLabel = this.operationLabels[filter.operation as FilterOperation] || filter.operation;
 
-    if (
-      filter.operation === FilterOperation.IS_NULL ||
-      filter.operation === FilterOperation.IS_NOT_NULL
-    ) {
+    if (filter.operation === FilterOperation.IS_NULL || filter.operation === FilterOperation.IS_NOT_NULL) {
       return `${fieldLabel} ${opLabel}`;
     }
 
@@ -264,7 +323,6 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
     if (Array.isArray(filter.value)) {
       valueStr = filter.value.join(", ");
     }
-
     return `${fieldLabel}: ${valueStr}`;
   }
 
@@ -288,6 +346,7 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
       description: this.newFilterDescription.trim() || undefined,
       model_name: this.modelName,
       filters: this.activeFilters,
+      filter_tree: this.activeTree ? toBackendPayload(this.activeTree) : undefined,
       sort_by: this.sortBy || undefined,
       sort_order: this.sortOrder,
       page_size: this.pageSize,
@@ -310,100 +369,51 @@ export class AdvancedSearchPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ============ CUSTOM FILTER ============
+  // ============ CUSTOM FILTER TREE ============
+
+  toggleCustomFilterTree(): void {
+    if (!this.activeTree) {
+      this.activeTree = createOperatorNode("AND");
+    }
+    this.showCustomFilterTree = !this.showCustomFilterTree;
+  }
+
+  onTreeChange(tree: FilterTreeNode): void {
+    this.activeTree = tree;
+    this.treeChange.emit(tree);
+  }
+
+  onApplyTree(tree: FilterTreeNode): void {
+    this.activeTree = tree;
+    this.treeChange.emit(tree);
+    this.showCustomFilterTree = false;
+    this.apply.emit();
+  }
+
+  onClearTree(): void {
+    this.activeTree = null;
+    this.treeChange.emit(null);
+    this.showCustomFilterTree = false;
+    this.apply.emit();
+  }
+
+  // ============ LEGACY CUSTOM FILTER (maintained for UI compatibility) ============
+
+  showCustomFilterBuilder = false;
+  customFilter = { field: "", operation: FilterOperation.EQUALS, value: "" };
 
   toggleCustomFilterBuilder(): void {
-    this.showCustomFilterBuilder = !this.showCustomFilterBuilder;
-  }
-
-  getAvailableOperations(): FilterOperation[] {
-    const field = this.fields.find((f) => f.name === this.customFilter.field);
-    if (!field) return Object.values(FilterOperation);
-
-    // Return operations based on field type
-    switch (field.type) {
-      case "text":
-        return [
-          FilterOperation.EQUALS,
-          FilterOperation.NOT_EQUALS,
-          FilterOperation.ILIKE,
-          FilterOperation.LIKE,
-          FilterOperation.STARTS_WITH,
-          FilterOperation.ENDS_WITH,
-          FilterOperation.IN,
-          FilterOperation.NOT_IN,
-          FilterOperation.IS_NULL,
-          FilterOperation.IS_NOT_NULL,
-        ];
-      case "number":
-        return [
-          FilterOperation.EQUALS,
-          FilterOperation.NOT_EQUALS,
-          FilterOperation.GREATER_THAN,
-          FilterOperation.GREATER_EQUAL,
-          FilterOperation.LESS_THAN,
-          FilterOperation.LESS_EQUAL,
-          FilterOperation.BETWEEN,
-          FilterOperation.IN,
-          FilterOperation.NOT_IN,
-          FilterOperation.IS_NULL,
-          FilterOperation.IS_NOT_NULL,
-        ];
-      case "boolean":
-        return [
-          FilterOperation.EQUALS,
-          FilterOperation.IS_NULL,
-          FilterOperation.IS_NOT_NULL,
-        ];
-      case "date":
-      case "datetime":
-        return [
-          FilterOperation.EQUALS,
-          FilterOperation.NOT_EQUALS,
-          FilterOperation.GREATER_THAN,
-          FilterOperation.GREATER_EQUAL,
-          FilterOperation.LESS_THAN,
-          FilterOperation.LESS_EQUAL,
-          FilterOperation.BETWEEN,
-          FilterOperation.IS_NULL,
-          FilterOperation.IS_NOT_NULL,
-        ];
-      default:
-        return Object.values(FilterOperation);
-    }
-  }
-
-  addCustomFilter(): void {
-    if (!this.customFilter.field) return;
-
-    const needsValue = ![
-      FilterOperation.IS_NULL,
-      FilterOperation.IS_NOT_NULL,
-    ].includes(this.customFilter.operation);
-    if (needsValue && !this.customFilter.value && this.customFilter.value !== 0)
-      return;
-
-    const newFilter: FilterRule = {
-      field: this.customFilter.field,
-      operation: this.customFilter.operation,
-      value: this.customFilter.value,
-    };
-
-    this.filtersChange.emit([...this.activeFilters, newFilter]);
-
-    // Reset
-    this.customFilter.value = "";
-    this.showCustomFilterBuilder = false;
-    this.apply.emit();
+    // Redirect to the new Tree Builder
+    this.toggleCustomFilterTree();
   }
 
   // ============ HELPERS ============
 
   get hasActiveFilters(): boolean {
-    return this.activeFilters.length > 0 || !!this.searchQuery;
+    return this.activeFilters.length > 0 || !!this.searchQuery || !!this.activeTree;
   }
 
   get activeFilterCount(): number {
-    return this.activeFilters.length + (this.searchQuery ? 1 : 0);
+    return this.activeFilters.length + (this.searchQuery ? 1 : 0) + (this.activeTree ? 1 : 0);
   }
 }

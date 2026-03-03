@@ -14,6 +14,7 @@ import {
   SavedFilter,
   SavedFilterCreate,
 } from "../../core/interfaces/saved-filter.interface";
+import { FilterTreeNode, generateNodeId } from "../../core/interfaces/filter-tree.interface";
 import { PaginationMeta } from "../../core/interfaces/pagination.interface";
 import { FilterOperation } from "../../core/enums/filter-operation.enum";
 import { SortOrder } from "../../core/enums/sort-order.enum";
@@ -44,8 +45,8 @@ export class BookListComponent implements OnInit, OnDestroy {
   pagination: PaginationMeta | null = null;
   loading = false;
 
-  // Current filter state
-  filters: FilterRule[] = [];
+  // Current filter state — tree-only (no flat filters)
+  filterTree: FilterTreeNode | null = null;
   search = "";
   sortField: string | null = "id";
   sortOrder: SortOrder = SortOrder.DESC;
@@ -152,98 +153,8 @@ export class BookListComponent implements OnInit, OnDestroy {
     { field: "is_available", label: "Availability", icon: "📗" },
   ];
 
-  // Filterable fields configuration
-  filterableFields: FilterableField[] = [
-    {
-      name: "title",
-      label: "Title",
-      type: "text",
-      sortable: true,
-      searchable: true,
-      defaultOperation: FilterOperation.ILIKE,
-    },
-    {
-      name: "genre",
-      label: "Genre",
-      type: "select",
-      sortable: true,
-      options: [
-        { label: "Fiction", value: "Fiction" },
-        { label: "Non-Fiction", value: "Non-Fiction" },
-        { label: "Science Fiction", value: "Science Fiction" },
-        { label: "Fantasy", value: "Fantasy" },
-        { label: "Mystery", value: "Mystery" },
-        { label: "Romance", value: "Romance" },
-        { label: "Thriller", value: "Thriller" },
-        { label: "Horror", value: "Horror" },
-        { label: "Biography", value: "Biography" },
-        { label: "History", value: "History" },
-      ],
-    },
-    {
-      name: "price",
-      label: "Price",
-      type: "number",
-      sortable: true,
-    },
-    {
-      name: "pages",
-      label: "Pages",
-      type: "number",
-      sortable: true,
-    },
-    {
-      name: "published_year",
-      label: "Published Year",
-      type: "number",
-      sortable: true,
-    },
-    {
-      name: "rating",
-      label: "Rating",
-      type: "number",
-      sortable: true,
-    },
-    {
-      name: "is_available",
-      label: "Available",
-      type: "boolean",
-      sortable: true,
-    },
-    {
-      name: "created_at",
-      label: "Created Date",
-      type: "date",
-      sortable: true,
-    },
-    // ============ RELATIONSHIP FILTERS (Author) ============
-    {
-      name: "author.name",
-      label: "Author Name",
-      type: "text",
-      sortable: false, // Sorting on relationships requires backend support
-      defaultOperation: FilterOperation.ILIKE,
-    },
-    {
-      name: "author.country",
-      label: "Author Country",
-      type: "text",
-      sortable: false,
-      defaultOperation: FilterOperation.ILIKE,
-    },
-    {
-      name: "author.email",
-      label: "Author Email",
-      type: "text",
-      sortable: false,
-    },
-    {
-      name: "author.is_active",
-      label: "Author Active",
-      type: "boolean",
-      sortable: false,
-    },
-  ];
+  // Filterable fields will be populated dynamically from backend metadata
+  filterableFields: FilterableField[] = [];
 
   // Table columns configuration
   tableColumns: TableColumn<Book>[] = [
@@ -299,6 +210,7 @@ export class BookListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadMetadata();
     this.loadBooks();
     this.loadSavedFilters();
   }
@@ -312,11 +224,59 @@ export class BookListComponent implements OnInit, OnDestroy {
   // DATA LOADING
   // ===========================================================================
 
+  loadMetadata(): void {
+    this.bookService.getMetadata()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (metadata) => {
+          const dynamicFields: FilterableField[] = metadata.fields.map((f: any) => {
+            let fieldType: 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'select' = 'text';
+            if (f.type === 'integer' || f.type === 'float' || f.type === 'decimal') fieldType = 'number';
+            else if (f.type === 'boolean') fieldType = 'boolean';
+            else if (f.type === 'date') fieldType = 'date';
+            else if (f.type === 'datetime') fieldType = 'datetime';
+            else if (f.type === 'enum') fieldType = 'select';
+
+            // Convert 'first_name' -> 'First Name'
+            const label = f.name.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+            return {
+              name: f.name,
+              label: label,
+              type: fieldType,
+              sortable: true,
+              searchable: true,
+              defaultOperation: fieldType === 'text' ? FilterOperation.ILIKE : FilterOperation.EQUALS,
+              options: f.type === 'enum' ? [] : undefined // Backend would need to provide options
+            };
+          });
+
+          // Add basic relationship fields
+          metadata.relationships.forEach((rel: any) => {
+            const relLabel = rel.name.charAt(0).toUpperCase() + rel.name.slice(1);
+            dynamicFields.push({
+              name: `${rel.name}.name`,
+              label: `${relLabel} Name`,
+              type: 'text',
+              sortable: false,
+              searchable: true,
+              defaultOperation: FilterOperation.ILIKE
+            });
+          });
+
+          this.filterableFields = dynamicFields;
+        },
+        error: (error) => {
+          console.error("Error loading metadata:", error);
+        }
+      });
+  }
+
   loadBooks(): void {
     this.loading = true;
 
-    // Set up query state
-    this.bookService.setFilters(this.filters);
+    // Set up query state — tree-only
+    this.bookService.setFilterTree(this.filterTree);
     this.bookService.setSearch(this.search || null);
     this.bookService.setSort({
       sort_by: this.sortField,
@@ -345,13 +305,43 @@ export class BookListComponent implements OnInit, OnDestroy {
   // ===========================================================================
 
   onFiltersChange(filters: FilterRule[]): void {
-    this.filters = filters;
+    // Legacy flat filters are now converted into tree conditions
+    // This is kept for backward compatibility with QuickFilters
+    if (filters.length > 0) {
+      const conditions: FilterTreeNode[] = filters.map(f => ({
+        id: generateNodeId(),
+        nodeType: 'condition' as const,
+        field: f.field,
+        operation: f.operation as FilterOperation,
+        value: f.value
+      }));
+      const andRoot: FilterTreeNode = {
+        id: generateNodeId(),
+        nodeType: 'operator',
+        operator: 'AND',
+        children: conditions,
+        expanded: true
+      };
+      this.filterTree = andRoot;
+    } else {
+      this.filterTree = null;
+    }
+    this.loadBooks();
+  }
+
+  onTreeChange(tree: FilterTreeNode | null): void {
+    this.filterTree = tree;
     this.loadBooks();
   }
 
   onSearchChange(search: string): void {
     this.search = search;
-    this.loadBooks();
+    // Don't reload on every keystroke — the Odoo-style dropdown
+    // will handle adding structured filters. Only reload when
+    // the search is cleared (user removed the text).
+    if (!search) {
+      this.loadBooks();
+    }
   }
 
   onSortChange(event: { field: string | null; order: SortOrder }): void {
@@ -419,8 +409,8 @@ export class BookListComponent implements OnInit, OnDestroy {
   }
 
   onApplySavedFilter(filter: SavedFilter): void {
-    // Apply the saved filter's settings
-    this.filters = filter.filters || [];
+    // Apply the saved filter's settings — tree-only
+    this.filterTree = filter.filter_tree || null;
     this.search = filter.search_query || "";
     this.sortField = filter.sort_by || "id";
     this.sortOrder = (filter.sort_order as SortOrder) || SortOrder.DESC;

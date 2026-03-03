@@ -16,6 +16,7 @@ import {
   SavedFilter,
   SavedFilterCreate,
 } from "../../../core/interfaces/saved-filter.interface";
+import { FilterTreeNode, toBackendPayload, generateNodeId } from "../../../core/interfaces/filter-tree.interface";
 import { PaginatedResponse } from "../../../core/interfaces/pagination.interface";
 import { SortOrder } from "../../../core/enums/sort-order.enum";
 import { SavedFilterService } from "../../../core/services/saved-filter.service";
@@ -67,12 +68,14 @@ import { DataTableComponent } from "../data-table/data-table.component";
           [quickFilters]="quickFilters"
           [groupByOptions]="groupByOptions"
           [activeFilters]="filters"
+          [activeTree]="filterTree"
           [searchQuery]="search"
           [sortBy]="sortField"
           [sortOrder]="sortOrder"
           [savedFilters]="savedFilters"
           [placeholder]="config?.searchPlaceholder || 'Search...'"
           (filtersChange)="onFiltersChange($event)"
+          (treeChange)="onTreeChange($event)"
           (searchChange)="onSearchChange($event)"
           (groupByChange)="onGroupByChange($event)"
           (saveFilter)="onSaveFilter($event)"
@@ -178,9 +181,10 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   loading = false;
 
   filters: FilterRule[] = [];
+  filterTree: FilterTreeNode | null = null;
   search = "";
   sortField: string | null = null;
-  sortOrder: SortOrder = SortOrder.DESC;
+  sortOrder: SortOrder = SortOrder.ASC;
   groupBy: string | null = null;
 
   savedFilters: SavedFilter[] = [];
@@ -228,7 +232,7 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   protected initializeDefaults(): void {
     if (this.config?.defaults) {
       this.sortField = this.config.defaults.sortField ?? null;
-      this.sortOrder = this.config.defaults.sortOrder ?? SortOrder.DESC;
+      this.sortOrder = this.config.defaults.sortOrder ?? SortOrder.ASC;
       this.currentPageSize = this.config.defaults.pageSize ?? 20;
     }
   }
@@ -243,8 +247,16 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    const params = this.buildQueryParams();
+    // Use POST /filter if tree is active, otherwise build GET params
+    if (this.filterTree) {
+      this.loadDataWithTree();
+    } else {
+      this.loadDataWithParams();
+    }
+  }
 
+  protected loadDataWithParams(): void {
+    const params = this.buildQueryParams();
     this.http
       .get<PaginatedResponse<T>>(this.config.apiEndpoint, { params })
       .pipe(
@@ -252,16 +264,48 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
         finalize(() => (this.loading = false)),
       )
       .subscribe({
-        next: (response) => {
-          this.data = response.data;
-          this.pagination = response.meta;
-        },
-        error: (error) => {
-          console.error("Error loading data:", error);
-          this.data = [];
-          this.pagination = null;
-        },
+        next: (response) => this.handleResponse(response),
+        error: (error) => this.handleError(error),
       });
+  }
+
+  protected loadDataWithTree(): void {
+    // Backend expects FilterNode directly as body, pagination/sort as query params
+    const body = toBackendPayload(this.filterTree!);
+
+    let params = new HttpParams();
+    params = params.set('page', this.currentPage.toString());
+    params = params.set('size', this.currentPageSize.toString());
+    if (this.sortField) {
+      params = params.set('sort_by', this.sortField);
+      params = params.set('order', this.sortOrder);
+    }
+    if (this.search) {
+      params = params.set('search', this.search);
+    }
+
+    const url = `${this.config.apiEndpoint}/filter`;
+    this.http
+      .post<PaginatedResponse<T>>(url, body, { params })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.loading = false)),
+      )
+      .subscribe({
+        next: (response) => this.handleResponse(response),
+        error: (error) => this.handleError(error),
+      });
+  }
+
+  private handleResponse(response: PaginatedResponse<T>): void {
+    this.data = response.data;
+    this.pagination = response.meta;
+  }
+
+  private handleError(error: any): void {
+    console.error("Error loading data:", error);
+    this.data = [];
+    this.pagination = null;
   }
 
   protected buildQueryParams(): HttpParams {
@@ -328,9 +372,10 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
 
   onApplySavedFilter(filter: SavedFilter): void {
     this.filters = filter.filters || [];
+    this.filterTree = filter.filter_tree || null;
     this.search = filter.search_query || "";
     this.sortField = filter.sort_by || this.config?.defaults?.sortField || null;
-    this.sortOrder = (filter.sort_order as SortOrder) || SortOrder.DESC;
+    this.sortOrder = (filter.sort_order as SortOrder) || SortOrder.ASC;
 
     if (filter.page_size) {
       this.currentPageSize = filter.page_size;
@@ -359,15 +404,44 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   // ===== EVENT HANDLERS =====
 
   onFiltersChange(filters: FilterRule[]): void {
+    // Convert flat filters (from quick filters) into tree conditions
+    if (filters.length > 0) {
+      const conditions: FilterTreeNode[] = filters.map(f => ({
+        id: generateNodeId(),
+        nodeType: 'condition' as const,
+        field: f.field,
+        operation: f.operation as any,
+        value: f.value
+      }));
+      this.filterTree = {
+        id: generateNodeId(),
+        nodeType: 'operator',
+        operator: 'AND',
+        children: conditions,
+        expanded: true
+      };
+    } else {
+      this.filterTree = null;
+    }
     this.filters = filters;
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  onTreeChange(tree: FilterTreeNode | null): void {
+    this.filterTree = tree;
     this.currentPage = 1;
     this.loadData();
   }
 
   onSearchChange(search: string): void {
     this.search = search;
-    this.currentPage = 1;
-    this.loadData();
+    // Don't reload on every keystroke — the Odoo-style dropdown
+    // handles adding structured filters. Only reload when cleared.
+    if (!search) {
+      this.currentPage = 1;
+      this.loadData();
+    }
   }
 
   onSortChange(event: { field: string | null; order: SortOrder }): void {

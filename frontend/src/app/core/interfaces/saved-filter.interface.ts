@@ -1,5 +1,6 @@
 import { FilterRule } from "./filter.interface";
 import { SortOrder } from "../enums/sort-order.enum";
+import { FilterTreeNode } from "./filter-tree.interface";
 
 /**
  * Saved filter response from API
@@ -11,6 +12,7 @@ export interface SavedFilter {
   description?: string | null;
   model_name: string;
   filters: FilterRule[];
+  filter_tree?: FilterTreeNode | null;
   sort_by?: string | null;
   sort_order: SortOrder | string;
   page_size: number;
@@ -28,6 +30,7 @@ export interface SavedFilterCreate {
   description?: string;
   model_name: string;
   filters: FilterRule[];
+  filter_tree?: FilterTreeNode;
   sort_by?: string;
   sort_order?: SortOrder | string;
   page_size?: number;
@@ -42,6 +45,7 @@ export interface SavedFilterUpdate {
   name?: string;
   description?: string;
   filters?: FilterRule[];
+  filter_tree?: FilterTreeNode;
   sort_by?: string;
   sort_order?: SortOrder | string;
   page_size?: number;
@@ -58,7 +62,5 @@ export interface SavedFilterApplyResponse<T = any> {
     size: number;
     total_items: number;
     total_pages: number;
-    has_next: boolean;
-    has_previous: boolean;
   };
 }

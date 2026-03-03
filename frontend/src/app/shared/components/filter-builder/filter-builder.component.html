@@ -1,144 +1,212 @@
 <div class="filter-builder">
   <div class="filter-header">
-    <h4 class="filter-title">Filters</h4>
-    <button
-      type="button"
-      class="btn btn-sm btn-outline-secondary"
-      (click)="clearAllRules()"
-    >
-      Clear All
-    </button>
+    <div class="header-left">
+      <i class="pi pi-filter mr-2"></i>
+      <h4 class="filter-title">Advanced Search Builder</h4>
+    </div>
+    <p-button 
+      label="Clear All" 
+      icon="pi pi-trash" 
+      severity="secondary" 
+      [text]="true" 
+      size="small"
+      (onClick)="clearAll()"
+    ></p-button>
   </div>
 
-  <form [formGroup]="form">
-    <div formArrayName="rules" class="filter-rules">
-      @for (rule of rules.controls; track $index; let i = $index) {
-        <div class="filter-rule" [formGroupName]="i">
-          <!-- Field Select -->
-          <div class="filter-field">
-            <label class="filter-label">Field</label>
-            <select
-              formControlName="field"
-              class="form-control"
-              (change)="onFieldChange(i)"
-            >
-              @for (field of fields; track field.name) {
-                <option [value]="field.name">{{ field.label }}</option>
-              }
-            </select>
+  <div class="filter-content">
+    <p-tree 
+      [value]="primeNodes" 
+      scrollHeight="400px" 
+      class="w-full shadow-none border-none"
+    >
+      <!-- Operator Node Template -->
+      <ng-template let-node pTemplate="operator">
+        <div class="operator-node-row">
+          <p-button 
+            [label]="node.data.node.operator" 
+            size="small"
+            [severity]="node.data.node.operator === 'AND' ? 'primary' : 'success'"
+            (onClick)="toggleOperator(node.data.node)"
+            class="operator-toggle-btn"
+          ></p-button>
+
+          <div class="node-actions ml-auto">
+            <p-button 
+              icon="pi pi-plus" 
+              [rounded]="true" 
+              [text]="true" 
+              size="small" 
+              (onClick)="addCondition(node.data.node)"
+              pTooltip="Add Condition"
+            ></p-button>
+            <p-button 
+              icon="pi pi-folder-plus" 
+              [rounded]="true" 
+              [text]="true" 
+              size="small" 
+              severity="secondary"
+              (onClick)="addGroup(node.data.node)"
+              pTooltip="Add Group"
+            ></p-button>
+            @if (node.data.parent) {
+              <p-button 
+                icon="pi pi-times" 
+                [rounded]="true" 
+                [text]="true" 
+                size="small" 
+                severity="danger"
+                (onClick)="removeNode(node.data.parent, node.data.node)"
+                pTooltip="Remove Group"
+              ></p-button>
+            }
           </div>
+        </div>
+      </ng-template>
 
-          <!-- Operation Select -->
-          <div class="filter-operation">
-            <label class="filter-label">Operation</label>
-            <select
-              formControlName="operation"
-              class="form-control"
-              (change)="onOperationChange(i)"
-            >
-              @for (
-                op of getAvailableOperations(rule.get("field")?.value);
-                track op
-              ) {
-                <option [value]="op">{{ operationLabels[op] }}</option>
-              }
-            </select>
-          </div>
+      <!-- Condition Node Template -->
+      <ng-template let-node pTemplate="condition">
+        <div class="condition-node-row">
+          <!-- Field -->
+          <p-select
+            [options]="fields"
+            [(ngModel)]="node.data.node.field"
+            (ngModelChange)="onFieldChange(node.data.node)"
+            optionLabel="label"
+            optionValue="name"
+            placeholder="Field"
+            class="flex-1"
+            [appendTo]="'body'"
+            size="small"
+          ></p-select>
 
-          <!-- Value Input -->
-          @if (needsValue(rule.get("operation")?.value)) {
-            <div class="filter-value">
-              <label class="filter-label">Value</label>
+          <!-- Operation -->
+          <p-select
+            [options]="getAvailableOperations(node.data.node.field || '')"
+            [(ngModel)]="node.data.node.operation"
+            (ngModelChange)="onOperationChange(node.data.node)"
+            placeholder="Op"
+            class="flex-none w-32"
+            [appendTo]="'body'"
+            size="small"
+          >
+            <ng-template let-op pTemplate="item">
+              {{ getOpLabel(op) }}
+            </ng-template>
+            <ng-template let-op pTemplate="selectedItem">
+              {{ getOpLabel(op) }}
+            </ng-template>
+          </p-select>
 
-              @if (needsMultipleValues(rule.get("operation")?.value)) {
-                <!-- Multiple values (comma-separated) -->
+          <!-- Value -->
+          @if (needsValue(node.data.node.operation)) {
+            <div class="value-container">
+              @if (needsMultipleValues(node.data.node.operation)) {
                 <input
-                  type="text"
-                  formControlName="value"
-                  class="form-control"
-                  placeholder="value1, value2, ..."
+                  pInputText
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  placeholder="v1, v2..."
+                  size="small"
                 />
-              } @else if (needsRange(rule.get("operation")?.value)) {
-                <!-- Range (two inputs) -->
-                <div class="range-inputs">
-                  <input
-                    [type]="getInputType(rule.get('field')?.value)"
-                    formControlName="value"
-                    class="form-control"
-                    placeholder="From"
-                  />
-                  <span class="range-separator">to</span>
-                  <input
-                    [type]="getInputType(rule.get('field')?.value)"
-                    formControlName="valueEnd"
-                    class="form-control"
-                    placeholder="To"
-                  />
+              } @else if (needsRange(node.data.node.operation)) {
+                <div class="flex gap-1 align-items-center">
+                  <p-inputnumber
+                    [(ngModel)]="node.data.node.value[0]"
+                    (ngModelChange)="onValueChange()"
+                    placeholder="Min"
+                    [showButtons]="false"
+                    size="small"
+                    class="w-20"
+                  ></p-inputnumber>
+                  <span>-</span>
+                  <p-inputnumber
+                    [(ngModel)]="node.data.node.value[1]"
+                    (ngModelChange)="onValueChange()"
+                    placeholder="Max"
+                    [showButtons]="false"
+                    size="small"
+                    class="w-20"
+                  ></p-inputnumber>
                 </div>
+              } @else if (getFieldConfig(node.data.node.field || "")?.type === "boolean") {
+                <p-select
+                  [options]="[{label: 'True', value: true}, {label: 'False', value: false}]"
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [appendTo]="'body'"
+                  size="small"
+                ></p-select>
               } @else if (
-                getFieldConfig(rule.get("field")?.value)?.type === "boolean"
+                getFieldConfig(node.data.node.field || "")?.type === "select" ||
+                getFieldConfig(node.data.node.field || "")?.type === "enum"
               ) {
-                <!-- Boolean select -->
-                <select formControlName="value" class="form-control">
-                  <option [ngValue]="true">True</option>
-                  <option [ngValue]="false">False</option>
-                </select>
-              } @else if (
-                getFieldConfig(rule.get("field")?.value)?.type === "select" ||
-                getFieldConfig(rule.get("field")?.value)?.type === "enum"
-              ) {
-                <!-- Select from options -->
-                <select formControlName="value" class="form-control">
-                  <option value="">-- Select --</option>
-                  @for (
-                    opt of getFieldConfig(rule.get("field")?.value)?.options;
-                    track opt.value
-                  ) {
-                    <option [ngValue]="opt.value">{{ opt.label }}</option>
-                  }
-                </select>
+                <p-select
+                  [options]="getFieldConfig(node.data.node.field || '')?.options || []"
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select"
+                  [appendTo]="'body'"
+                  size="small"
+                ></p-select>
+              } @else if (getFieldConfig(node.data.node.field || "")?.type === 'date' || getFieldConfig(node.data.node.field || "")?.type === 'datetime') {
+                <p-datepicker
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  [showTime]="getFieldConfig(node.data.node.field || '')?.type === 'datetime'"
+                  dateFormat="yy-mm-dd"
+                  [appendTo]="'body'"
+                  size="small"
+                ></p-datepicker>
+              } @else if (getFieldConfig(node.data.node.field || "")?.type === 'number') {
+                <p-inputnumber
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  [showButtons]="false"
+                  size="small"
+                ></p-inputnumber>
               } @else {
-                <!-- Standard input -->
                 <input
-                  [type]="getInputType(rule.get('field')?.value)"
-                  formControlName="value"
-                  class="form-control"
-                  placeholder="Enter value"
+                  pInputText
+                  [(ngModel)]="node.data.node.value"
+                  (ngModelChange)="onValueChange()"
+                  placeholder="Value"
+                  size="small"
                 />
               }
             </div>
           }
 
-          <!-- Remove Button -->
-          <div class="filter-actions">
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-danger"
-              (click)="removeRule(i)"
-              [disabled]="rules.length <= 1"
-              title="Remove filter"
-            >
-              <span class="remove-icon">×</span>
-            </button>
-          </div>
+          <p-button 
+            icon="pi pi-times" 
+            [rounded]="true" 
+            [text]="true" 
+            size="small" 
+            severity="danger"
+            (onClick)="removeNode(node.data.parent, node.data.node)"
+            [disabled]="!node.data.parent"
+            pTooltip="Remove Filter"
+          ></p-button>
         </div>
-      }
-    </div>
-  </form>
+      </ng-template>
+    </p-tree>
+  </div>
 
   <div class="filter-footer">
-    <button
-      type="button"
-      class="btn btn-sm btn-outline-primary"
-      (click)="addRule()"
-    >
-      + Add Filter
-    </button>
-
-    @if (showApplyButton) {
-      <button type="button" class="btn btn-primary" (click)="applyFilters()">
-        {{ applyButtonLabel }}
-      </button>
-    }
+    <div class="footer-actions">
+        @if (showApplyButton) {
+            <p-button 
+                [label]="applyButtonLabel" 
+                icon="pi pi-check" 
+                (onClick)="applyFilters()"
+                class="w-full"
+            ></p-button>
+        }
+    </div>
   </div>
 </div>
+

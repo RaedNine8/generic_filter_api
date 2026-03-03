@@ -4,21 +4,15 @@ import {
   Output,
   EventEmitter,
   OnInit,
-  OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormGroup,
-  FormBuilder,
-  FormArray,
-  Validators,
-} from "@angular/forms";
-import { Subject } from "rxjs";
-import { takeUntil, debounceTime } from "rxjs/operators";
+import { FormsModule } from "@angular/forms";
 
-import { FilterRule } from "../../../core/interfaces/filter.interface";
+import {
+  FilterTreeNode,
+  createConditionNode,
+  createOperatorNode,
+} from "../../../core/interfaces/filter-tree.interface";
 import {
   FilterableField,
   getOperationsForFieldType,
@@ -31,166 +25,172 @@ import {
   operationNeedsRange,
 } from "../../../core/enums/filter-operation.enum";
 
+// PrimeNG 18 Imports
+import { TreeModule } from "primeng/tree";
+import { TreeNode } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { SelectModule } from "primeng/select";
+import { InputTextModule } from "primeng/inputtext";
+import { InputNumberModule } from "primeng/inputnumber";
+import { DatePickerModule } from "primeng/datepicker";
+import { TooltipModule } from "primeng/tooltip";
+
 /**
- * Filter Builder Component
+ * Tree-based Filter Builder Component
  *
- * A reusable component for building filter rules dynamically.
- * Supports multiple field types, operations, and value inputs.
- *
- * Features:
- * - Dynamic field selection based on configuration
- * - Operation selection based on field type
- * - Appropriate value input based on operation
- * - Add/remove filter rules
- * - Clear all filters
- * - Emits filter changes
+ * Renders a recursive tree of AND/OR groups and filter conditions.
+ * Each operator node can contain conditions and nested operator groups.
  *
  * Usage:
  * ```html
  * <app-filter-builder
  *   [fields]="filterableFields"
- *   [filters]="currentFilters"
- *   (filtersChange)="onFiltersChange($event)"
- *   (apply)="onApplyFilters($event)">
+ *   [tree]="filterTree"
+ *   (treeChange)="onTreeChange($event)"
+ *   (apply)="onApply($event)">
  * </app-filter-builder>
  * ```
  */
 @Component({
   selector: "app-filter-builder",
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TreeModule,
+    ButtonModule,
+    SelectModule,
+    InputTextModule,
+    InputNumberModule,
+    DatePickerModule,
+    TooltipModule,
+  ],
   templateUrl: "./filter-builder.component.html",
   styleUrls: ["./filter-builder.component.scss"],
 })
-export class FilterBuilderComponent implements OnInit, OnDestroy {
-  /** Available fields for filtering */
+export class FilterBuilderComponent implements OnInit {
   @Input() fields: FilterableField[] = [];
+  @Input() set tree(value: FilterTreeNode | null) {
+    this._tree = value;
+    this.refreshPrimeNodes();
+  }
+  get tree(): FilterTreeNode | null {
+    return this._tree;
+  }
 
-  /** Current filter rules */
-  @Input() filters: FilterRule[] = [];
-
-  /** Label for the apply button */
   @Input() applyButtonLabel = "Apply Filters";
-
-  /** Show apply button */
   @Input() showApplyButton = true;
 
-  /** Auto-emit on change (if false, only emit on apply) */
-  @Input() autoApply = false;
-
-  /** Debounce time for auto-apply (ms) */
-  @Input() debounceMs = 300;
-
-  /** Emitted when filters change */
-  @Output() filtersChange = new EventEmitter<FilterRule[]>();
-
-  /** Emitted when apply button is clicked */
-  @Output() apply = new EventEmitter<FilterRule[]>();
-
-  /** Emitted when clear button is clicked */
+  @Output() treeChange = new EventEmitter<FilterTreeNode>();
+  @Output() apply = new EventEmitter<FilterTreeNode>();
   @Output() clear = new EventEmitter<void>();
 
-  form!: FormGroup;
+  private _tree: FilterTreeNode | null = null;
+  primeNodes: TreeNode[] = [];
   operationLabels = FILTER_OPERATION_LABELS;
 
-  private destroy$ = new Subject<void>();
-
-  constructor(private fb: FormBuilder) {}
-
   ngOnInit(): void {
-    this.initForm();
-    this.loadFilters();
+    if (!this.tree) {
+      this.tree = createOperatorNode("AND");
+    }
+    this.refreshPrimeNodes();
+  }
 
-    if (this.autoApply) {
-      this.form.valueChanges
-        .pipe(takeUntil(this.destroy$), debounceTime(this.debounceMs))
-        .subscribe(() => this.emitFilters());
+  // ===========================================================================
+  // TREE MAPPING
+  // ===========================================================================
+
+  refreshPrimeNodes(): void {
+    if (!this.tree) {
+      this.primeNodes = [];
+      return;
+    }
+    this.primeNodes = [this.mapToTreeNode(this.tree)];
+  }
+
+  private mapToTreeNode(node: FilterTreeNode, parent: FilterTreeNode | null = null): TreeNode {
+    const treeNode: TreeNode = {
+      key: node.id,
+      type: node.nodeType,
+      data: { node, parent },
+      expanded: node.expanded !== false,
+      children: [],
+    };
+
+    if (node.nodeType === "operator" && node.children) {
+      treeNode.children = node.children.map((child) =>
+        this.mapToTreeNode(child, node)
+      );
+    }
+
+    return treeNode;
+  }
+
+  // ===========================================================================
+  // NODE MANAGEMENT
+  // ===========================================================================
+
+  addCondition(node: FilterTreeNode): void {
+    if (node.children) {
+      const defaultField = this.fields.length > 0 ? this.fields[0].name : "";
+      node.children.push(createConditionNode(defaultField));
+      this.refreshPrimeNodes();
+      this.emitChange();
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  addGroup(node: FilterTreeNode): void {
+    if (node.children) {
+      const defaultField = this.fields.length > 0 ? this.fields[0].name : "";
+      node.children.push(
+        createOperatorNode("AND", [
+          createConditionNode(defaultField),
+          createConditionNode(defaultField),
+        ])
+      );
+      this.refreshPrimeNodes();
+      this.emitChange();
+    }
   }
 
-  // ===========================================================================
-  // FORM MANAGEMENT
-  // ===========================================================================
-
-  private initForm(): void {
-    this.form = this.fb.group({
-      rules: this.fb.array([]),
-    });
-  }
-
-  get rules(): FormArray {
-    return this.form.get("rules") as FormArray;
-  }
-
-  private createRuleGroup(rule?: Partial<FilterRule>): FormGroup {
-    const field =
-      rule?.field || (this.fields.length > 0 ? this.fields[0].name : "");
-    const fieldConfig = this.getFieldConfig(field);
-    const defaultOp = fieldConfig?.defaultOperation || FilterOperation.EQUALS;
-
-    return this.fb.group({
-      field: [field, Validators.required],
-      operation: [rule?.operation || defaultOp, Validators.required],
-      value: [rule?.value ?? ""],
-      valueEnd: [""], // For BETWEEN operation
-    });
-  }
-
-  private loadFilters(): void {
-    this.rules.clear();
-    for (const filter of this.filters) {
-      const group = this.createRuleGroup(filter);
-      // Handle BETWEEN value
-      if (
-        filter.operation === FilterOperation.BETWEEN &&
-        Array.isArray(filter.value)
-      ) {
-        group.patchValue({
-          value: filter.value[0],
-          valueEnd: filter.value[1],
-        });
+  removeNode(parent: FilterTreeNode, node: FilterTreeNode): void {
+    if (parent.children) {
+      const index = parent.children.findIndex((c) => c.id === node.id);
+      if (index !== -1) {
+        parent.children.splice(index, 1);
+        this.refreshPrimeNodes();
+        this.emitChange();
       }
-      this.rules.push(group);
-    }
-
-    // Add empty rule if none exist
-    if (this.rules.length === 0) {
-      this.addRule();
     }
   }
 
-  // ===========================================================================
-  // RULE MANAGEMENT
-  // ===========================================================================
-
-  addRule(): void {
-    this.rules.push(this.createRuleGroup());
+  toggleOperator(node: FilterTreeNode): void {
+    node.operator = node.operator === "AND" ? "OR" : "AND";
+    this.refreshPrimeNodes();
+    this.emitChange();
   }
 
-  removeRule(index: number): void {
-    this.rules.removeAt(index);
-    if (this.rules.length === 0) {
-      this.addRule();
-    }
-    if (this.autoApply) {
-      this.emitFilters();
-    }
+  toggleExpanded(node: FilterTreeNode): void {
+    node.expanded = !node.expanded;
+    this.refreshPrimeNodes();
   }
 
-  clearAllRules(): void {
-    this.rules.clear();
-    this.addRule();
+  clearAll(): void {
+    this.tree = createOperatorNode("AND");
     this.clear.emit();
-    this.filtersChange.emit([]);
+    this.refreshPrimeNodes();
+    this.emitChange();
+  }
+
+  applyFilters(): void {
+    if (this.tree) {
+      this.apply.emit(this.tree);
+      this.emitChange();
+    }
   }
 
   // ===========================================================================
-  // FIELD/OPERATION HELPERS
+  // FIELD / OPERATION HELPERS
   // ===========================================================================
 
   getFieldConfig(fieldName: string): FilterableField | undefined {
@@ -199,49 +199,46 @@ export class FilterBuilderComponent implements OnInit, OnDestroy {
 
   getAvailableOperations(fieldName: string): FilterOperation[] {
     const field = this.getFieldConfig(fieldName);
-    if (!field) {
-      return Object.values(FilterOperation);
-    }
-
+    if (!field) return Object.values(FilterOperation);
     if (field.allowedOperations && field.allowedOperations.length > 0) {
       return field.allowedOperations;
     }
-
     return getOperationsForFieldType(field.type);
   }
 
-  onFieldChange(index: number): void {
-    const ruleGroup = this.rules.at(index) as FormGroup;
-    const fieldName = ruleGroup.get("field")?.value;
-    const operations = this.getAvailableOperations(fieldName);
-
-    // Reset operation to first available if current is not valid
-    const currentOp = ruleGroup.get("operation")?.value;
-    if (!operations.includes(currentOp)) {
-      ruleGroup.patchValue({
-        operation: operations[0],
-        value: "",
-        valueEnd: "",
-      });
+  onFieldChange(node: FilterTreeNode): void {
+    const ops = this.getAvailableOperations(node.field || "");
+    if (node.operation && !ops.includes(node.operation)) {
+      node.operation = ops[0];
+      node.value = "";
     }
+    this.emitChange();
   }
 
-  onOperationChange(index: number): void {
-    const ruleGroup = this.rules.at(index) as FormGroup;
-    // Reset value when operation changes
-    ruleGroup.patchValue({ value: "", valueEnd: "" });
+  onOperationChange(node: FilterTreeNode): void {
+    node.value = "";
+    this.emitChange();
   }
 
-  needsValue(operation: string): boolean {
-    return operationNeedsValue(operation as FilterOperation);
+  onValueChange(): void {
+    this.emitChange();
   }
 
-  needsMultipleValues(operation: string): boolean {
-    return operationNeedsMultipleValues(operation as FilterOperation);
+  getOpLabel(op: any): string {
+    if (!op) return "";
+    return this.operationLabels[op as FilterOperation] || op;
   }
 
-  needsRange(operation: string): boolean {
-    return operationNeedsRange(operation as FilterOperation);
+  needsValue(operation: FilterOperation | undefined): boolean {
+    return operation ? operationNeedsValue(operation) : false;
+  }
+
+  needsMultipleValues(operation: FilterOperation | undefined): boolean {
+    return operation ? operationNeedsMultipleValues(operation) : false;
+  }
+
+  needsRange(operation: FilterOperation | undefined): boolean {
+    return operation ? operationNeedsRange(operation) : false;
   }
 
   getInputType(fieldName: string): string {
@@ -258,63 +255,17 @@ export class FilterBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ===========================================================================
-  // OUTPUT
-  // ===========================================================================
-
-  applyFilters(): void {
-    const filters = this.buildFilters();
-    this.apply.emit(filters);
-    this.filtersChange.emit(filters);
+  canRemoveChild(parent: FilterTreeNode): boolean {
+    return (parent.children?.length || 0) > 2;
   }
 
-  private emitFilters(): void {
-    const filters = this.buildFilters();
-    this.filtersChange.emit(filters);
-  }
+  // ===========================================================================
+  // PRIVATE
+  // ===========================================================================
 
-  private buildFilters(): FilterRule[] {
-    const filters: FilterRule[] = [];
-
-    for (const control of this.rules.controls) {
-      const group = control as FormGroup;
-      const field = group.get("field")?.value;
-      const operation = group.get("operation")?.value;
-      let value = group.get("value")?.value;
-      const valueEnd = group.get("valueEnd")?.value;
-
-      // Skip empty rules
-      if (!field || !operation) continue;
-
-      // Skip if value is required but empty
-      if (
-        this.needsValue(operation) &&
-        (value === "" || value === null || value === undefined)
-      ) {
-        continue;
-      }
-
-      // Handle special operations
-      if (operation === FilterOperation.BETWEEN) {
-        if (value !== "" && valueEnd !== "") {
-          value = [value, valueEnd];
-        } else {
-          continue; // Skip incomplete BETWEEN
-        }
-      } else if (this.needsMultipleValues(operation)) {
-        // Parse comma-separated values
-        if (typeof value === "string") {
-          value = value
-            .split(",")
-            .map((v: string) => v.trim())
-            .filter((v: string) => v !== "");
-          if (value.length === 0) continue;
-        }
-      }
-
-      filters.push({ field, operation, value });
+  private emitChange(): void {
+    if (this.tree) {
+      this.treeChange.emit(this.tree);
     }
-
-    return filters;
   }
 }
