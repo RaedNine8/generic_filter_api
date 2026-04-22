@@ -1,6 +1,6 @@
 <div class="data-table-container" data-testid="data-table-container">
   <div class="loading-progress" *ngIf="loading" aria-hidden="true"></div>
-  
+
   <div class="loading-overlay" *ngIf="loading">
     <div class="loading-spinner"></div>
     <span class="loading-text">Loading...</span>
@@ -13,7 +13,6 @@
       [class.striped]="striped"
       [class.hover]="hoverRows"
     >
-      
       <thead>
         <tr>
           <th
@@ -39,7 +38,6 @@
       </thead>
 
       <tbody>
-        
         <tr *ngIf="data.length === 0 && !loading" class="empty-row">
           <td [attr.colspan]="columns.length" class="empty-cell">
             <div class="empty-state">
@@ -49,7 +47,11 @@
           </td>
         </tr>
 
-        <tr *ngIf="loading && data.length === 0" class="skeleton-row" aria-hidden="true">
+        <tr
+          *ngIf="loading && data.length === 0"
+          class="skeleton-row"
+          aria-hidden="true"
+        >
           <td [attr.colspan]="columns.length">
             <div class="skeleton-lines">
               <span class="skeleton-line"></span>
@@ -61,7 +63,6 @@
         </tr>
 
         <ng-container *ngIf="data.length > 0">
-          
           <ng-container *ngIf="rowTemplate; else defaultRows">
             <tr
               *ngFor="let row of data; let i = index; trackBy: trackByIndex"
@@ -88,7 +89,6 @@
                 [class]="column.cssClass"
                 [class.numeric]="isNumericColumn(column)"
               >
-                
                 <ng-container
                   *ngIf="
                     column.type === 'custom' && cellTemplate;
@@ -108,15 +108,23 @@
                 </ng-container>
 
                 <ng-template #defaultCell>
-                  <ng-container *ngIf="!isBooleanColumn(column); else booleanCell">
+                  <ng-container
+                    *ngIf="!isBooleanColumn(column); else booleanCell"
+                  >
                     {{ formatCellValue(getCellValue(row, column), column) }}
                   </ng-container>
                   <ng-template #booleanCell>
                     <span
                       class="boolean-badge"
-                      [class.true]="getBooleanState(getCellValue(row, column)) === 'true'"
-                      [class.false]="getBooleanState(getCellValue(row, column)) === 'false'"
-                      [class.unknown]="getBooleanState(getCellValue(row, column)) === 'unknown'"
+                      [class.true]="
+                        getBooleanState(getCellValue(row, column)) === 'true'
+                      "
+                      [class.false]="
+                        getBooleanState(getCellValue(row, column)) === 'false'
+                      "
+                      [class.unknown]="
+                        getBooleanState(getCellValue(row, column)) === 'unknown'
+                      "
                     >
                       {{ formatBooleanLabel(getCellValue(row, column)) }}
                     </span>

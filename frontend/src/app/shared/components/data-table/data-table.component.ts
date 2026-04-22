@@ -73,11 +73,9 @@ export class DataTableComponent<T = any> {
 
   @Output() rowClick = new EventEmitter<T>();
 
-
   onSortChange(event: { field: string; order: SortOrder }): void {
     this.sortChange.emit(event);
   }
-
 
   onPageChange(page: number): void {
     this.pageChange.emit(page);
@@ -86,7 +84,6 @@ export class DataTableComponent<T = any> {
   onPageSizeChange(size: number): void {
     this.pageSizeChange.emit(size);
   }
-
 
   onRowClick(row: T): void {
     if (this.clickableRows) {
@@ -113,7 +110,6 @@ export class DataTableComponent<T = any> {
     if (value === false) return "No";
     return "Unknown";
   }
-
 
   getCellValue(row: T, column: TableColumn<T>): any {
     const value = this.getNestedValue(row, column.field);
@@ -174,7 +170,6 @@ export class DataTableComponent<T = any> {
     if (typeof value !== "number") return "—";
     return new Intl.NumberFormat("en-US").format(value);
   }
-
 
   trackByIndex(index: number): number {
     return index;

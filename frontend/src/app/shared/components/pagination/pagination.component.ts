@@ -74,7 +74,6 @@ export class PaginationComponent implements OnChanges {
     }
   }
 
-
   goToPage(page: number): void {
     if (!this.meta) return;
     if (page < 1 || page > this.meta.total_pages) return;
@@ -115,7 +114,6 @@ export class PaginationComponent implements OnChanges {
     }
     this.goToPage(Number(this.jumpPage));
   }
-
 
   get itemsInfo(): string {
     if (!this.meta || this.meta.total_items === 0) {

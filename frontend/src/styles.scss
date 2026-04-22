@@ -59,8 +59,16 @@ body {
   line-height: 1.5;
   color: var(--color-text);
   background:
-    radial-gradient(circle at top right, rgba(13, 148, 136, 0.08), transparent 28%),
-    radial-gradient(circle at top left, rgba(11, 106, 162, 0.08), transparent 28%),
+    radial-gradient(
+      circle at top right,
+      rgba(13, 148, 136, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top left,
+      rgba(11, 106, 162, 0.08),
+      transparent 28%
+    ),
     var(--color-bg);
 }
 

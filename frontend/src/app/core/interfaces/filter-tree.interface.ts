@@ -15,7 +15,6 @@ export interface FilterTreeNode {
   expanded?: boolean;
 }
 
-
 let _nextId = 1;
 export function generateNodeId(): string {
   return `node-${_nextId++}`;
@@ -57,7 +56,11 @@ export function toBackendPayload(node: FilterTreeNode): any | null {
     const isNullOp = op === "is_null" || op === "is_not_null";
 
     if (!isNullOp) {
-      if (node.value === null || node.value === undefined || node.value === "") {
+      if (
+        node.value === null ||
+        node.value === undefined ||
+        node.value === ""
+      ) {
         return null;
       }
       if (Array.isArray(node.value) && node.value.length === 0) {

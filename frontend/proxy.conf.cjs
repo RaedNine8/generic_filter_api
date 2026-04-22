@@ -34,7 +34,9 @@ function normalizeUrl(url) {
 }
 
 function buildCandidates() {
-  const explicitTargets = parseList(process.env.FILTER_API_TARGETS).map(normalizeUrl);
+  const explicitTargets = parseList(process.env.FILTER_API_TARGETS).map(
+    normalizeUrl,
+  );
   const singleTarget = normalizeUrl(process.env.FILTER_API_TARGET || "");
 
   const envPorts = parseList(process.env.FILTER_API_PORTS)
@@ -55,7 +57,12 @@ function buildCandidates() {
   const portTargets = unique(ports).map((port) => `http://127.0.0.1:${port}`);
 
   return unique(
-    [singleTarget, ...explicitTargets, ...portTargets, DEFAULT_FALLBACK_TARGET].filter(Boolean),
+    [
+      singleTarget,
+      ...explicitTargets,
+      ...portTargets,
+      DEFAULT_FALLBACK_TARGET,
+    ].filter(Boolean),
   );
 }
 
@@ -101,7 +108,9 @@ async function isCompatibleBackend(target) {
   if (!openapi || !openapi.paths) {
     return false;
   }
-  return REQUIRED_ROUTES.every((route) => Object.prototype.hasOwnProperty.call(openapi.paths, route));
+  return REQUIRED_ROUTES.every((route) =>
+    Object.prototype.hasOwnProperty.call(openapi.paths, route),
+  );
 }
 
 async function resolveTarget() {

@@ -1,8 +1,6 @@
 <div class="advanced-search-container">
-  
   <div class="search-bar">
     <div class="search-bar-content">
-      
       <span class="filter-icon" aria-hidden="true"></span>
 
       <div class="filter-tags">
@@ -44,7 +42,6 @@
             </span>
           }
         }
-
       </div>
 
       <div class="search-input-wrapper">
@@ -64,7 +61,11 @@
           <div class="search-dropdown" data-testid="search-options-dropdown">
             @for (option of searchOptions; track option.label) {
               @if (option.isCustom) {
-                <div class="search-option custom-filter-option" data-testid="search-option" (mousedown)="selectSearchOption(option)">
+                <div
+                  class="search-option custom-filter-option"
+                  data-testid="search-option"
+                  (mousedown)="selectSearchOption(option)"
+                >
                   <span class="option-icon">➕</span>
                   <span class="option-label">Custom Filter...</span>
                   @if (option.typeHint) {
@@ -72,15 +73,19 @@
                   }
                 </div>
               } @else if (option.isFkHeader) {
-                
                 <div
                   class="search-option fk-header"
                   data-testid="search-option"
                   [class.disabled]="option.isDisabled"
                   (mousedown)="selectSearchOption(option)"
                 >
-                  <span class="option-arrow"
-                        [class.expanded]="expandedFkHeaders.has(option.fkRelationshipName!)">►</span>
+                  <span
+                    class="option-arrow"
+                    [class.expanded]="
+                      expandedFkHeaders.has(option.fkRelationshipName!)
+                    "
+                    >►</span
+                  >
                   @if (getOptionLabelParts(option.label); as parts) {
                     <span class="option-label">
                       <span class="option-prefix">{{ parts.prefix }}</span>
@@ -94,12 +99,14 @@
                     <span class="option-type">{{ option.typeHint }}</span>
                   }
                 </div>
-                
+
                 @if (option.subOptions && option.subOptions.length > 0) {
                   @for (sub of option.subOptions; track sub.label) {
-                    <div class="search-option fk-sub-option"
-                         data-testid="search-option"
-                         (mousedown)="selectSearchOption(sub)">
+                    <div
+                      class="search-option fk-sub-option"
+                      data-testid="search-option"
+                      (mousedown)="selectSearchOption(sub)"
+                    >
                       @if (getOptionLabelParts(sub.label); as parts) {
                         <span class="option-label">
                           <span class="option-prefix">{{ parts.prefix }}</span>
@@ -159,11 +166,15 @@
       data-testid="custom-filters-toggle"
       [class.active]="isPanelOpen"
       [attr.aria-expanded]="isPanelOpen"
-      [attr.aria-label]="isPanelOpen ? 'Hide custom filters panel' : 'Show custom filters panel'"
+      [attr.aria-label]="
+        isPanelOpen ? 'Hide custom filters panel' : 'Show custom filters panel'
+      "
       title="Custom filters"
       (click)="togglePanel()"
     >
-      <span class="toggle-icon">Custom filters {{ isPanelOpen ? '▲' : '▼' }}</span>
+      <span class="toggle-icon"
+        >Custom filters {{ isPanelOpen ? "▲" : "▼" }}</span
+      >
     </button>
   </div>
 
@@ -178,7 +189,9 @@
           <div class="column-content">
             @if (groupByOptions.length > 0) {
               <div class="group-by-block">
-                <label for="groupBySelect" class="group-by-label">Group results by</label>
+                <label for="groupBySelect" class="group-by-label"
+                  >Group results by</label
+                >
                 <select
                   id="groupBySelect"
                   class="group-by-select"
@@ -203,15 +216,15 @@
                 New custom filter
               </button>
 
-            <button
-              type="button"
-              class="save-current-btn"
-              data-testid="save-current-search"
-              [disabled]="!hasActiveFilters"
-              (click)="openSaveDialog()"
-            >
-              Save current search
-            </button>
+              <button
+                type="button"
+                class="save-current-btn"
+                data-testid="save-current-search"
+                [disabled]="!hasActiveFilters"
+                (click)="openSaveDialog()"
+              >
+                Save current search
+              </button>
             </div>
 
             @if (savedFilters.length > 0) {
@@ -247,11 +260,20 @@
   }
 
   @if (showCustomFilterTree) {
-    <div class="filter-builder-modal-overlay" (click)="toggleCustomFilterTree()">
+    <div
+      class="filter-builder-modal-overlay"
+      (click)="toggleCustomFilterTree()"
+    >
       <div class="filter-builder-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h3>Custom Filter Builder</h3>
-          <button type="button" class="close-btn" (click)="toggleCustomFilterTree()">×</button>
+          <button
+            type="button"
+            class="close-btn"
+            (click)="toggleCustomFilterTree()"
+          >
+            ×
+          </button>
         </div>
         <div class="modal-body">
           <app-filter-builder

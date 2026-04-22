@@ -102,7 +102,9 @@ interface MetadataRelationship {
   templateUrl: "./advanced-search-panel.component.html",
   styleUrls: ["./advanced-search-panel.component.scss"],
 })
-export class AdvancedSearchPanelComponent implements OnInit, OnDestroy, OnChanges {
+export class AdvancedSearchPanelComponent
+  implements OnInit, OnDestroy, OnChanges
+{
   @Input() modelName = "";
   @Input() fields: FilterableField[] = [];
   @Input() quickFilters: QuickFilter[] = [];

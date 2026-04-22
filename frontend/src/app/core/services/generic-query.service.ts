@@ -22,7 +22,6 @@ import { FilterOperation } from "../enums/filter-operation.enum";
 import { SortOrder } from "../enums/sort-order.enum";
 import { ApiError, QueryState } from "../interfaces/query-state.interface";
 
-
 @Injectable({
   providedIn: "root",
 })
@@ -49,7 +48,6 @@ export abstract class GenericQueryService<T> {
   public data$ = this._data.asObservable();
 
   constructor(protected http: HttpClient) {}
-
 
   query(): Observable<PaginatedResponse<T>> {
     const state = this._queryState.value;
@@ -109,9 +107,7 @@ export abstract class GenericQueryService<T> {
   getMetadata(): Observable<any> {
     return this.http
       .get<any>(`${this.baseUrl}/metadata`)
-      .pipe(
-        catchError((error) => this.handleError(error)),
-      );
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   private queryWithTree(state: QueryState): Observable<PaginatedResponse<T>> {
@@ -200,7 +196,6 @@ export abstract class GenericQueryService<T> {
         }),
       );
   }
-
 
   getState(): QueryState {
     return { ...this._queryState.value };
@@ -316,7 +311,6 @@ export abstract class GenericQueryService<T> {
     this._data.next(null);
   }
 
-
   buildUrlParamKey(field: string, operation: FilterOperation | string): string {
     return `${field}_${operation}`;
   }
@@ -382,7 +376,6 @@ export abstract class GenericQueryService<T> {
     return httpParams;
   }
 
-
   protected handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage: string;
     const status: number = error.status || 0;
@@ -398,7 +391,11 @@ export abstract class GenericQueryService<T> {
         errorMessage = `Server Error: ${error.message}`;
       }
     }
-    console.error("API Error:", { status, message: errorMessage, error: error.error });
+    console.error("API Error:", {
+      status,
+      message: errorMessage,
+      error: error.error,
+    });
     return throwError(() => new ApiError(status, errorMessage, error));
   };
 }

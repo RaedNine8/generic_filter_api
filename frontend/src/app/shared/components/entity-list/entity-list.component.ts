@@ -66,23 +66,36 @@ import { DataTableComponent } from "../data-table/data-table.component";
         ></app-advanced-search-panel>
       </section>
 
-      <section class="group-summary" *ngIf="groupBy && groupedBuckets.length > 0">
+      <section
+        class="group-summary"
+        *ngIf="groupBy && groupedBuckets.length > 0"
+      >
         <h3 class="group-summary-title">Grouped By {{ groupByLabel }}</h3>
         <div class="group-buckets">
-          <span class="group-bucket" *ngFor="let bucket of groupedBuckets; trackBy: trackByBucketKey">
-            <span class="bucket-key">{{ bucket.key ?? 'None' }}</span>
+          <span
+            class="group-bucket"
+            *ngFor="let bucket of groupedBuckets; trackBy: trackByBucketKey"
+          >
+            <span class="bucket-key">{{ bucket.key ?? "None" }}</span>
             <span class="bucket-count">{{ bucket.count }}</span>
           </span>
         </div>
       </section>
 
-      <section class="query-context" *ngIf="loading || pagination || hasActiveCriteria">
+      <section
+        class="query-context"
+        *ngIf="loading || pagination || hasActiveCriteria"
+      >
         <div class="context-left">
           <span class="context-pill result-pill" [class.loading]="loading">
             {{ contextResultLabel }}
           </span>
-          <span class="context-pill" *ngIf="sortField">Sorted: {{ sortLabel }}</span>
-          <span class="context-pill" *ngIf="groupByLabel">Group: {{ groupByLabel }}</span>
+          <span class="context-pill" *ngIf="sortField"
+            >Sorted: {{ sortLabel }}</span
+          >
+          <span class="context-pill" *ngIf="groupByLabel"
+            >Group: {{ groupByLabel }}</span
+          >
         </div>
         <div class="context-right">
           <button
@@ -344,7 +357,8 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
 
   @Input() onRowClicked?: (item: T) => void;
 
-  protected entityQueryService = inject<EntityQueryService<T>>(EntityQueryService);
+  protected entityQueryService =
+    inject<EntityQueryService<T>>(EntityQueryService);
   protected savedFilterService = inject(SavedFilterService);
 
   data: T[] = [];
@@ -663,7 +677,10 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
     return label;
   }
 
-  trackByBucketKey(index: number, bucket: { key: unknown; count: number }): string {
+  trackByBucketKey(
+    index: number,
+    bucket: { key: unknown; count: number },
+  ): string {
     return `${index}-${String(bucket.key)}`;
   }
 

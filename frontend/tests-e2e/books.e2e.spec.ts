@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("books: suggestion -> filter -> save custom filter -> delete", async ({ page }) => {
+test("books: suggestion -> filter -> save custom filter -> delete", async ({
+  page,
+}) => {
   await page.goto("/books");
 
   await expect(page.getByRole("heading", { name: "Books" })).toBeVisible();
@@ -30,16 +32,22 @@ test("books: suggestion -> filter -> save custom filter -> delete", async ({ pag
   await page.locator("#filterName").fill(filterName);
   await page.getByRole("button", { name: "Save", exact: true }).click();
 
-  const savedItem = page.getByTestId("saved-filter-item").filter({ hasText: filterName });
+  const savedItem = page
+    .getByTestId("saved-filter-item")
+    .filter({ hasText: filterName });
   await expect(savedItem).toBeVisible();
 
   page.once("dialog", (dialog) => dialog.accept());
   await savedItem.getByTestId("saved-filter-delete").click();
 
-  await expect(page.getByTestId("saved-filter-item").filter({ hasText: filterName })).toHaveCount(0);
+  await expect(
+    page.getByTestId("saved-filter-item").filter({ hasText: filterName }),
+  ).toHaveCount(0);
 });
 
-test("books: advanced custom builder, relation search, no-results, sort state, and retry", async ({ page }) => {
+test("books: advanced custom builder, relation search, no-results, sort state, and retry", async ({
+  page,
+}) => {
   test.setTimeout(90_000);
 
   const openCustomFiltersPanel = async () => {
@@ -81,9 +89,13 @@ test("books: advanced custom builder, relation search, no-results, sort state, a
     .first();
   await expect(disabledBooleanOption).toHaveClass(/disabled/);
 
-  const currentAdvancedTagCount = await page.locator(".filter-tag.advanced-tag").count();
+  const currentAdvancedTagCount = await page
+    .locator(".filter-tag.advanced-tag")
+    .count();
   await disabledOption.click();
-  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(currentAdvancedTagCount);
+  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(
+    currentAdvancedTagCount,
+  );
 
   await searchInput.fill("Alpha");
   await expect(page.getByTestId("search-options-dropdown")).toBeVisible();
@@ -93,15 +105,21 @@ test("books: advanced custom builder, relation search, no-results, sort state, a
     .first();
   await firstActiveOption.click();
 
-  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(currentAdvancedTagCount + 1);
+  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(
+    currentAdvancedTagCount + 1,
+  );
 
   await openCustomFiltersPanel();
   await page.getByRole("button", { name: "New custom filter" }).click();
 
-  await expect(page.getByRole("heading", { name: "Custom Filter Builder" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Custom Filter Builder" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Apply Filters" }).click();
 
-  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(currentAdvancedTagCount + 1);
+  await expect(page.locator(".filter-tag.advanced-tag")).toHaveCount(
+    currentAdvancedTagCount + 1,
+  );
 
   await openCustomFiltersPanel();
   await page.getByRole("button", { name: "New custom filter" }).click();
@@ -124,20 +142,36 @@ test("books: advanced custom builder, relation search, no-results, sort state, a
 
   await searchInput.fill("zzzz_no_hit_12345");
   await searchInput.press("Enter");
-  await expect(page.locator(".empty-message", { hasText: "No matches for current criteria" })).toBeVisible();
+  await expect(
+    page.locator(".empty-message", {
+      hasText: "No matches for current criteria",
+    }),
+  ).toBeVisible();
 
   await page.getByRole("button", { name: "Clear all filters" }).click();
-  await expect(page.locator(".empty-message", { hasText: "No matches for current criteria" })).toHaveCount(0);
-  await expect(page.locator(".context-pill.result-pill")).toContainText(/\d+ results/);
+  await expect(
+    page.locator(".empty-message", {
+      hasText: "No matches for current criteria",
+    }),
+  ).toHaveCount(0);
+  await expect(page.locator(".context-pill.result-pill")).toContainText(
+    /\d+ results/,
+  );
 
   await closeCustomFiltersPanel();
 
-  const titleSortButton = page.getByTestId("data-table").getByRole("button", { name: "Title" });
+  const titleSortButton = page
+    .getByTestId("data-table")
+    .getByRole("button", { name: "Title" });
   await titleSortButton.click();
-  await expect(page.locator(".context-pill", { hasText: "Sorted: Title (Asc)" })).toBeVisible();
+  await expect(
+    page.locator(".context-pill", { hasText: "Sorted: Title (Asc)" }),
+  ).toBeVisible();
 
   await titleSortButton.click();
-  await expect(page.locator(".context-pill", { hasText: "Sorted: Title (Desc)" })).toBeVisible();
+  await expect(
+    page.locator(".context-pill", { hasText: "Sorted: Title (Desc)" }),
+  ).toBeVisible();
 
   let failNextBooksList = true;
   await page.route("**/api/books**", async (route) => {

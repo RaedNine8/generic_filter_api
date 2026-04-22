@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
@@ -33,13 +27,7 @@ import { TooltipModule } from "primeng/tooltip";
 @Component({
   selector: "app-filter-builder",
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TreeModule,
-    ButtonModule,
-    TooltipModule,
-  ],
+  imports: [CommonModule, FormsModule, TreeModule, ButtonModule, TooltipModule],
   templateUrl: "./filter-builder.component.html",
   styleUrls: ["./filter-builder.component.scss"],
 })
@@ -71,7 +59,6 @@ export class FilterBuilderComponent implements OnInit {
     this.refreshPrimeNodes();
   }
 
-
   refreshPrimeNodes(): void {
     if (!this.tree) {
       this.primeNodes = [];
@@ -80,7 +67,10 @@ export class FilterBuilderComponent implements OnInit {
     this.primeNodes = [this.mapToTreeNode(this.tree)];
   }
 
-  private mapToTreeNode(node: FilterTreeNode, parent: FilterTreeNode | null = null): TreeNode {
+  private mapToTreeNode(
+    node: FilterTreeNode,
+    parent: FilterTreeNode | null = null,
+  ): TreeNode {
     const treeNode: TreeNode = {
       key: node.id,
       type: node.nodeType,
@@ -91,13 +81,12 @@ export class FilterBuilderComponent implements OnInit {
 
     if (node.nodeType === "operator" && node.children) {
       treeNode.children = node.children.map((child) =>
-        this.mapToTreeNode(child, node)
+        this.mapToTreeNode(child, node),
       );
     }
 
     return treeNode;
   }
-
 
   addCondition(node: FilterTreeNode): void {
     if (node.children) {
@@ -115,7 +104,7 @@ export class FilterBuilderComponent implements OnInit {
         createOperatorNode("AND", [
           createConditionNode(defaultField),
           createConditionNode(defaultField),
-        ])
+        ]),
       );
       this.refreshPrimeNodes();
       this.emitChange();
@@ -158,7 +147,6 @@ export class FilterBuilderComponent implements OnInit {
       this.apply.emit(this.tree);
     }
   }
-
 
   getFieldConfig(fieldName: string): FilterableField | undefined {
     return this.fields.find((f) => f.name === fieldName);
@@ -237,7 +225,6 @@ export class FilterBuilderComponent implements OnInit {
   canRemoveChild(parent: FilterTreeNode): boolean {
     return (parent.children?.length || 0) > 2;
   }
-
 
   private emitChange(): void {
     if (this.tree) {

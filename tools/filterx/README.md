@@ -3,6 +3,7 @@
 FilterX CLI bootstraps a generic filtering system into a project with safe, idempotent patching.
 
 It can:
+
 - scan SQLAlchemy models and API routes,
 - generate backend integration files,
 - generate frontend integration files,
@@ -15,16 +16,19 @@ This guide is written for GitHub use: clear setup, clear commands, and a complet
 ## What You Need
 
 Minimum requirements:
+
 - Python 3.10+
 - FastAPI app importable from your project
 - SQLAlchemy `Base` importable from your project
 - SQLAlchemy models package importable from your project
 
 Optional frontend requirements:
+
 - Angular workspace with routes file and app config file
 - Anchor comments where FilterX inserts generated route/provider snippets
 
 Optional DB requirements:
+
 - Alembic migration directory
 
 ## Install FilterX CLI
@@ -62,6 +66,7 @@ This section shows how to inject FilterX into a brand new project.
 ### 1. Prepare Backend Structure
 
 Your project must expose:
+
 - FastAPI app object (example: `app.main:app`)
 - SQLAlchemy Base (example: `app.database:Base`)
 - models package (example: `app.models`)
@@ -200,6 +205,7 @@ GET /api/filterx/metadata
 ```
 
 Generated files are written under:
+
 - `app/filterx_generated/` (backend)
 - `frontend/src/app/filterx-generated/` (frontend)
 
@@ -212,6 +218,7 @@ filterx scan --project-root . --config filterx.yaml
 ```
 
 Writes:
+
 - `.filterx/scan.json`
 - `.filterx/diagnostics.json`
 - `.filterx/plan.json`
@@ -223,6 +230,7 @@ filterx install --project-root . --config filterx.yaml
 ```
 
 Runs:
+
 1. scan
 2. backend install (if enabled)
 3. frontend install (if enabled)
@@ -237,6 +245,7 @@ filterx backend validate --project-root . --config filterx.yaml
 ```
 
 Useful options:
+
 - `--entities Book,Author`
 - `--no-mount`
 - `--force`
@@ -252,6 +261,7 @@ filterx frontend remove --project-root . --config filterx.yaml
 ```
 
 Useful remove options:
+
 - `--list` to list frontend install patch bundles
 - `--patch-id <id>` to rollback a specific frontend patch bundle
 
@@ -275,6 +285,7 @@ filterx db install --project-root . --config filterx.yaml --no-shared-filters --
 ```
 
 Migration output file:
+
 - `<migration_dir>/filterx_generated_persistence.py`
 
 ### Rollback
@@ -290,6 +301,7 @@ Rollback restores previous file content from `.filterx/patches/*/backup`.
 ## Safety Model
 
 FilterX writes are safe by design:
+
 - anchor-based patching (does not blindly rewrite host files),
 - strict conflict mode support,
 - idempotency manifest (`.filterx/manifest.json`),
@@ -305,6 +317,7 @@ filterx validate --project-root . --config filterx.yaml
 ## Troubleshooting
 
 ### "SCAN_FILE_MISSING"
+
 Run scan first:
 
 ```powershell
@@ -312,15 +325,19 @@ filterx scan --project-root . --config filterx.yaml
 ```
 
 ### "ANCHOR_NOT_FOUND"
+
 Add missing anchor comment in configured host file:
+
 - backend: `# FILTERX:ROUTER_MOUNT`
 - frontend routes: `// FILTERX:ROUTES`
 - frontend app config: `// FILTERX:PROVIDERS`
 
 ### Route conflict on `/api/filterx/metadata`
+
 Adjust `backend.api_prefix` or remove conflicting host route.
 
 ### Patch rollback target not found
+
 List bundles first:
 
 ```powershell

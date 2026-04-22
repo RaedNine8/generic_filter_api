@@ -1,4 +1,9 @@
-<div class="pagination-container" *ngIf="meta && meta.total_items > 0" aria-label="Pagination controls" data-testid="pagination-container">
+<div
+  class="pagination-container"
+  *ngIf="meta && meta.total_items > 0"
+  aria-label="Pagination controls"
+  data-testid="pagination-container"
+>
   <div class="pagination-info" *ngIf="showItemsInfo">
     <span class="info-main">{{ itemsInfo }}</span>
     <span class="info-sep">•</span>
