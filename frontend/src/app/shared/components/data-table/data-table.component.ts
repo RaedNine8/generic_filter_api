@@ -19,35 +19,6 @@ import { SortOrder } from "../../../core/enums/sort-order.enum";
 import { PaginationComponent } from "../pagination/pagination.component";
 import { SortHeaderComponent } from "../sort-header/sort-header.component";
 
-/**
- * Data Table Component
- *
- * A generic, reusable data table with sorting, pagination, and custom cell templates.
- *
- * Features:
- * - Dynamic column configuration
- * - Sortable columns
- * - Integrated pagination
- * - Custom cell templates
- * - Loading state
- * - Empty state
- * - Row selection (optional)
- *
- * Usage:
- * ```html
- * <app-data-table
- *   [data]="items"
- *   [columns]="columnConfig"
- *   [loading]="isLoading"
- *   [pagination]="paginationMeta"
- *   [sortField]="currentSort.field"
- *   [sortOrder]="currentSort.order"
- *   (sortChange)="onSort($event)"
- *   (pageChange)="onPageChange($event)"
- *   (rowClick)="onRowClick($event)">
- * </app-data-table>
- * ```
- */
 @Component({
   selector: "app-data-table",
   standalone: true,
@@ -63,74 +34,50 @@ import { SortHeaderComponent } from "../sort-header/sort-header.component";
   styleUrls: ["./data-table.component.scss"],
 })
 export class DataTableComponent<T = any> {
-  /** Data to display */
   @Input() data: T[] = [];
 
-  /** Column configuration */
   @Input() columns: TableColumn<T>[] = [];
 
-  /** Loading state */
   @Input() loading = false;
 
-  /** Pagination metadata */
   @Input() pagination: PaginationMeta | null = null;
 
-  /** Current sort field */
   @Input() sortField: string | null = null;
 
-  /** Current sort order */
   @Input() sortOrder: SortOrder = SortOrder.ASC;
 
-  /** Page size options for pagination */
   @Input() pageSizeOptions: number[] = [10, 20, 50, 100];
 
-  /** Show pagination */
   @Input() showPagination = true;
 
-  /** Enable row hover effect */
   @Input() hoverRows = true;
 
-  /** Enable row click */
   @Input() clickableRows = false;
 
-  /** Striped rows */
   @Input() striped = false;
 
-  /** Empty state message */
   @Input() emptyMessage = "No data available";
 
-  /** Custom row template */
   @ContentChild("rowTemplate") rowTemplate?: TemplateRef<any>;
 
-  /** Custom cell templates */
   @ContentChild("cellTemplate") cellTemplate?: TemplateRef<any>;
 
-  /** Emitted when sort changes */
   @Output() sortChange = new EventEmitter<{
     field: string;
     order: SortOrder;
   }>();
 
-  /** Emitted when page changes */
   @Output() pageChange = new EventEmitter<number>();
 
-  /** Emitted when page size changes */
   @Output() pageSizeChange = new EventEmitter<number>();
 
-  /** Emitted when a row is clicked */
   @Output() rowClick = new EventEmitter<T>();
 
-  // ===========================================================================
-  // SORTING
-  // ===========================================================================
 
   onSortChange(event: { field: string; order: SortOrder }): void {
     this.sortChange.emit(event);
   }
 
-  // ===========================================================================
-  // PAGINATION
-  // ===========================================================================
 
   onPageChange(page: number): void {
     this.pageChange.emit(page);
@@ -140,9 +87,6 @@ export class DataTableComponent<T = any> {
     this.pageSizeChange.emit(size);
   }
 
-  // ===========================================================================
-  // ROW INTERACTION
-  // ===========================================================================
 
   onRowClick(row: T): void {
     if (this.clickableRows) {
@@ -150,9 +94,26 @@ export class DataTableComponent<T = any> {
     }
   }
 
-  // ===========================================================================
-  // CELL RENDERING
-  // ===========================================================================
+  isNumericColumn(column: TableColumn<T>): boolean {
+    return column.type === "number" || column.type === "currency";
+  }
+
+  isBooleanColumn(column: TableColumn<T>): boolean {
+    return column.type === "boolean";
+  }
+
+  getBooleanState(value: any): "true" | "false" | "unknown" {
+    if (value === true) return "true";
+    if (value === false) return "false";
+    return "unknown";
+  }
+
+  formatBooleanLabel(value: any): string {
+    if (value === true) return "Yes";
+    if (value === false) return "No";
+    return "Unknown";
+  }
+
 
   getCellValue(row: T, column: TableColumn<T>): any {
     const value = this.getNestedValue(row, column.field);
@@ -214,9 +175,6 @@ export class DataTableComponent<T = any> {
     return new Intl.NumberFormat("en-US").format(value);
   }
 
-  // ===========================================================================
-  // TRACKING
-  // ===========================================================================
 
   trackByIndex(index: number): number {
     return index;

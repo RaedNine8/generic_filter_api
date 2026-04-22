@@ -6,22 +6,11 @@ from app.enums.filter_operation import FilterOperation
 
 
 class FilterNode(BaseModel):
-    """
-    Recursive tree node for boolean filter expressions.
-
-    Two kinds of nodes:
-      - 'operator' : internal node with AND/OR and a list of children
-      - 'condition' : leaf node with field + operation + value
-
-    Mirrors the LeetCode 2331 "Evaluate Boolean Binary Tree" pattern,
-    enabling arbitrary nesting like (A AND B) OR (C AND (D OR E)).
-    """
 
     node_type: Literal["operator", "condition"] = Field(
         ..., description="Node kind: 'operator' for AND/OR groups, 'condition' for filter leaves"
     )
 
-    # --- Operator node fields ---
     operator: Optional[Literal["AND", "OR"]] = Field(
         default=None, description="Logical operator (only for operator nodes)"
     )
@@ -29,7 +18,6 @@ class FilterNode(BaseModel):
         default=None, description="Child nodes (only for operator nodes)"
     )
 
-    # --- Condition (leaf) node fields ---
     field: Optional[str] = Field(
         default=None, description="Field path, supports dot notation for relationships (e.g. 'author.country')"
     )

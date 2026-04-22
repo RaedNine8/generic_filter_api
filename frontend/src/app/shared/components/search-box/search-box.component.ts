@@ -11,26 +11,6 @@ import { FormsModule } from "@angular/forms";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
 
-/**
- * Search Box Component
- *
- * A reusable search input with debounce support.
- *
- * Features:
- * - Debounced search input
- * - Clear button
- * - Loading indicator support
- * - Customizable placeholder
- *
- * Usage:
- * ```html
- * <app-search-box
- *   [placeholder]="'Search books...'"
- *   [debounceMs]="300"
- *   (searchChange)="onSearch($event)">
- * </app-search-box>
- * ```
- */
 @Component({
   selector: "app-search-box",
   standalone: true,
@@ -39,31 +19,22 @@ import { debounceTime, distinctUntilChanged, takeUntil } from "rxjs/operators";
   styleUrls: ["./search-box.component.scss"],
 })
 export class SearchBoxComponent implements OnInit, OnDestroy {
-  /** Placeholder text */
   @Input() placeholder = "Search...";
 
-  /** Debounce time in milliseconds */
   @Input() debounceMs = 300;
 
-  /** Initial search value */
   @Input() value = "";
 
-  /** Minimum characters before search triggers */
   @Input() minLength = 0;
 
-  /** Show loading indicator */
   @Input() loading = false;
 
-  /** Show clear button */
   @Input() showClear = true;
 
-  /** Emitted when search value changes (debounced) */
   @Output() searchChange = new EventEmitter<string>();
 
-  /** Emitted when user presses Enter */
   @Output() searchSubmit = new EventEmitter<string>();
 
-  /** Emitted when clear button is clicked */
   @Output() searchClear = new EventEmitter<void>();
 
   searchValue = "";

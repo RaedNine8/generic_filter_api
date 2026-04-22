@@ -1,7 +1,3 @@
-/**
- * Filter Operations Enum
- * Matches the backend FilterOperation enum values
- */
 export enum FilterOperation {
   EQUALS = "eq",
   NOT_EQUALS = "ne",
@@ -20,9 +16,6 @@ export enum FilterOperation {
   BETWEEN = "between",
 }
 
-/**
- * Human-readable labels for filter operations
- */
 export const FILTER_OPERATION_LABELS: Record<FilterOperation, string> = {
   [FilterOperation.EQUALS]: "Equals",
   [FilterOperation.NOT_EQUALS]: "Not Equals",
@@ -41,27 +34,18 @@ export const FILTER_OPERATION_LABELS: Record<FilterOperation, string> = {
   [FilterOperation.BETWEEN]: "Between",
 };
 
-/**
- * Check if operation requires a value input
- */
 export function operationNeedsValue(operation: FilterOperation): boolean {
   return ![FilterOperation.IS_NULL, FilterOperation.IS_NOT_NULL].includes(
     operation,
   );
 }
 
-/**
- * Check if operation requires multiple values (array input)
- */
 export function operationNeedsMultipleValues(
   operation: FilterOperation,
 ): boolean {
   return [FilterOperation.IN, FilterOperation.NOT_IN].includes(operation);
 }
 
-/**
- * Check if operation requires a range (two values)
- */
 export function operationNeedsRange(operation: FilterOperation): boolean {
   return operation === FilterOperation.BETWEEN;
 }

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Subject, BehaviorSubject, Observable } from "rxjs";
+import { Subject } from "rxjs";
 import { takeUntil, finalize } from "rxjs/operators";
 
 import {
@@ -16,67 +15,50 @@ import {
   SavedFilter,
   SavedFilterCreate,
 } from "../../../core/interfaces/saved-filter.interface";
-import { FilterTreeNode, toBackendPayload, generateNodeId } from "../../../core/interfaces/filter-tree.interface";
+import {
+  FilterTreeNode,
+  generateNodeId,
+} from "../../../core/interfaces/filter-tree.interface";
 import { PaginatedResponse } from "../../../core/interfaces/pagination.interface";
 import { SortOrder } from "../../../core/enums/sort-order.enum";
+import { FilterOperation } from "../../../core/enums/filter-operation.enum";
+import { QueryState } from "../../../core/interfaces/query-state.interface";
+import { EntityQueryService } from "../../../core/services/entity-query.service";
 import { SavedFilterService } from "../../../core/services/saved-filter.service";
 
 import { AdvancedSearchPanelComponent } from "../advanced-search-panel/advanced-search-panel.component";
 import { DataTableComponent } from "../data-table/data-table.component";
 
-/**
- * Generic Entity List Component
- *
- * A fully reusable list component that works with any entity.
- * Just provide an EntityConfig and it handles everything:
- * - Filtering, sorting, pagination
- * - Quick filters
- * - Saved filters (favorites)
- * - Data table with configurable columns
- *
- * Usage:
- * ```html
- * <app-entity-list [config]="bookConfig"></app-entity-list>
- * ```
- *
- * Or extend this component for custom behavior:
- * ```typescript
- * @Component({...})
- * export class BookListComponent extends EntityListComponent<Book> {
- *   constructor() {
- *     super();
- *     this.config = BOOK_CONFIG;
- *   }
- * }
- * ```
- */
 @Component({
   selector: "app-entity-list",
   standalone: true,
   imports: [CommonModule, AdvancedSearchPanelComponent, DataTableComponent],
+  providers: [EntityQueryService],
   template: `
     <div class="entity-list-container">
       <header class="page-header" *ngIf="showHeader">
-        <h1 class="page-title">{{ config?.pluralLabel }}</h1>
+        <h1 class="page-title">{{ config.pluralLabel }}</h1>
         <p class="page-description" *ngIf="description">{{ description }}</p>
       </header>
 
       <section class="search-section">
         <app-advanced-search-panel
-          [modelName]="config?.name || ''"
+          [modelName]="config.name"
+          [apiEndpoint]="config.apiEndpoint"
           [fields]="fields"
           [quickFilters]="quickFilters"
           [groupByOptions]="groupByOptions"
+          [activeGroupBy]="groupBy"
           [activeFilters]="filters"
           [activeTree]="filterTree"
           [searchQuery]="search"
           [sortBy]="sortField"
           [sortOrder]="sortOrder"
           [savedFilters]="savedFilters"
-          [placeholder]="config?.searchPlaceholder || 'Search...'"
+          [placeholder]="config.searchPlaceholder || 'Search...'"
           (filtersChange)="onFiltersChange($event)"
           (treeChange)="onTreeChange($event)"
-          (searchChange)="onSearchChange($event)"
+          (globalSearch)="onGlobalSearch($event)"
           (groupByChange)="onGroupByChange($event)"
           (saveFilter)="onSaveFilter($event)"
           (applySavedFilter)="onApplySavedFilter($event)"
@@ -84,7 +66,47 @@ import { DataTableComponent } from "../data-table/data-table.component";
         ></app-advanced-search-panel>
       </section>
 
+      <section class="group-summary" *ngIf="groupBy && groupedBuckets.length > 0">
+        <h3 class="group-summary-title">Grouped By {{ groupByLabel }}</h3>
+        <div class="group-buckets">
+          <span class="group-bucket" *ngFor="let bucket of groupedBuckets; trackBy: trackByBucketKey">
+            <span class="bucket-key">{{ bucket.key ?? 'None' }}</span>
+            <span class="bucket-count">{{ bucket.count }}</span>
+          </span>
+        </div>
+      </section>
+
+      <section class="query-context" *ngIf="loading || pagination || hasActiveCriteria">
+        <div class="context-left">
+          <span class="context-pill result-pill" [class.loading]="loading">
+            {{ contextResultLabel }}
+          </span>
+          <span class="context-pill" *ngIf="sortField">Sorted: {{ sortLabel }}</span>
+          <span class="context-pill" *ngIf="groupByLabel">Group: {{ groupByLabel }}</span>
+        </div>
+        <div class="context-right">
+          <button
+            type="button"
+            class="context-action"
+            *ngIf="hasActiveCriteria"
+            (click)="clearAllCriteria()"
+          >
+            Clear all filters
+          </button>
+        </div>
+      </section>
+
       <section class="table-section">
+        <div class="table-error" *ngIf="errorMessage">
+          <div class="table-error-content">
+            <strong>Could not load data.</strong>
+            <span>{{ errorMessage }}</span>
+          </div>
+          <button type="button" class="error-retry-btn" (click)="retryLoad()">
+            Retry
+          </button>
+        </div>
+
         <app-data-table
           [data]="data"
           [columns]="columns"
@@ -97,7 +119,7 @@ import { DataTableComponent } from "../data-table/data-table.component";
           [hoverRows]="true"
           [clickableRows]="clickableRows"
           [striped]="true"
-          [emptyMessage]="config?.emptyMessage || 'No items found'"
+          [emptyMessage]="tableEmptyMessage"
           (sortChange)="onSortChange($event)"
           (pageChange)="onPageChange($event)"
           (pageSizeChange)="onPageSizeChange($event)"
@@ -109,76 +131,226 @@ import { DataTableComponent } from "../data-table/data-table.component";
   styles: [
     `
       .entity-list-container {
-        max-width: 1400px;
+        max-width: 1420px;
         margin: 0 auto;
-        padding: 24px;
+        padding: var(--space-6);
       }
 
       .page-header {
-        margin-bottom: 24px;
+        margin-bottom: var(--space-5);
       }
 
       .page-title {
-        margin: 0 0 8px 0;
-        font-size: 28px;
-        font-weight: 600;
-        color: #1a1a1a;
+        margin: 0 0 var(--space-2) 0;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--color-text);
+        letter-spacing: -0.015em;
       }
 
       .page-description {
         margin: 0;
         font-size: 14px;
-        color: #666;
+        color: var(--color-text-muted);
       }
 
       .search-section {
-        margin-bottom: 20px;
+        margin-bottom: var(--space-4);
+      }
+
+      .query-context {
+        margin-bottom: var(--space-4);
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+      }
+
+      .context-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .context-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--color-bg-soft);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+      }
+
+      .result-pill {
+        color: var(--color-primary-strong);
+        background: #e8f2fb;
+        border-color: #c8dff3;
+      }
+
+      .result-pill.loading {
+        color: var(--color-info);
+      }
+
+      .context-right {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .context-action {
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid #f4b4b4;
+        background: #fff7f7;
+        color: var(--color-danger);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .context-action:hover {
+        background: #ffecec;
+        border-color: #ea9e9e;
       }
 
       .table-section {
+        background: var(--color-bg-elevated);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--color-border);
+        overflow: hidden;
+      }
+
+      .group-summary {
+        margin-bottom: var(--space-4);
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-elevated);
+      }
+
+      .group-summary-title {
+        margin: 0 0 var(--space-2) 0;
+        font-size: 14px;
+        color: var(--color-text-muted);
+      }
+
+      .group-buckets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .group-bucket {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #eef6ff;
+        border: 1px solid #cadff4;
+        color: #275278;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .bucket-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: #dceeff;
+        color: #143c5f;
+      }
+
+      .table-error {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        background: #fff5f5;
+        border-bottom: 1px solid #f3bebe;
+      }
+
+      .table-error-content {
+        display: grid;
+        gap: 2px;
+        font-size: 13px;
+        color: #8b2c2c;
+      }
+
+      .error-retry-btn {
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid #f0a7a7;
         background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        color: #9b2c2c;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .error-retry-btn:hover {
+        background: #ffeaea;
       }
 
       @media (max-width: 768px) {
         .entity-list-container {
-          padding: 16px;
+          padding: var(--space-4);
         }
 
         .page-title {
           font-size: 24px;
+        }
+
+        .query-context {
+          padding: var(--space-3);
+        }
+
+        .table-error {
+          align-items: flex-start;
+          flex-direction: column;
         }
       }
     `,
   ],
 })
 export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
-  // ===== INPUTS =====
-
-  /** Entity configuration - defines fields, columns, filters, etc. */
   @Input() config!: EntityConfig<T>;
 
-  /** Show page header with title */
   @Input() showHeader = true;
 
-  /** Page description text */
   @Input() description = "";
 
-  /** Whether rows are clickable */
   @Input() clickableRows = true;
 
-  /** Custom row click handler */
   @Input() onRowClicked?: (item: T) => void;
 
-  // ===== SERVICES =====
-  protected http = inject(HttpClient);
+  protected entityQueryService = inject<EntityQueryService<T>>(EntityQueryService);
   protected savedFilterService = inject(SavedFilterService);
 
-  // ===== STATE =====
   data: T[] = [];
   pagination: PaginatedResponse<T>["meta"] | null = null;
   loading = false;
+  errorMessage: string | null = null;
 
   filters: FilterRule[] = [];
   filterTree: FilterTreeNode | null = null;
@@ -186,12 +358,11 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   sortField: string | null = null;
   sortOrder: SortOrder = SortOrder.ASC;
   groupBy: string | null = null;
+  groupedBuckets: Array<{ key: unknown; count: number }> = [];
 
   savedFilters: SavedFilter[] = [];
 
   protected destroy$ = new Subject<void>();
-
-  // ===== COMPUTED FROM CONFIG =====
 
   get fields(): FieldConfig[] {
     return this.config?.fields || [];
@@ -216,8 +387,6 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   protected currentPage = 1;
   protected currentPageSize = 20;
 
-  // ===== LIFECYCLE =====
-
   ngOnInit(): void {
     this.initializeDefaults();
     this.loadData();
@@ -237,62 +406,32 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
     }
   }
 
-  // ===== DATA LOADING =====
-
   loadData(): void {
     if (!this.config?.apiEndpoint) {
       console.warn("EntityListComponent: No API endpoint configured");
       return;
     }
 
+    this.entityQueryService.setBaseUrl(this.config.apiEndpoint);
     this.loading = true;
+    this.errorMessage = null;
 
-    // Use POST /filter if tree is active, otherwise build GET params
-    if (this.filterTree) {
-      this.loadDataWithTree();
-    } else {
-      this.loadDataWithParams();
-    }
-  }
-
-  protected loadDataWithParams(): void {
-    const params = this.buildQueryParams();
-    this.http
-      .get<PaginatedResponse<T>>(this.config.apiEndpoint, { params })
+    const state = this.buildQueryState();
+    this.entityQueryService
+      .queryWithState(state)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => (this.loading = false)),
       )
       .subscribe({
-        next: (response) => this.handleResponse(response),
-        error: (error) => this.handleError(error),
-      });
-  }
-
-  protected loadDataWithTree(): void {
-    // Backend expects FilterNode directly as body, pagination/sort as query params
-    const body = toBackendPayload(this.filterTree!);
-
-    let params = new HttpParams();
-    params = params.set('page', this.currentPage.toString());
-    params = params.set('size', this.currentPageSize.toString());
-    if (this.sortField) {
-      params = params.set('sort_by', this.sortField);
-      params = params.set('order', this.sortOrder);
-    }
-    if (this.search) {
-      params = params.set('search', this.search);
-    }
-
-    const url = `${this.config.apiEndpoint}/filter`;
-    this.http
-      .post<PaginatedResponse<T>>(url, body, { params })
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => (this.loading = false)),
-      )
-      .subscribe({
-        next: (response) => this.handleResponse(response),
+        next: (response) => {
+          this.handleResponse(response);
+          if (this.groupBy) {
+            this.loadGroupedData(state);
+          } else {
+            this.groupedBuckets = [];
+          }
+        },
         error: (error) => this.handleError(error),
       });
   }
@@ -300,45 +439,51 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   private handleResponse(response: PaginatedResponse<T>): void {
     this.data = response.data;
     this.pagination = response.meta;
+    this.errorMessage = null;
   }
 
   private handleError(error: any): void {
     console.error("Error loading data:", error);
     this.data = [];
     this.pagination = null;
+    this.errorMessage =
+      error?.error?.detail || error?.message || "Unexpected API error";
   }
 
-  protected buildQueryParams(): HttpParams {
-    let params = new HttpParams();
-
-    // Pagination
-    params = params.set("page", this.currentPage.toString());
-    params = params.set("size", this.currentPageSize.toString());
-
-    // Sorting
-    if (this.sortField) {
-      params = params.set("sort_by", this.sortField);
-      params = params.set("order", this.sortOrder);
-    }
-
-    // Search
-    if (this.search) {
-      params = params.set("search", this.search);
-    }
-
-    // Filters (URL grammar format: field_operation=value)
-    for (const filter of this.filters) {
-      const paramName = `${filter.field}_${filter.operation}`;
-      const value = Array.isArray(filter.value)
-        ? filter.value.join(",")
-        : String(filter.value);
-      params = params.set(paramName, value);
-    }
-
-    return params;
+  protected buildQueryState(): QueryState {
+    return {
+      filterTree: this.filterTree,
+      filters: this.filters,
+      pagination: {
+        page: this.currentPage,
+        size: this.currentPageSize,
+      },
+      sort: {
+        sort_by: this.sortField,
+        order: this.sortOrder,
+      },
+      search: this.search || null,
+    };
   }
 
-  // ===== SAVED FILTERS =====
+  protected loadGroupedData(state: QueryState): void {
+    if (!this.groupBy) {
+      this.groupedBuckets = [];
+      return;
+    }
+
+    this.entityQueryService
+      .queryGroupedWithState(this.groupBy, state)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (buckets) => {
+          this.groupedBuckets = buckets;
+        },
+        error: () => {
+          this.groupedBuckets = [];
+        },
+      });
+  }
 
   loadSavedFilters(): void {
     if (!this.config?.name) return;
@@ -401,24 +546,21 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
       });
   }
 
-  // ===== EVENT HANDLERS =====
-
   onFiltersChange(filters: FilterRule[]): void {
-    // Convert flat filters (from quick filters) into tree conditions
     if (filters.length > 0) {
-      const conditions: FilterTreeNode[] = filters.map(f => ({
+      const conditions: FilterTreeNode[] = filters.map((f) => ({
         id: generateNodeId(),
-        nodeType: 'condition' as const,
+        nodeType: "condition" as const,
         field: f.field,
         operation: f.operation as any,
-        value: f.value
+        value: f.value,
       }));
       this.filterTree = {
         id: generateNodeId(),
-        nodeType: 'operator',
-        operator: 'AND',
+        nodeType: "operator",
+        operator: "AND",
         children: conditions,
-        expanded: true
+        expanded: true,
       };
     } else {
       this.filterTree = null;
@@ -429,19 +571,18 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   }
 
   onTreeChange(tree: FilterTreeNode | null): void {
-    this.filterTree = tree;
+    this.filterTree = this.normalizeIncomingTree(tree);
+    if (this.filterTree) {
+      this.filters = [];
+    }
     this.currentPage = 1;
     this.loadData();
   }
 
-  onSearchChange(search: string): void {
-    this.search = search;
-    // Don't reload on every keystroke — the Odoo-style dropdown
-    // handles adding structured filters. Only reload when cleared.
-    if (!search) {
-      this.currentPage = 1;
-      this.loadData();
-    }
+  onGlobalSearch(query: string): void {
+    this.search = query;
+    this.currentPage = 1;
+    this.loadData();
   }
 
   onSortChange(event: { field: string | null; order: SortOrder }): void {
@@ -452,8 +593,7 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
 
   onGroupByChange(field: string | null): void {
     this.groupBy = field;
-    // Group by logic would go here - could trigger backend grouping or client-side
-    console.log("Group by:", field);
+    this.loadData();
   }
 
   onPageChange(page: number): void {
@@ -471,7 +611,130 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
     if (this.onRowClicked) {
       this.onRowClicked(item);
     } else {
-      console.log("Row clicked:", item);
     }
+  }
+
+  clearAllCriteria(): void {
+    this.filters = [];
+    this.filterTree = null;
+    this.search = "";
+    this.groupBy = null;
+    this.groupedBuckets = [];
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  retryLoad(): void {
+    this.loadData();
+  }
+
+  get hasActiveCriteria(): boolean {
+    return this.filters.length > 0 || !!this.filterTree || !!this.search;
+  }
+
+  get contextResultLabel(): string {
+    if (this.loading) {
+      return "Updating results...";
+    }
+    if (!this.pagination) {
+      return "No results yet";
+    }
+    const total = this.pagination.total_items;
+    return `${total} result${total === 1 ? "" : "s"}`;
+  }
+
+  get sortLabel(): string {
+    if (!this.sortField) {
+      return "Default";
+    }
+    const label =
+      this.columns.find((column) => column.field === this.sortField)?.header ||
+      this.sortField;
+    return `${label} ${this.sortOrder === SortOrder.ASC ? "(Asc)" : "(Desc)"}`;
+  }
+
+  get groupByLabel(): string | null {
+    if (!this.groupBy) {
+      return null;
+    }
+    const label =
+      this.groupByOptions.find((option) => option.field === this.groupBy)
+        ?.label || this.groupBy;
+    return label;
+  }
+
+  trackByBucketKey(index: number, bucket: { key: unknown; count: number }): string {
+    return `${index}-${String(bucket.key)}`;
+  }
+
+  get tableEmptyMessage(): string {
+    if (this.hasActiveCriteria) {
+      return "No matches for current criteria";
+    }
+    return this.config?.emptyMessage || "No items found";
+  }
+
+  private normalizeIncomingTree(
+    tree: FilterTreeNode | null,
+  ): FilterTreeNode | null {
+    if (!tree) {
+      return null;
+    }
+
+    if (tree.nodeType === "operator") {
+      return {
+        ...tree,
+        children: (tree.children || [])
+          .map((child) => this.normalizeIncomingTree(child))
+          .filter((child): child is FilterTreeNode => !!child),
+      };
+    }
+
+    const operation = tree.operation;
+    let value = tree.value;
+
+    if (
+      operation === FilterOperation.IS_NULL ||
+      operation === FilterOperation.IS_NOT_NULL
+    ) {
+      value = true;
+    } else if (
+      operation === FilterOperation.IN ||
+      operation === FilterOperation.NOT_IN
+    ) {
+      if (Array.isArray(value)) {
+        value = value.filter(
+          (v) => v !== null && v !== undefined && `${v}`.trim() !== "",
+        );
+      } else if (typeof value === "string") {
+        value = value
+          .split(",")
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+      } else if (value === null || value === undefined || value === "") {
+        value = [];
+      } else {
+        value = [value];
+      }
+    } else if (operation === FilterOperation.BETWEEN) {
+      if (Array.isArray(value)) {
+        value = value.slice(0, 2);
+      } else if (typeof value === "string") {
+        value = value
+          .split(",")
+          .map((v) => v.trim())
+          .slice(0, 2);
+      } else {
+        value = [null, null];
+      }
+      while (value.length < 2) {
+        value.push(null);
+      }
+    }
+
+    return {
+      ...tree,
+      value,
+    };
   }
 }

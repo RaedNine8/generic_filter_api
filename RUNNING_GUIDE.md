@@ -59,7 +59,7 @@ From the project root:
     ```bash
     uvicorn app.main:app --reload
     ```
-    The API will be available at [http://localhost:8000](http://localhost:8000).
+    The API will be available on the port you start Uvicorn with (default: 8000).
 
 ## 3. Frontend Setup (Angular)
 
@@ -82,9 +82,10 @@ Open a new terminal and navigate to the `frontend` directory:
     npm start
     ```
     The application will be available at [http://localhost:4200](http://localhost:4200).
+    During development, API requests are proxied by `frontend/proxy.conf.cjs` to the first compatible local backend (not hard-locked to port 8000).
 
 ## Summary of URLs
 
 - **Frontend:** [http://localhost:4200](http://localhost:4200)
-- **Backend API:** [http://localhost:8000](http://localhost:8000)
-- **API Documentation (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Backend API:** URL depends on your chosen backend port (e.g. [http://localhost:8000](http://localhost:8000))
+- **API Documentation (Swagger):** URL depends on your chosen backend port (e.g. [http://localhost:8000/docs](http://localhost:8000/docs))

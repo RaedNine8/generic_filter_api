@@ -1,9 +1,5 @@
-"""
-Type Registry — maps SQLAlchemy column types to abstract field types
-and defines which FilterOperations are permitted for each type.
-"""
 
-from typing import Dict, List, Set, Type
+from typing import Dict, List, Type
 
 from sqlalchemy import (
     Boolean,
@@ -20,9 +16,6 @@ from sqlalchemy.types import TypeEngine
 
 from app.enums.filter_operation import FilterOperation
 
-# ──────────────────────────────────────────────────────────────────────
-# Abstract field type names
-# ──────────────────────────────────────────────────────────────────────
 FIELD_TYPE_STRING = "string"
 FIELD_TYPE_INTEGER = "integer"
 FIELD_TYPE_FLOAT = "float"
@@ -31,9 +24,6 @@ FIELD_TYPE_DATE = "date"
 FIELD_TYPE_DATETIME = "datetime"
 FIELD_TYPE_ENUM = "enum"
 
-# ──────────────────────────────────────────────────────────────────────
-# Permitted operations per abstract field type
-# ──────────────────────────────────────────────────────────────────────
 PERMITTED_OPS: Dict[str, List[FilterOperation]] = {
     FIELD_TYPE_STRING: [
         FilterOperation.EQUALS,
@@ -42,6 +32,8 @@ PERMITTED_OPS: Dict[str, List[FilterOperation]] = {
         FilterOperation.ILIKE,
         FilterOperation.STARTS_WITH,
         FilterOperation.ENDS_WITH,
+        FilterOperation.IN,
+        FilterOperation.NOT_IN,
         FilterOperation.IS_NULL,
         FilterOperation.IS_NOT_NULL,
     ],
@@ -52,6 +44,8 @@ PERMITTED_OPS: Dict[str, List[FilterOperation]] = {
         FilterOperation.GREATER_EQUAL,
         FilterOperation.LESS_THAN,
         FilterOperation.LESS_EQUAL,
+        FilterOperation.IN,
+        FilterOperation.NOT_IN,
         FilterOperation.BETWEEN,
         FilterOperation.IS_NULL,
         FilterOperation.IS_NOT_NULL,
@@ -63,6 +57,8 @@ PERMITTED_OPS: Dict[str, List[FilterOperation]] = {
         FilterOperation.GREATER_EQUAL,
         FilterOperation.LESS_THAN,
         FilterOperation.LESS_EQUAL,
+        FilterOperation.IN,
+        FilterOperation.NOT_IN,
         FilterOperation.BETWEEN,
         FilterOperation.IS_NULL,
         FilterOperation.IS_NOT_NULL,
@@ -105,9 +101,6 @@ PERMITTED_OPS: Dict[str, List[FilterOperation]] = {
     ],
 }
 
-# ──────────────────────────────────────────────────────────────────────
-# SQLAlchemy type → abstract field type mapping
-# ──────────────────────────────────────────────────────────────────────
 _SA_TYPE_MAP: List[tuple[Type[TypeEngine], str]] = [
     (Boolean, FIELD_TYPE_BOOLEAN),
     (DateTime, FIELD_TYPE_DATETIME),
@@ -122,18 +115,15 @@ _SA_TYPE_MAP: List[tuple[Type[TypeEngine], str]] = [
 
 
 def get_field_type(sa_type: TypeEngine) -> str:
-    """Map a SQLAlchemy column type instance to an abstract field type string."""
     for sa_cls, field_type in _SA_TYPE_MAP:
         if isinstance(sa_type, sa_cls):
             return field_type
-    return FIELD_TYPE_STRING  # fallback
+    return FIELD_TYPE_STRING
 
 
 def get_permitted_operations(field_type: str) -> List[FilterOperation]:
-    """Return the list of permitted FilterOperations for a given field type."""
     return PERMITTED_OPS.get(field_type, list(FilterOperation))
 
 
 def validate_operation_for_type(field_type: str, operation: FilterOperation) -> bool:
-    """Check whether an operation is valid for the given field type."""
     return operation in get_permitted_operations(field_type)

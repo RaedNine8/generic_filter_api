@@ -9,29 +9,6 @@ import { CommonModule } from "@angular/common";
 
 import { SortOrder } from "../../../core/enums/sort-order.enum";
 
-/**
- * Sort Header Component
- *
- * A reusable sortable column header component.
- *
- * Features:
- * - Visual sort indicator
- * - Click to toggle sort
- * - Active state styling
- *
- * Usage:
- * ```html
- * <th>
- *   <app-sort-header
- *     [field]="'title'"
- *     [label]="'Title'"
- *     [currentSortField]="sortBy"
- *     [currentSortOrder]="sortOrder"
- *     (sortChange)="onSort($event)">
- *   </app-sort-header>
- * </th>
- * ```
- */
 @Component({
   selector: "app-sort-header",
   standalone: true,
@@ -57,11 +34,11 @@ import { SortOrder } from "../../../core/enums/sort-order.enum";
       .sort-header {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         padding: 0;
         font-size: inherit;
-        font-weight: 600;
-        color: #333;
+        font-weight: 700;
+        color: var(--color-text-muted);
         background: none;
         border: none;
         cursor: pointer;
@@ -69,11 +46,11 @@ import { SortOrder } from "../../../core/enums/sort-order.enum";
       }
 
       .sort-header:hover {
-        color: #007bff;
+        color: var(--color-primary);
       }
 
       .sort-header.active {
-        color: #007bff;
+        color: var(--color-primary);
       }
 
       .sort-label {
@@ -83,32 +60,28 @@ import { SortOrder } from "../../../core/enums/sort-order.enum";
       .sort-indicator {
         font-size: 12px;
         line-height: 1;
+        font-weight: 800;
       }
 
       .sort-indicator.sort-inactive {
-        opacity: 0.3;
+        opacity: 0.45;
       }
 
       .sort-header:hover .sort-inactive {
-        opacity: 0.6;
+        opacity: 0.75;
       }
     `,
   ],
 })
 export class SortHeaderComponent {
-  /** Field name for sorting */
   @Input() field = "";
 
-  /** Display label */
   @Input() label = "";
 
-  /** Current sort field */
   @Input() currentSortField: string | null = null;
 
-  /** Current sort order */
   @Input() currentSortOrder: SortOrder = SortOrder.ASC;
 
-  /** Emitted when sort changes */
   @Output() sortChange = new EventEmitter<{
     field: string;
     order: SortOrder;
@@ -124,13 +97,11 @@ export class SortHeaderComponent {
     let newOrder: SortOrder;
 
     if (this.isActive) {
-      // Toggle between ASC and DESC
       newOrder =
         this.currentSortOrder === SortOrder.ASC
           ? SortOrder.DESC
           : SortOrder.ASC;
     } else {
-      // Default to ASC when first selecting
       newOrder = SortOrder.ASC;
     }
 

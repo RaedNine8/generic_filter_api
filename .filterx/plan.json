@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-04-09T19:26:03.212846+00:00",
+  "phases": [
+    {
+      "name": "scan",
+      "enabled": true
+    },
+    {
+      "name": "backend.install",
+      "enabled": true
+    },
+    {
+      "name": "frontend.install",
+      "enabled": true
+    },
+    {
+      "name": "db.install",
+      "enabled": true
+    },
+    {
+      "name": "validate",
+      "enabled": true
+    }
+  ],
+  "actions": [
+    "Generate backend integration modules",
+    "Generate frontend integration modules",
+    "Generate database migrations"
+  ],
+  "entity_targets": [
+    "Author",
+    "Book",
+    "SavedFilter"
+  ]
+}

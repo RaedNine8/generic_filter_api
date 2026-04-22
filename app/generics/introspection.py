@@ -1,10 +1,3 @@
-"""
-Model Introspection — examines any SQLAlchemy model and returns
-field metadata (types, FK info, relationship cardinalities, permitted ops).
-
-Used by the metadata endpoint so the frontend can auto-discover
-which fields exist, what widget to render, and which operations are valid.
-"""
 
 from typing import Any, Dict, List, Optional, Type
 
@@ -14,17 +7,28 @@ from sqlalchemy.orm import RelationshipProperty
 from app.generics.type_registry import get_field_type, get_permitted_operations
 
 
+def _get_display_fields(model: Type[Any]) -> List[Dict[str, Any]]:
+    mapper = sa_inspect(model)
+    result: List[Dict[str, Any]] = []
+    for col in mapper.columns:
+        if col.primary_key:
+            continue
+        if col.foreign_keys:
+            continue
+        field_type = get_field_type(col.type)
+        result.append({
+            "name": col.key,
+            "type": field_type,
+            "ops": [op.value for op in get_permitted_operations(field_type)],
+        })
+    return result
+
+
 def get_model_metadata(model: Type[Any]) -> Dict[str, Any]:
-    """
-    Introspect a SQLAlchemy model and return a metadata dict with:
-      - fields: list of field descriptors (name, type, ops, FK info)
-      - relationships: list of relationship descriptors
-    """
     mapper = sa_inspect(model)
     fields: List[Dict[str, Any]] = []
     relationships: List[Dict[str, Any]] = []
 
-    # ── Columns ──────────────────────────────────────────────────
     for col in mapper.columns:
         field_type = get_field_type(col.type)
         permitted_ops = [op.value for op in get_permitted_operations(field_type)]
@@ -36,7 +40,6 @@ def get_model_metadata(model: Type[Any]) -> Dict[str, Any]:
             "ops": permitted_ops,
         }
 
-        # FK detection
         if col.foreign_keys:
             fk = next(iter(col.foreign_keys))
             field_meta["is_fk"] = True
@@ -47,24 +50,31 @@ def get_model_metadata(model: Type[Any]) -> Dict[str, Any]:
 
         fields.append(field_meta)
 
-    # ── Relationships ────────────────────────────────────────────
     for rel_prop in mapper.relationships:
         rel: RelationshipProperty = rel_prop
         related_model = rel.mapper.class_
 
-        # Determine cardinality
         if rel.uselist:
-            cardinality = "o2m"  # or m2m depending on secondary
+            cardinality = "o2m"
             if rel.secondary is not None:
                 cardinality = "m2m"
         else:
             cardinality = "m2o"
+
+        related_fields = _get_display_fields(related_model)
+        display_field = "name"
+        string_fields = [f for f in related_fields if f["type"] == "string"]
+        if string_fields:
+            if not any(f["name"] == "name" for f in string_fields):
+                display_field = string_fields[0]["name"]
 
         relationships.append({
             "name": rel.key,
             "related_model": related_model.__name__,
             "related_table": related_model.__tablename__,
             "cardinality": cardinality,
+            "display_field": display_field,
+            "related_fields": related_fields,
         })
 
     return {

@@ -25,32 +25,11 @@ import {
   operationNeedsRange,
 } from "../../../core/enums/filter-operation.enum";
 
-// PrimeNG 18 Imports
 import { TreeModule } from "primeng/tree";
 import { TreeNode } from "primeng/api";
 import { ButtonModule } from "primeng/button";
-import { SelectModule } from "primeng/select";
-import { InputTextModule } from "primeng/inputtext";
-import { InputNumberModule } from "primeng/inputnumber";
-import { DatePickerModule } from "primeng/datepicker";
 import { TooltipModule } from "primeng/tooltip";
 
-/**
- * Tree-based Filter Builder Component
- *
- * Renders a recursive tree of AND/OR groups and filter conditions.
- * Each operator node can contain conditions and nested operator groups.
- *
- * Usage:
- * ```html
- * <app-filter-builder
- *   [fields]="filterableFields"
- *   [tree]="filterTree"
- *   (treeChange)="onTreeChange($event)"
- *   (apply)="onApply($event)">
- * </app-filter-builder>
- * ```
- */
 @Component({
   selector: "app-filter-builder",
   standalone: true,
@@ -59,10 +38,6 @@ import { TooltipModule } from "primeng/tooltip";
     FormsModule,
     TreeModule,
     ButtonModule,
-    SelectModule,
-    InputTextModule,
-    InputNumberModule,
-    DatePickerModule,
     TooltipModule,
   ],
   templateUrl: "./filter-builder.component.html",
@@ -96,9 +71,6 @@ export class FilterBuilderComponent implements OnInit {
     this.refreshPrimeNodes();
   }
 
-  // ===========================================================================
-  // TREE MAPPING
-  // ===========================================================================
 
   refreshPrimeNodes(): void {
     if (!this.tree) {
@@ -126,9 +98,6 @@ export class FilterBuilderComponent implements OnInit {
     return treeNode;
   }
 
-  // ===========================================================================
-  // NODE MANAGEMENT
-  // ===========================================================================
 
   addCondition(node: FilterTreeNode): void {
     if (node.children) {
@@ -155,6 +124,9 @@ export class FilterBuilderComponent implements OnInit {
 
   removeNode(parent: FilterTreeNode, node: FilterTreeNode): void {
     if (parent.children) {
+      if (parent.children.length <= 1) {
+        return;
+      }
       const index = parent.children.findIndex((c) => c.id === node.id);
       if (index !== -1) {
         parent.children.splice(index, 1);
@@ -179,19 +151,14 @@ export class FilterBuilderComponent implements OnInit {
     this.tree = createOperatorNode("AND");
     this.clear.emit();
     this.refreshPrimeNodes();
-    this.emitChange();
   }
 
   applyFilters(): void {
     if (this.tree) {
       this.apply.emit(this.tree);
-      this.emitChange();
     }
   }
 
-  // ===========================================================================
-  // FIELD / OPERATION HELPERS
-  // ===========================================================================
 
   getFieldConfig(fieldName: string): FilterableField | undefined {
     return this.fields.find((f) => f.name === fieldName);
@@ -210,13 +177,25 @@ export class FilterBuilderComponent implements OnInit {
     const ops = this.getAvailableOperations(node.field || "");
     if (node.operation && !ops.includes(node.operation)) {
       node.operation = ops[0];
-      node.value = "";
+      this.onOperationChange(node);
+      return;
     }
     this.emitChange();
   }
 
   onOperationChange(node: FilterTreeNode): void {
-    node.value = "";
+    const operation = node.operation;
+    if (!operation) {
+      node.value = "";
+    } else if (operationNeedsRange(operation)) {
+      node.value = [null, null];
+    } else if (operationNeedsMultipleValues(operation)) {
+      node.value = [];
+    } else if (!operationNeedsValue(operation)) {
+      node.value = true;
+    } else {
+      node.value = "";
+    }
     this.emitChange();
   }
 
@@ -259,9 +238,6 @@ export class FilterBuilderComponent implements OnInit {
     return (parent.children?.length || 0) > 2;
   }
 
-  // ===========================================================================
-  // PRIVATE
-  // ===========================================================================
 
   private emitChange(): void {
     if (this.tree) {

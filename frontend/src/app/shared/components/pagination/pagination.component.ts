@@ -11,28 +11,6 @@ import { FormsModule } from "@angular/forms";
 
 import { PaginationMeta } from "../../../core/interfaces/pagination.interface";
 
-/**
- * Pagination Component
- *
- * A reusable pagination component with page navigation and page size selection.
- *
- * Features:
- * - Previous/Next navigation
- * - Jump to first/last page
- * - Page number display
- * - Page size selector
- * - Responsive design
- *
- * Usage:
- * ```html
- * <app-pagination
- *   [meta]="paginationMeta"
- *   [pageSizeOptions]="[10, 20, 50, 100]"
- *   (pageChange)="onPageChange($event)"
- *   (pageSizeChange)="onPageSizeChange($event)">
- * </app-pagination>
- * ```
- */
 @Component({
   selector: "app-pagination",
   standalone: true,
@@ -41,43 +19,33 @@ import { PaginationMeta } from "../../../core/interfaces/pagination.interface";
   styleUrls: ["./pagination.component.scss"],
 })
 export class PaginationComponent implements OnChanges {
-  /** Pagination metadata from API response */
   @Input() meta: PaginationMeta | null = null;
 
-  /** Available page size options */
   @Input() pageSizeOptions: number[] = [10, 20, 50, 100];
 
-  /** Maximum number of page buttons to show */
   @Input() maxPageButtons = 5;
 
-  /** Show page size selector */
   @Input() showPageSizeSelector = true;
 
-  /** Show items info (e.g., "1-20 of 100") */
   @Input() showItemsInfo = true;
 
-  /** Emitted when page changes */
   @Output() pageChange = new EventEmitter<number>();
 
-  /** Emitted when page size changes */
   @Output() pageSizeChange = new EventEmitter<number>();
 
-  /** Current page size for binding */
   currentPageSize = 20;
+  jumpPage: number | null = null;
 
-  /** Array of page numbers to display */
   pageNumbers: number[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["meta"] && this.meta) {
       this.currentPageSize = this.meta.size;
+      this.jumpPage = this.meta.page;
       this.calculatePageNumbers();
     }
   }
 
-  /**
-   * Calculate which page numbers to display
-   */
   private calculatePageNumbers(): void {
     if (!this.meta) {
       this.pageNumbers = [];
@@ -89,10 +57,8 @@ export class PaginationComponent implements OnChanges {
     const maxButtons = this.maxPageButtons;
 
     if (totalPages <= maxButtons) {
-      // Show all pages
       this.pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     } else {
-      // Calculate range around current page
       let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
       let end = start + maxButtons - 1;
 
@@ -108,9 +74,6 @@ export class PaginationComponent implements OnChanges {
     }
   }
 
-  // ===========================================================================
-  // NAVIGATION
-  // ===========================================================================
 
   goToPage(page: number): void {
     if (!this.meta) return;
@@ -146,9 +109,13 @@ export class PaginationComponent implements OnChanges {
     this.pageSizeChange.emit(this.currentPageSize);
   }
 
-  // ===========================================================================
-  // DISPLAY HELPERS
-  // ===========================================================================
+  onJumpSubmit(): void {
+    if (this.jumpPage === null || this.jumpPage === undefined) {
+      return;
+    }
+    this.goToPage(Number(this.jumpPage));
+  }
+
 
   get itemsInfo(): string {
     if (!this.meta || this.meta.total_items === 0) {

@@ -131,10 +131,7 @@ import { PRODUCT_CONFIG, Product } from "../../config/entities/product.config";
 export class ProductListComponent {
   config = PRODUCT_CONFIG;
 
-  handleRowClick = (product: Product): void => {
-    console.log("Product clicked:", product);
-    // Navigate to detail page, open modal, etc.
-  };
+  handleRowClick = (_product: Product): void => {};
 }
 ```
 

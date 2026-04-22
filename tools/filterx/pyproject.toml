@@ -1,0 +1,22 @@
+[project]
+name = "filterx-cli"
+version = "0.1.0"
+description = "FilterX smart bootstrap CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6.0.0",
+]
+
+[project.scripts]
+filterx = "filterx.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+include = ["filterx*"]

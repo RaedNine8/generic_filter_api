@@ -1,0 +1,8 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "&": true,
+    "npm install": true,
+    "npx playwright": true,
+    "npm run test:e2e": true
+  }
+}

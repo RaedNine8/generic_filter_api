@@ -3,6 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.enums.sort_order import SortOrder
 from app.schema.filter_node import FilterNode
 
 
@@ -13,9 +14,11 @@ class SavedFilterCreate(BaseModel):
     filters: Optional[List[Dict[str, Any]]] = None
     filter_tree: Optional[FilterNode] = None
     sort_by: Optional[str] = None
-    sort_order: str = "asc"
-    page_size: int = 20
+    sort_order: SortOrder = SortOrder.ASC
+    page_size: int = Field(default=20, ge=1, le=100)
     search_query: Optional[str] = None
+
+    model_config = {"protected_namespaces": ()}
 
 
 class SavedFilterUpdate(BaseModel):
@@ -24,8 +27,8 @@ class SavedFilterUpdate(BaseModel):
     filters: Optional[List[Dict[str, Any]]] = None
     filter_tree: Optional[FilterNode] = None
     sort_by: Optional[str] = None
-    sort_order: Optional[str] = None
-    page_size: Optional[int] = None
+    sort_order: Optional[SortOrder] = None
+    page_size: Optional[int] = Field(default=None, ge=1, le=100)
     search_query: Optional[str] = None
 
 
@@ -37,10 +40,10 @@ class SavedFilterResponse(BaseModel):
     filters: Optional[List[Dict[str, Any]]] = None
     filter_tree: Optional[FilterNode] = None
     sort_by: Optional[str] = None
-    sort_order: str = "asc"
-    page_size: int = 20
+    sort_order: SortOrder = SortOrder.ASC
+    page_size: int = Field(default=20, ge=1, le=100)
     search_query: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "protected_namespaces": ()}

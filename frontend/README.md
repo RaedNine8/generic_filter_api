@@ -58,7 +58,7 @@ frontend/
 │
 ├── angular.json
 ├── package.json
-├── proxy.conf.json
+├── proxy.conf.cjs
 └── tsconfig.json
 ```
 
@@ -77,7 +77,15 @@ npm install
 npm start
 ```
 
-The app will be available at `http://localhost:4200` and will proxy API requests to `http://localhost:8000`.
+The app will be available at `http://localhost:4200` and will proxy API requests to the first compatible local backend it finds.
+By default it scans `127.0.0.1` on ports `8000, 8001, 8002, 8010, 8080` and verifies the backend exposes `/api/books` and `/api/authors`.
+
+Optional environment variables for proxy discovery:
+
+- `FILTER_API_TARGET` (single target URL or host:port)
+- `FILTER_API_TARGETS` (comma-separated target URLs)
+- `FILTER_API_PORTS` (comma-separated ports on `127.0.0.1`)
+- `BACKEND_PORT` (single backend port)
 
 ### 3. Build for Production
 

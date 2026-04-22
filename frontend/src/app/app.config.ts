@@ -4,22 +4,23 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { providePrimeNG } from "primeng/config";
+import Aura from "@primeng/themes/aura";
 
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    // FILTERX:PROVIDERS
+    provideZoneChangeDetection({ eventCoalescing: false }),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),
     providePrimeNG({
-        theme: {
-            preset: Aura
-        }
-    })
+      theme: {
+        preset: Aura,
+      },
+    }),
   ],
 };

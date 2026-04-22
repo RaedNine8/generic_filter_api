@@ -1,0 +1,1259 @@
+{
+  "generated_at": "2026-04-09T19:26:03.212846+00:00",
+  "project": {
+    "name": "filter_test_project",
+    "root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\PROJECT\\filter_test_project"
+  },
+  "config_summary": {
+    "backend_enabled": true,
+    "frontend_enabled": true,
+    "database_enabled": true,
+    "api_prefix": "/api"
+  },
+  "entities": [
+    {
+      "model": "Author",
+      "module": "app.models.author",
+      "table": "authors",
+      "primary_keys": [
+        "id"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "birth_year",
+          "type": "integer",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "books",
+          "related_model": "Book",
+          "related_table": "books",
+          "cardinality": "o2m",
+          "uselist": true,
+          "display_field": "id",
+          "related_fields": [
+            {
+              "name": "id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "isbn",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "genre",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "description",
+              "type": "text",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "price",
+              "type": "float",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "pages",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "published_year",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "is_available",
+              "type": "boolean",
+              "ops": [
+                "eq",
+                "ne",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "rating",
+              "type": "float",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "created_at",
+              "type": "datetime",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "updated_at",
+              "type": "datetime",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "author_id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            }
+          ],
+          "back_populates": "author"
+        }
+      ]
+    },
+    {
+      "model": "Book",
+      "module": "app.models.book",
+      "table": "books",
+      "primary_keys": [
+        "id"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "isbn",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "genre",
+          "type": "string",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "price",
+          "type": "float",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "pages",
+          "type": "integer",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "published_year",
+          "type": "integer",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "is_available",
+          "type": "boolean",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "rating",
+          "type": "float",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "author_id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": true,
+          "fk_targets": [
+            "authors.id"
+          ],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "author",
+          "related_model": "Author",
+          "related_table": "authors",
+          "cardinality": "m2o",
+          "uselist": false,
+          "display_field": "name",
+          "related_fields": [
+            {
+              "name": "id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "email",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "country",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "is_active",
+              "type": "boolean",
+              "ops": [
+                "eq",
+                "ne",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "birth_year",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "created_at",
+              "type": "datetime",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "updated_at",
+              "type": "datetime",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            }
+          ],
+          "back_populates": "books"
+        }
+      ]
+    },
+    {
+      "model": "SavedFilter",
+      "module": "app.models.saved_filter",
+      "table": "saved_filters",
+      "primary_keys": [
+        "id"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "model_name",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "filters",
+          "type": "json",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "is_null",
+            "is_not_null",
+            "eq",
+            "ne"
+          ]
+        },
+        {
+          "name": "filter_tree",
+          "type": "json",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "is_null",
+            "is_not_null",
+            "eq",
+            "ne"
+          ]
+        },
+        {
+          "name": "sort_by",
+          "type": "string",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "sort_order",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "page_size",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "search_query",
+          "type": "string",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        }
+      ],
+      "relationships": []
+    }
+  ],
+  "relationship_graph": {
+    "Author": [
+      "Book"
+    ],
+    "Book": [
+      "Author"
+    ],
+    "SavedFilter": []
+  },
+  "graph_stats": {
+    "entity_count": 3,
+    "relationship_cycle_count": 1,
+    "max_depth": 1
+  },
+  "routes": [
+    {
+      "path": "/openapi.json",
+      "name": "openapi",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/docs",
+      "name": "swagger_ui_html",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/docs/oauth2-redirect",
+      "name": "swagger_ui_redirect",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/redoc",
+      "name": "redoc_html",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/api/books",
+      "name": "list_books",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/books/filter",
+      "name": "filter_books",
+      "methods": [
+        "POST"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/authors",
+      "name": "list_authors",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/authors/filter",
+      "name": "filter_authors",
+      "methods": [
+        "POST"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/books/group-by/{field}",
+      "name": "group_books",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/books/group-by/{field}/filter",
+      "name": "group_books_with_tree",
+      "methods": [
+        "POST"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/authors/group-by/{field}",
+      "name": "group_authors",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/authors/group-by/{field}/filter",
+      "name": "group_authors_with_tree",
+      "methods": [
+        "POST"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/books/metadata",
+      "name": "books_metadata",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/authors/metadata",
+      "name": "authors_metadata",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters",
+      "name": "list_saved_filters",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters",
+      "name": "create_saved_filter",
+      "methods": [
+        "POST"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters/{filter_id}",
+      "name": "get_saved_filter",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters/{filter_id}",
+      "name": "update_saved_filter",
+      "methods": [
+        "PUT"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters/{filter_id}",
+      "name": "delete_saved_filter",
+      "methods": [
+        "DELETE"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/api/saved-filters/{filter_id}/apply",
+      "name": "apply_saved_filter",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    },
+    {
+      "path": "/health",
+      "name": "health_check",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    }
+  ]
+}

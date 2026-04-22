@@ -1,24 +1,26 @@
-<div class="data-table-container">
-  <!-- Loading Overlay -->
+<div class="data-table-container" data-testid="data-table-container">
+  <div class="loading-progress" *ngIf="loading" aria-hidden="true"></div>
+  
   <div class="loading-overlay" *ngIf="loading">
     <div class="loading-spinner"></div>
     <span class="loading-text">Loading...</span>
   </div>
 
-  <!-- Table -->
   <div class="table-wrapper" [class.loading]="loading">
     <table
       class="data-table"
+      data-testid="data-table"
       [class.striped]="striped"
       [class.hover]="hoverRows"
     >
-      <!-- Header -->
+      
       <thead>
         <tr>
           <th
             *ngFor="let column of columns; trackBy: trackByColumn"
             [style.width]="column.width"
             [class]="column.cssClass"
+            [class.numeric]="isNumericColumn(column)"
           >
             <ng-container *ngIf="column.sortable; else plainHeader">
               <app-sort-header
@@ -36,9 +38,8 @@
         </tr>
       </thead>
 
-      <!-- Body -->
       <tbody>
-        <!-- Empty State -->
+        
         <tr *ngIf="data.length === 0 && !loading" class="empty-row">
           <td [attr.colspan]="columns.length" class="empty-cell">
             <div class="empty-state">
@@ -48,9 +49,19 @@
           </td>
         </tr>
 
-        <!-- Data Rows -->
+        <tr *ngIf="loading && data.length === 0" class="skeleton-row" aria-hidden="true">
+          <td [attr.colspan]="columns.length">
+            <div class="skeleton-lines">
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+            </div>
+          </td>
+        </tr>
+
         <ng-container *ngIf="data.length > 0">
-          <!-- Use custom row template if provided -->
+          
           <ng-container *ngIf="rowTemplate; else defaultRows">
             <tr
               *ngFor="let row of data; let i = index; trackBy: trackByIndex"
@@ -66,7 +77,6 @@
             </tr>
           </ng-container>
 
-          <!-- Default row rendering -->
           <ng-template #defaultRows>
             <tr
               *ngFor="let row of data; let i = index; trackBy: trackByIndex"
@@ -76,8 +86,9 @@
               <td
                 *ngFor="let column of columns; trackBy: trackByColumn"
                 [class]="column.cssClass"
+                [class.numeric]="isNumericColumn(column)"
               >
-                <!-- Use custom cell template if provided and type is 'custom' -->
+                
                 <ng-container
                   *ngIf="
                     column.type === 'custom' && cellTemplate;
@@ -96,9 +107,20 @@
                   ></ng-container>
                 </ng-container>
 
-                <!-- Default cell rendering -->
                 <ng-template #defaultCell>
-                  {{ formatCellValue(getCellValue(row, column), column) }}
+                  <ng-container *ngIf="!isBooleanColumn(column); else booleanCell">
+                    {{ formatCellValue(getCellValue(row, column), column) }}
+                  </ng-container>
+                  <ng-template #booleanCell>
+                    <span
+                      class="boolean-badge"
+                      [class.true]="getBooleanState(getCellValue(row, column)) === 'true'"
+                      [class.false]="getBooleanState(getCellValue(row, column)) === 'false'"
+                      [class.unknown]="getBooleanState(getCellValue(row, column)) === 'unknown'"
+                    >
+                      {{ formatBooleanLabel(getCellValue(row, column)) }}
+                    </span>
+                  </ng-template>
                 </ng-template>
               </td>
             </tr>
@@ -108,7 +130,6 @@
     </table>
   </div>
 
-  <!-- Pagination -->
   <app-pagination
     *ngIf="showPagination && pagination"
     [meta]="pagination"

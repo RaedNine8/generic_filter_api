@@ -15,3 +15,15 @@ frontend/node_modules/
 
 # Environment
 .env
+
+# Local books/authors sandbox (example-only, do not publish)
+# Note: if a file is already tracked by git, .gitignore alone will not untrack it.
+app/models/book.py
+app/models/author.py
+app/schema/book.py
+app/schema/author.py
+app/routers/books.py
+frontend/src/app/config/entities/book.config.ts
+frontend/src/app/config/entities/author.config.ts
+frontend/src/app/features/books/
+frontend/src/app/features/authors/

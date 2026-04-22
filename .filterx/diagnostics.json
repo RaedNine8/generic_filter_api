@@ -1,0 +1,19 @@
+{
+  "errors": [],
+  "warnings": [
+    {
+      "code": "RELATIONSHIP_CYCLES_DETECTED",
+      "message": "Relationship cycles were detected in model graph.",
+      "context": {
+        "cycles": [
+          [
+            "Author",
+            "Book",
+            "Author"
+          ]
+        ]
+      }
+    }
+  ],
+  "info": []
+}

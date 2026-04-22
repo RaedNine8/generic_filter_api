@@ -2,10 +2,6 @@ import { FilterRule } from "./filter.interface";
 import { SortOrder } from "../enums/sort-order.enum";
 import { FilterTreeNode } from "./filter-tree.interface";
 
-/**
- * Saved filter response from API
- * Matches backend SavedFilterResponse
- */
 export interface SavedFilter {
   id: number;
   name: string;
@@ -14,17 +10,13 @@ export interface SavedFilter {
   filters: FilterRule[];
   filter_tree?: FilterTreeNode | null;
   sort_by?: string | null;
-  sort_order: SortOrder | string;
+  sort_order: SortOrder;
   page_size: number;
   search_query?: string | null;
   created_at: string;
   updated_at?: string | null;
 }
 
-/**
- * Request body to create a new saved filter
- * Matches backend SavedFilterCreate
- */
 export interface SavedFilterCreate {
   name: string;
   description?: string;
@@ -32,29 +24,22 @@ export interface SavedFilterCreate {
   filters: FilterRule[];
   filter_tree?: FilterTreeNode;
   sort_by?: string;
-  sort_order?: SortOrder | string;
+  sort_order?: SortOrder;
   page_size?: number;
   search_query?: string;
 }
 
-/**
- * Request body to update an existing saved filter
- * Matches backend SavedFilterUpdate
- */
 export interface SavedFilterUpdate {
   name?: string;
   description?: string;
   filters?: FilterRule[];
   filter_tree?: FilterTreeNode;
   sort_by?: string;
-  sort_order?: SortOrder | string;
+  sort_order?: SortOrder;
   page_size?: number;
   search_query?: string;
 }
 
-/**
- * Response when applying a saved filter
- */
 export interface SavedFilterApplyResponse<T = any> {
   data: T[];
   meta: {

@@ -1,0 +1,66 @@
+version: 1
+
+project:
+  name: filter_test_project
+  root: .
+  backend_root: app
+  frontend_root: frontend
+  alembic_ini: alembic.ini
+
+python:
+  app_import: app.main:app
+  base_class_import: app.database:Base
+  models_package: app.models
+  session_dependency_import: app.database:get_db
+  sqlalchemy_url_env: DATABASE_URL
+
+backend:
+  enabled: true
+  api_prefix: /api
+  generated_package: app/filterx_generated
+  mount_file: app/main.py
+  mount_anchor: "# FILTERX:ROUTER_MOUNT"
+  entities:
+    - Book
+    - Author
+    - SavedFilter
+  exclude_entities: []
+  global_predicate_hooks: []
+
+frontend:
+  enabled: true
+  workspace_root: frontend
+  generated_root: frontend/src/app/filterx-generated
+  routes_file: frontend/src/app/app.routes.ts
+  routes_anchor: "// FILTERX:ROUTES"
+  app_config_file: frontend/src/app/app.config.ts
+  app_config_anchor: "// FILTERX:PROVIDERS"
+  entity_style: kebab
+
+database:
+  enabled: true
+  provider: alembic
+  migration_dir: alembic/versions
+  features:
+    saved_filters: true
+    shared_filters: false
+    auditing: false
+
+scan:
+  max_relationship_depth: 3
+  include_views: false
+  include_hybrid_properties: false
+  respect_soft_delete: true
+
+safety:
+  dry_run_default: true
+  require_anchor_comments: true
+  idempotency_manifest: .filterx/manifest.json
+  allow_overwrite_generated: true
+  strict_conflict_mode: true
+
+output:
+  scan_file: .filterx/scan.json
+  plan_file: .filterx/plan.json
+  diagnostics_file: .filterx/diagnostics.json
+  patch_dir: .filterx/patches

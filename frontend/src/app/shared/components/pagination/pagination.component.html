@@ -1,79 +1,92 @@
-<div class="pagination-container" *ngIf="meta && meta.total_items > 0">
-  <!-- Items Info -->
+<div class="pagination-container" *ngIf="meta && meta.total_items > 0" aria-label="Pagination controls" data-testid="pagination-container">
   <div class="pagination-info" *ngIf="showItemsInfo">
-    <span>{{ itemsInfo }}</span>
+    <span class="info-main">{{ itemsInfo }}</span>
+    <span class="info-sep">•</span>
+    <span class="info-total">{{ meta.total_pages }} pages</span>
   </div>
 
-  <!-- Page Navigation -->
   <div class="pagination-nav">
-    <!-- First Page -->
     <button
       type="button"
       class="pagination-btn"
       [disabled]="isFirstPage"
       (click)="goToFirstPage()"
       title="First page"
+      aria-label="Go to first page"
     >
-      <span class="pagination-icon">««</span>
+      <span class="pagination-icon">&laquo;</span>
     </button>
 
-    <!-- Previous Page -->
     <button
       type="button"
       class="pagination-btn"
       [disabled]="isFirstPage"
       (click)="goToPreviousPage()"
       title="Previous page"
+      aria-label="Go to previous page"
     >
-      <span class="pagination-icon">«</span>
+      <span class="pagination-icon">&lsaquo;</span>
     </button>
 
-    <!-- Ellipsis Before -->
     <span class="pagination-ellipsis" *ngIf="showEllipsisBefore">...</span>
 
-    <!-- Page Numbers -->
     <button
       *ngFor="let page of pageNumbers"
       type="button"
       class="pagination-btn pagination-page"
       [class.active]="page === meta.page"
       (click)="goToPage(page)"
+      [attr.aria-current]="page === meta.page ? 'page' : null"
     >
       {{ page }}
     </button>
 
-    <!-- Ellipsis After -->
     <span class="pagination-ellipsis" *ngIf="showEllipsisAfter">...</span>
 
-    <!-- Next Page -->
     <button
       type="button"
       class="pagination-btn"
+      data-testid="pagination-next"
       [disabled]="isLastPage"
       (click)="goToNextPage()"
       title="Next page"
+      aria-label="Go to next page"
     >
-      <span class="pagination-icon">»</span>
+      <span class="pagination-icon">&rsaquo;</span>
     </button>
 
-    <!-- Last Page -->
     <button
       type="button"
       class="pagination-btn"
       [disabled]="isLastPage"
       (click)="goToLastPage()"
       title="Last page"
+      aria-label="Go to last page"
     >
-      <span class="pagination-icon">»»</span>
+      <span class="pagination-icon">&raquo;</span>
     </button>
   </div>
 
-  <!-- Page Size Selector -->
+  <div class="pagination-jump" *ngIf="meta.total_pages > 6">
+    <label for="jumpPage" class="jump-label">Go to page</label>
+    <input
+      id="jumpPage"
+      type="number"
+      class="jump-input"
+      [min]="1"
+      [max]="meta.total_pages"
+      [(ngModel)]="jumpPage"
+      (keydown.enter)="onJumpSubmit()"
+    />
+    <button type="button" class="jump-btn" (click)="onJumpSubmit()">Go</button>
+  </div>
+
   <div class="pagination-size" *ngIf="showPageSizeSelector">
     <label for="pageSize" class="pagination-size-label">Items per page:</label>
     <select
       id="pageSize"
       class="pagination-size-select"
+      data-testid="pagination-size-select"
       [(ngModel)]="currentPageSize"
       (change)="onPageSizeChanged()"
     >
@@ -84,7 +97,6 @@
   </div>
 </div>
 
-<!-- Empty State -->
 <div class="pagination-empty" *ngIf="!meta || meta.total_items === 0">
   <span>No items to display</span>
 </div>

@@ -1,57 +1,26 @@
 import { FilterOperation } from "../enums/filter-operation.enum";
 
-/**
- * Recursive tree node for boolean filter expressions.
- *
- * Mirrors the backend FilterNode schema exactly.
- *
- * Two node types:
- *   - 'operator': internal node with AND/OR and a list of children
- *   - 'condition': leaf node with field + operation + value
- *
- * Example tree: (price > 20 AND rating >= 4) OR (genre = Fantasy)
- * ```
- * {
- *   nodeType: 'operator', operator: 'OR', children: [
- *     { nodeType: 'operator', operator: 'AND', children: [
- *       { nodeType: 'condition', field: 'price', operation: 'gt', value: 20 },
- *       { nodeType: 'condition', field: 'rating', operation: 'gte', value: 4 }
- *     ]},
- *     { nodeType: 'condition', field: 'genre', operation: 'eq', value: 'Fantasy' }
- *   ]
- * }
- * ```
- */
 export interface FilterTreeNode {
-  /** Unique ID for UI tracking (not sent to backend). */
   id: string;
 
-  /** 'operator' = AND/OR group, 'condition' = filter leaf. */
   nodeType: "operator" | "condition";
 
-  // ── Operator node fields ──────────────────────────
   operator?: "AND" | "OR";
   children?: FilterTreeNode[];
 
-  // ── Condition (leaf) node fields ──────────────────
   field?: string;
   operation?: FilterOperation;
   value?: any;
 
-  // ── UI-only state ─────────────────────────────────
   expanded?: boolean;
 }
 
-// ────────────────────────────────────────────────────────────────
-// Helpers
-// ────────────────────────────────────────────────────────────────
 
 let _nextId = 1;
 export function generateNodeId(): string {
   return `node-${_nextId++}`;
 }
 
-/** Create a new empty condition leaf. */
 export function createConditionNode(
   field: string = "",
   operation: FilterOperation = FilterOperation.EQUALS,
@@ -66,7 +35,6 @@ export function createConditionNode(
   };
 }
 
-/** Create a new operator group with default children. */
 export function createOperatorNode(
   operator: "AND" | "OR" = "AND",
   children: FilterTreeNode[] = [],
@@ -83,12 +51,20 @@ export function createOperatorNode(
   };
 }
 
-/**
- * Strip UI-only fields (id, expanded) to produce a clean payload
- * matching the backend FilterNode schema.
- */
-export function toBackendPayload(node: FilterTreeNode): any {
+export function toBackendPayload(node: FilterTreeNode): any | null {
   if (node.nodeType === "condition") {
+    const op = node.operation?.toLowerCase();
+    const isNullOp = op === "is_null" || op === "is_not_null";
+
+    if (!isNullOp) {
+      if (node.value === null || node.value === undefined || node.value === "") {
+        return null;
+      }
+      if (Array.isArray(node.value) && node.value.length === 0) {
+        return null;
+      }
+    }
+
     return {
       node_type: "condition",
       field: node.field,
@@ -96,9 +72,18 @@ export function toBackendPayload(node: FilterTreeNode): any {
       value: node.value,
     };
   }
+
+  const children = (node.children || [])
+    .map(toBackendPayload)
+    .filter((c: any) => c !== null);
+
+  if (children.length === 0) {
+    return null;
+  }
+
   return {
     node_type: "operator",
     operator: node.operator,
-    children: (node.children || []).map(toBackendPayload),
+    children,
   };
 }

@@ -1,12 +1,23 @@
 <div class="advanced-search-container">
-  <!-- Search Bar with Filter Tags -->
+  
   <div class="search-bar">
     <div class="search-bar-content">
-      <!-- Filter Icon -->
-      <span class="filter-icon">🔍</span>
+      
+      <span class="filter-icon" aria-hidden="true"></span>
 
-      <!-- Active Filter Tags -->
       <div class="filter-tags">
+        @if (searchQuery) {
+          <span class="filter-tag search-tag">
+            Search: {{ searchQuery }}
+            <button
+              type="button"
+              class="tag-remove"
+              (mousedown)="removeSearchTag()"
+            >
+              ×
+            </button>
+          </span>
+        }
         @for (filter of activeFilters; track $index) {
           <span class="filter-tag">
             {{ getFilterTagLabel(filter) }}
@@ -20,38 +31,28 @@
           </span>
         }
         @if (activeTree) {
-          <span class="filter-tag advanced-tag">
-            Advanced Filter
-            <button
-              type="button"
-              class="tag-remove"
-              (click)="onClearTree()"
-            >
-              ×
-            </button>
-          </span>
+          @for (cond of getTreeConditions(); track cond.id) {
+            <span class="filter-tag advanced-tag">
+              {{ cond.label }}
+              <button
+                type="button"
+                class="tag-remove"
+                (click)="removeTreeCondition(cond.id)"
+              >
+                ×
+              </button>
+            </span>
+          }
         }
 
-        @if (searchQuery) {
-          <span class="filter-tag search-tag">
-            Search: {{ searchQuery }}
-            <button
-              type="button"
-              class="tag-remove"
-              (click)="searchChange.emit('')"
-            >
-              ×
-            </button>
-          </span>
-        }
       </div>
 
-      <!-- Search Input & Autocomplete -->
       <div class="search-input-wrapper">
         <input
+          #searchInput
           type="text"
           class="search-input"
-          [value]="searchQuery"
+          data-testid="global-search-input"
           [placeholder]="placeholder"
           (input)="onSearchInput($event)"
           (keydown)="onSearchKeydown($event)"
@@ -59,20 +60,80 @@
           (blur)="hideSearchDropdown()"
         />
 
-        <!-- Smart Search Dropdown -->
         @if (isSearchDropdownOpen) {
-          <div class="search-dropdown">
+          <div class="search-dropdown" data-testid="search-options-dropdown">
             @for (option of searchOptions; track option.label) {
-              @if (option.field === '__custom__') {
-                <div class="search-option custom-filter-option" (mousedown)="selectSearchOption(option)">
+              @if (option.isCustom) {
+                <div class="search-option custom-filter-option" data-testid="search-option" (mousedown)="selectSearchOption(option)">
+                  <span class="option-icon">➕</span>
                   <span class="option-label">Custom Filter...</span>
-                </div>
-              } @else {
-                <div class="search-option" (mousedown)="selectSearchOption(option)">
-                  @if (option.field.includes('.')) {
-                    <span class="option-arrow">►</span>
+                  @if (option.typeHint) {
+                    <span class="option-type">{{ option.typeHint }}</span>
                   }
-                  <span class="option-label">{{ option.label }}</span>
+                </div>
+              } @else if (option.isFkHeader) {
+                
+                <div
+                  class="search-option fk-header"
+                  data-testid="search-option"
+                  [class.disabled]="option.isDisabled"
+                  (mousedown)="selectSearchOption(option)"
+                >
+                  <span class="option-arrow"
+                        [class.expanded]="expandedFkHeaders.has(option.fkRelationshipName!)">►</span>
+                  @if (getOptionLabelParts(option.label); as parts) {
+                    <span class="option-label">
+                      <span class="option-prefix">{{ parts.prefix }}</span>
+                      <span class="option-field">{{ parts.field }}</span>
+                      <span class="option-suffix">{{ parts.suffix }}</span>
+                    </span>
+                  } @else {
+                    <span class="option-label">{{ option.label }}</span>
+                  }
+                  @if (option.typeHint) {
+                    <span class="option-type">{{ option.typeHint }}</span>
+                  }
+                </div>
+                
+                @if (option.subOptions && option.subOptions.length > 0) {
+                  @for (sub of option.subOptions; track sub.label) {
+                    <div class="search-option fk-sub-option"
+                         data-testid="search-option"
+                         (mousedown)="selectSearchOption(sub)">
+                      @if (getOptionLabelParts(sub.label); as parts) {
+                        <span class="option-label">
+                          <span class="option-prefix">{{ parts.prefix }}</span>
+                          <span class="option-field">{{ parts.field }}</span>
+                          <span class="option-suffix">{{ parts.suffix }}</span>
+                        </span>
+                      } @else {
+                        <span class="option-label">{{ sub.label }}</span>
+                      }
+                      @if (sub.typeHint) {
+                        <span class="option-type">{{ sub.typeHint }}</span>
+                      }
+                    </div>
+                  }
+                }
+              } @else {
+                <div
+                  class="search-option"
+                  data-testid="search-option"
+                  [class.disabled]="option.isDisabled"
+                  (mousedown)="selectSearchOption(option)"
+                >
+                  @if (getOptionLabelParts(option.label); as parts) {
+                    <span class="option-label">
+                      <span class="option-prefix">{{ parts.prefix }}</span>
+                      <span class="option-field">{{ parts.field }}</span>
+                      <span class="option-suffix">{{ parts.suffix }}</span>
+                    </span>
+                  } @else {
+                    <span class="option-label">{{ option.label }}</span>
+                  }
+                  @if (option.typeHint) {
+                    <span class="option-type">{{ option.typeHint }}</span>
+                  }
                 </div>
               }
             }
@@ -80,7 +141,6 @@
         }
       </div>
 
-      <!-- Clear All Button -->
       @if (hasActiveFilters) {
         <button
           type="button"
@@ -93,160 +153,91 @@
       }
     </div>
 
-    <!-- Dropdown Toggle Button -->
     <button
       type="button"
       class="dropdown-toggle"
+      data-testid="custom-filters-toggle"
       [class.active]="isPanelOpen"
+      [attr.aria-expanded]="isPanelOpen"
+      [attr.aria-label]="isPanelOpen ? 'Hide custom filters panel' : 'Show custom filters panel'"
+      title="Custom filters"
       (click)="togglePanel()"
     >
-      <span class="toggle-icon">▼</span>
+      <span class="toggle-icon">Custom filters {{ isPanelOpen ? '▲' : '▼' }}</span>
     </button>
   </div>
 
-  <!-- Dropdown Panel -->
   @if (isPanelOpen) {
     <div class="dropdown-panel">
       <div class="panel-columns">
-        <!-- Left Column: Filters -->
-        <div class="panel-column filters-column">
-          <div class="column-header">
-            <span class="column-icon">🔍</span>
-            <span class="column-title">Filters</span>
-          </div>
-
-          <div class="column-content">
-            @for (filter of quickFilters; track filter.id) {
-              @if (filter.isHeader) {
-                <div class="filter-header">{{ filter.label }}</div>
-              } @else {
-                <button
-                  type="button"
-                  class="filter-item"
-                  [class.active]="isQuickFilterActive(filter.id)"
-                  (click)="toggleQuickFilter(filter)"
-                >
-                  @if (filter.icon) {
-                    <span class="item-icon">{{ filter.icon }}</span>
-                  }
-                  <span class="item-label">{{ filter.label }}</span>
-                  @if (filter.hasSubmenu) {
-                    <span class="submenu-arrow">▶</span>
-                  }
-                </button>
-              }
-            }
-
-            <!-- Add Custom Filter -->
-            <button
-              type="button"
-              class="filter-item add-custom"
-              (click)="toggleCustomFilterTree()"
-            >
-              <span class="item-icon">➕</span>
-              <span class="item-label">Advanced Custom Filter</span>
-            </button>
-          </div>
-
-          <!-- Advanced Custom Filter Builder Modal -->
-          @if (showCustomFilterTree) {
-            <div class="filter-builder-modal-overlay" (click)="showCustomFilterTree = false">
-              <div class="filter-builder-modal" (click)="$event.stopPropagation()">
-                <div class="modal-header">
-                  <h3>Advanced Filter Builder</h3>
-                  <button type="button" class="close-btn" (click)="showCustomFilterTree = false">×</button>
-                </div>
-                <div class="modal-body">
-                  <app-filter-builder
-                    [fields]="fields"
-                    [tree]="activeTree"
-                    (treeChange)="onTreeChange($event)"
-                    (apply)="onApplyTree($event)"
-                    (clear)="onClearTree()"
-                  ></app-filter-builder>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-
-        <!-- Middle Column: Group By -->
-        <div class="panel-column groupby-column">
-          <div class="column-header">
-            <span class="column-icon">📊</span>
-            <span class="column-title">Group By</span>
-          </div>
-
-          <div class="column-content">
-            @for (option of groupByOptions; track option.field) {
-              <button
-                type="button"
-                class="filter-item"
-                [class.active]="currentGroupBy === option.field"
-                (click)="setGroupBy(option.field)"
-              >
-                <span class="item-label">{{ option.label }}</span>
-                @if (option.hasSubmenu) {
-                  <span class="submenu-arrow">▶</span>
-                }
-              </button>
-            }
-
-            @if (currentGroupBy) {
-              <button
-                type="button"
-                class="filter-item clear-groupby"
-                (click)="setGroupBy(null)"
-              >
-                <span class="item-label">Clear Grouping</span>
-              </button>
-            }
-          </div>
-        </div>
-
-        <!-- Right Column: Favorites (Saved Filters) -->
         <div class="panel-column favorites-column">
           <div class="column-header">
-            <span class="column-icon">⭐</span>
-            <span class="column-title">Favorites</span>
+            <span class="column-title">Custom Filters</span>
           </div>
 
           <div class="column-content">
-            <!-- Save Current Search Button -->
+            @if (groupByOptions.length > 0) {
+              <div class="group-by-block">
+                <label for="groupBySelect" class="group-by-label">Group results by</label>
+                <select
+                  id="groupBySelect"
+                  class="group-by-select"
+                  data-testid="group-by-select"
+                  [ngModel]="currentGroupBy"
+                  (ngModelChange)="setGroupBy($event || null)"
+                >
+                  <option [ngValue]="null">No grouping</option>
+                  @for (option of groupByOptions; track option.field) {
+                    <option [ngValue]="option.field">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+            }
+
+            <div class="favorites-actions">
+              <button
+                type="button"
+                class="filter-item add-custom"
+                (click)="toggleCustomFilterTree()"
+              >
+                New custom filter
+              </button>
+
             <button
               type="button"
               class="save-current-btn"
+              data-testid="save-current-search"
               [disabled]="!hasActiveFilters"
               (click)="openSaveDialog()"
             >
               Save current search
-              <span class="dropdown-arrow">▼</span>
             </button>
+            </div>
 
-            <!-- Saved Filters List -->
             @if (savedFilters.length > 0) {
               <div class="saved-filters-list">
                 @for (saved of savedFilters; track saved.id) {
                   <div
                     class="saved-filter-item"
+                    data-testid="saved-filter-item"
                     (click)="onApplySavedFilter(saved)"
                   >
-                    <span class="saved-icon">⭐</span>
                     <span class="saved-name">{{ saved.name }}</span>
                     <button
                       type="button"
                       class="saved-delete"
+                      data-testid="saved-filter-delete"
                       (click)="onDeleteSavedFilter($event, saved.id)"
                       title="Delete"
                     >
-                      🗑️
+                      Delete
                     </button>
                   </div>
                 }
               </div>
             } @else {
               <div class="no-favorites">
-                <p>No saved filters yet</p>
+                <p>No custom filters saved yet</p>
               </div>
             }
           </div>
@@ -255,7 +246,26 @@
     </div>
   }
 
-  <!-- Save Filter Dialog -->
+  @if (showCustomFilterTree) {
+    <div class="filter-builder-modal-overlay" (click)="toggleCustomFilterTree()">
+      <div class="filter-builder-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Custom Filter Builder</h3>
+          <button type="button" class="close-btn" (click)="toggleCustomFilterTree()">×</button>
+        </div>
+        <div class="modal-body">
+          <app-filter-builder
+            [fields]="filterBuilderFields"
+            [tree]="draftTree"
+            (treeChange)="onTreeChange($event)"
+            (apply)="onApplyTree($event)"
+            (clear)="onClearTree()"
+          ></app-filter-builder>
+        </div>
+      </div>
+    </div>
+  }
+
   @if (showSaveDialog) {
     <div class="dialog-overlay" (click)="closeSaveDialog()">
       <div class="dialog" (click)="$event.stopPropagation()">

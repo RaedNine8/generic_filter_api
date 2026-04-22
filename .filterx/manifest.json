@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "created_at": "2026-04-09T19:26:03.244469+00:00",
+  "updated_at": "2026-04-09T19:26:03.344897+00:00",
+  "entries": {
+    "app/filterx_generated/__init__.py": {
+      "kind": "generated_file",
+      "sha256": "4c58362d8712c5e35d4a4321c29ae67b2e740619d458415890b771899bf5c3e6",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.246468+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/entities.py": {
+      "kind": "generated_file",
+      "sha256": "f3a886bb316417ccf54bb71ba2f3361e94ebe56032de6e373dd1943d449617e5",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.251996+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/metadata.py": {
+      "kind": "generated_file",
+      "sha256": "ff8b90709c0a468a51d6e4d2c03b1cf7f8833b60ae05746d240d8cbd8ad8e9d2",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.256995+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/router_factory.py": {
+      "kind": "generated_file",
+      "sha256": "48d42af05d2ea67a78e0fe122e19ff8d1d65aa22ae4cff8efd56601f218368f6",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.258501+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/router.py": {
+      "kind": "generated_file",
+      "sha256": "78509d65e344e800cf48652e457f5f945d7e52c617f9e8b5a90a912c9e781736",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.260517+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/predicates.py": {
+      "kind": "generated_file",
+      "sha256": "6fe9d97fd1b084108803544ebe335360eadfef3e9c09b05d42fd2821801c170e",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.262517+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/main.py": {
+      "kind": "anchor_insert",
+      "sha256": "594e0d933ae0ecc220eaad50f217ed0a2a8a0e170abb578691b7f0561360fc0f",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.267519+00:00",
+      "metadata": {
+        "anchor": "# FILTERX:ROUTER_MOUNT",
+        "snippet_hash": "b36dd60cc566a8eb7c20232a562bbcf3bd29e4433d1b8d0921d1f19d4ceb4e75"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/author.config.ts": {
+      "kind": "generated_file",
+      "sha256": "5ec205523f14e28434df5c83a0b24f4dd8f8525eca78847c1dfe449c0e5df915",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.294709+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/book.config.ts": {
+      "kind": "generated_file",
+      "sha256": "29dd5189a32a0700898b954ebb2141767e6ab025cd29c59bbb6fc4a13e759603",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.296709+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/saved-filter.config.ts": {
+      "kind": "generated_file",
+      "sha256": "20fd243e64bd25ea8fde03d6f2145ca52dcb2d81cebc09acff01c8d6bb66470f",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.298217+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/routes.ts": {
+      "kind": "generated_file",
+      "sha256": "97f515dcfb67b55124c2acbb89207b070a180305b32fce7803e89d88a7f9ecb6",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.302242+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/index.ts": {
+      "kind": "generated_file",
+      "sha256": "2b228cf4e8ec6e8359e2f6fccf2a97cf4f41d2fcb3ce5662235eac72cbde15cb",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.304243+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "3387664080ec202b26a07b02eaaae1ecdba82f9e5324885a473e0efe7cbb17d0",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.308241+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts": {
+      "kind": "generated_file",
+      "sha256": "38a4dd43b852a45705474afda8097988acdc94204ef6c2f5da932a4bac4d3fdc",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.310762+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "alembic/versions/filterx_generated_persistence.py": {
+      "kind": "generated_file",
+      "sha256": "e003ad5c9cd3559d0fc6f24dd96d4dc048a37faaed4fc56c80a5b259b197bc1b",
+      "last_patch_id": "patch-20260409T192603Z",
+      "updated_at": "2026-04-09T19:26:03.344897+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    }
+  },
+  "patch_history": [
+    {
+      "patch_id": "patch-20260409T192603Z",
+      "created_at": "2026-04-09T19:26:03.269036+00:00",
+      "mode": "apply",
+      "description": "backend.install",
+      "touched_files": [
+        "app/filterx_generated/__init__.py",
+        "app/filterx_generated/entities.py",
+        "app/filterx_generated/metadata.py",
+        "app/filterx_generated/router_factory.py",
+        "app/filterx_generated/router.py",
+        "app/filterx_generated/predicates.py",
+        "app/main.py"
+      ]
+    },
+    {
+      "patch_id": "patch-20260409T192603Z",
+      "created_at": "2026-04-09T19:26:03.311767+00:00",
+      "mode": "apply",
+      "description": "frontend.install",
+      "touched_files": [
+        "frontend/src/app/filterx-generated/entities/author.config.ts",
+        "frontend/src/app/filterx-generated/entities/book.config.ts",
+        "frontend/src/app/filterx-generated/entities/saved-filter.config.ts",
+        "frontend/src/app/filterx-generated/routes.ts",
+        "frontend/src/app/filterx-generated/entities/index.ts",
+        "frontend/src/app/filterx-generated/index.ts",
+        "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts"
+      ]
+    },
+    {
+      "patch_id": "patch-20260409T192603Z",
+      "created_at": "2026-04-09T19:26:03.344897+00:00",
+      "mode": "apply",
+      "description": "db.install",
+      "touched_files": [
+        "alembic/versions/filterx_generated_persistence.py"
+      ]
+    }
+  ]
+}

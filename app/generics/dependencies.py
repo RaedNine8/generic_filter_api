@@ -1,6 +1,3 @@
-"""
-FastAPI dependencies for pagination, sorting, search, and URL-grammar filter parsing.
-"""
 
 from typing import Any, List, Optional, Type
 
@@ -13,10 +10,6 @@ from app.generics.query_executor import GenericQueryExecutor
 from app.schema.pagination import GenericPaginationParams
 from app.schema.sorting import GenericSortParams
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Query executor factory
-# ──────────────────────────────────────────────────────────────────────
 
 def create_query_executor_dependency(
     model: Type[Any],
@@ -37,10 +30,6 @@ def create_query_executor_dependency(
     return query_executor_dependency
 
 
-# ──────────────────────────────────────────────────────────────────────
-# Pagination
-# ──────────────────────────────────────────────────────────────────────
-
 def create_pagination_dependency(
     default_page: int = 1,
     default_size: int = 20,
@@ -55,10 +44,6 @@ def create_pagination_dependency(
         return GenericPaginationParams(page=page, size=size)
     return pagination_dependency
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Sorting
-# ──────────────────────────────────────────────────────────────────────
 
 def create_sort_dependency(
     sortable_fields: Optional[List[str]] = None,
@@ -77,10 +62,6 @@ def create_sort_dependency(
         return GenericSortParams(sort_by=sort_by, order=order)
     return sort_dependency
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Search
-# ──────────────────────────────────────────────────────────────────────
 
 def create_search_dependency(min_length: int = 2, max_length: int = 100):
     def search_dependency(
@@ -101,10 +82,6 @@ def create_search_dependency(min_length: int = 2, max_length: int = 100):
     return search_dependency
 
 
-# ──────────────────────────────────────────────────────────────────────
-# URL grammar filter parsing (flat filters from query params)
-# ──────────────────────────────────────────────────────────────────────
-
 VALID_OPS = {
     "eq", "ne", "gt", "gte", "lt", "lte",
     "like", "ilike", "in", "not_in",
@@ -114,7 +91,6 @@ VALID_OPS = {
 
 
 def parse_url_filter_param(key: str, value: str) -> Optional[dict]:
-    """Parse a query param like `title_ilike=foo` into a filter dict."""
     sorted_ops = sorted(VALID_OPS, key=len, reverse=True)
     for op_suffix in sorted_ops:
         suffix = f"_{op_suffix}"

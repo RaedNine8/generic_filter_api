@@ -11,7 +11,6 @@ import { FilterRule } from "../interfaces/filter.interface";
 import {
   FilterTreeNode,
   toBackendPayload,
-  createOperatorNode,
 } from "../interfaces/filter-tree.interface";
 import {
   PaginatedResponse,
@@ -24,17 +23,6 @@ import { SortOrder } from "../enums/sort-order.enum";
 import { ApiError, QueryState } from "../interfaces/query-state.interface";
 
 
-
-/**
- * Generic Query Service
- *
- * A reusable service for querying any API endpoint with filtering,
- * pagination, sorting, and search capabilities.
- *
- * Supports two filter modes:
- *   1. Tree-based (POST /filter) — boolean expression tree
- *   2. URL grammar (GET) — flat field_operation=value params
- */
 @Injectable({
   providedIn: "root",
 })
@@ -62,15 +50,7 @@ export abstract class GenericQueryService<T> {
 
   constructor(protected http: HttpClient) {}
 
-  // ===========================================================================
-  // QUERY EXECUTION
-  // ===========================================================================
 
-  /**
-   * Execute query with current state.
-   * If filterTree is set, uses POST /filter endpoint.
-   * Otherwise falls back to GET with URL grammar.
-   */
   query(): Observable<PaginatedResponse<T>> {
     const state = this._queryState.value;
 
@@ -80,9 +60,52 @@ export abstract class GenericQueryService<T> {
     return this.queryWithUrlGrammar(state);
   }
 
-  /**
-   * Fetch model metadata (fields, types, relationships) for dynamic UI generation.
-   */
+  queryWithState(state: QueryState): Observable<PaginatedResponse<T>> {
+    if (state.filterTree) {
+      return this.queryWithTree(state);
+    }
+    return this.queryWithUrlGrammar(state);
+  }
+
+  queryGroupedWithState(
+    field: string,
+    state: QueryState,
+  ): Observable<Array<{ key: unknown; count: number }>> {
+    const encodedField = encodeURIComponent(field);
+    const params = this.buildFilterSearchParams(state);
+    this._loading.next(true);
+
+    const request$ = state.filterTree
+      ? (() => {
+          const treePayload = toBackendPayload(state.filterTree);
+          if (!treePayload) {
+            return this.http.get<Array<{ key: unknown; count: number }>>(
+              `${this.baseUrl}/group-by/${encodedField}`,
+              { params },
+            );
+          }
+          return this.http.post<Array<{ key: unknown; count: number }>>(
+            `${this.baseUrl}/group-by/${encodedField}/filter`,
+            treePayload,
+            { params },
+          );
+        })()
+      : this.http.get<Array<{ key: unknown; count: number }>>(
+          `${this.baseUrl}/group-by/${encodedField}`,
+          { params },
+        );
+
+    return request$.pipe(
+      tap(() => {
+        this._loading.next(false);
+      }),
+      catchError((error) => {
+        this._loading.next(false);
+        return this.handleError(error);
+      }),
+    );
+  }
+
   getMetadata(): Observable<any> {
     return this.http
       .get<any>(`${this.baseUrl}/metadata`)
@@ -91,12 +114,13 @@ export abstract class GenericQueryService<T> {
       );
   }
 
-  /**
-   * POST-based query using the filter tree.
-   */
   private queryWithTree(state: QueryState): Observable<PaginatedResponse<T>> {
     const httpParams = this.buildPaginationSortParams(state);
     const body = toBackendPayload(state.filterTree!);
+
+    if (!body) {
+      return this.queryWithUrlGrammar({ ...state, filterTree: null });
+    }
 
     this._loading.next(true);
     return this.http
@@ -115,9 +139,6 @@ export abstract class GenericQueryService<T> {
       );
   }
 
-  /**
-   * GET-based query using URL grammar.
-   */
   private queryWithUrlGrammar(
     state: QueryState,
   ): Observable<PaginatedResponse<T>> {
@@ -180,15 +201,11 @@ export abstract class GenericQueryService<T> {
       );
   }
 
-  // ===========================================================================
-  // STATE MANAGEMENT
-  // ===========================================================================
 
   getState(): QueryState {
     return { ...this._queryState.value };
   }
 
-  /** Set the filter tree and optionally re-query. */
   setFilterTree(
     tree: FilterTreeNode | null,
     autoQuery = false,
@@ -197,7 +214,7 @@ export abstract class GenericQueryService<T> {
     this._queryState.next({
       ...state,
       filterTree: tree,
-      filters: [], // clear flat filters when tree is set
+      filters: [],
       pagination: { ...state.pagination, page: 1 },
     });
     if (autoQuery) {
@@ -213,7 +230,7 @@ export abstract class GenericQueryService<T> {
     this._queryState.next({
       ...state,
       filters,
-      filterTree: null, // clear tree when flat filters are set
+      filterTree: null,
       pagination: { ...state.pagination, page: 1 },
     });
     if (autoQuery) {
@@ -299,9 +316,6 @@ export abstract class GenericQueryService<T> {
     this._data.next(null);
   }
 
-  // ===========================================================================
-  // URL GRAMMAR HELPERS
-  // ===========================================================================
 
   buildUrlParamKey(field: string, operation: FilterOperation | string): string {
     return `${field}_${operation}`;
@@ -322,11 +336,9 @@ export abstract class GenericQueryService<T> {
     return params;
   }
 
-  /** Build HttpParams with pagination, sort, search, and URL grammar filters. */
   protected buildHttpParams(params: Partial<QueryState>): HttpParams {
     let httpParams = this.buildPaginationSortParams(params);
 
-    // Filters (URL grammar)
     if (params.filters && params.filters.length > 0) {
       const filterParams = this.filterRulesToParams(params.filters);
       Object.entries(filterParams).forEach(([key, value]) => {
@@ -336,7 +348,23 @@ export abstract class GenericQueryService<T> {
     return httpParams;
   }
 
-  /** Build HttpParams for pagination, sort, and search only. */
+  protected buildFilterSearchParams(params: Partial<QueryState>): HttpParams {
+    let httpParams = new HttpParams();
+
+    if (params.search) {
+      httpParams = httpParams.set("search", params.search);
+    }
+
+    if (params.filters && params.filters.length > 0) {
+      const filterParams = this.filterRulesToParams(params.filters);
+      Object.entries(filterParams).forEach(([key, value]) => {
+        httpParams = httpParams.set(key, value);
+      });
+    }
+
+    return httpParams;
+  }
+
   protected buildPaginationSortParams(params: Partial<QueryState>): HttpParams {
     let httpParams = new HttpParams();
 
@@ -354,9 +382,6 @@ export abstract class GenericQueryService<T> {
     return httpParams;
   }
 
-  // ===========================================================================
-  // ERROR HANDLING
-  // ===========================================================================
 
   protected handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage: string;
