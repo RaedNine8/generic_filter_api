@@ -35,7 +35,7 @@ Install FilterX into your target project environment.
 This gives you the `filterx` command.
 
 ```powershell
-pip install "git+https://github.com/<ORG>/<REPO>.git#subdirectory=tools/filterx"
+pip install "https://github.com/RaedNine8/generic_filter_api.git"
 filterx --help
 ```
 
