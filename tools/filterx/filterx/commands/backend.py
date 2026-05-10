@@ -554,6 +554,11 @@ def create_router(
     def get_metadata() -> dict[str, object]:
         return build_metadata()
 
+    @router.get("/{entity}/metadata")
+    def get_entity_metadata(entity: str) -> dict[str, Any]:
+        return _get_entity(registry, entity)
+
+    @router.get("/{entity}")
     @router.get("/{entity}/query")
     def query_entity(
         entity: str,
@@ -881,10 +886,27 @@ def run_install(args: Any) -> int:
         include_mount=include_mount,
     )
 
-    existing_routes = list(scan_payload.get("routes", []))
     filterx_base_path = _to_filterx_base_path(api_prefix)
+    generated_route_names = {
+        "get_metadata",
+        "get_entity_metadata",
+        "query_entity",
+        "filter_entity",
+        "group_entity",
+        "group_entity_with_filter",
+    }
+    existing_routes = [
+        route
+        for route in list(scan_payload.get("routes", []))
+        if not (
+            str(route.get("path", "")).startswith(filterx_base_path)
+            and str(route.get("name", "")) in generated_route_names
+        )
+    ]
     candidate_paths = [
         f"{filterx_base_path}/metadata",
+        f"{filterx_base_path}/{{entity}}",
+        f"{filterx_base_path}/{{entity}}/metadata",
         f"{filterx_base_path}/{{entity}}/query",
         f"{filterx_base_path}/{{entity}}/filter",
         f"{filterx_base_path}/{{entity}}/group-by/{{field:path}}",

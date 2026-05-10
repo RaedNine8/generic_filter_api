@@ -118,34 +118,64 @@
 :host ::ng-deep .operator-toggle-btn.p-button {
   min-width: 72px;
   border-radius: 10px;
-  border: 1px solid #bfd5ea;
-  background: #e8f2fb;
-  color: #1f4f75;
+  border: 1px solid #bfd5ea !important;
+  background: #e8f2fb !important;
+  color: #1f4f75 !important;
   font-weight: 700;
 }
 
+:host ::ng-deep .operator-toggle-btn.p-button .p-button-label,
+:host ::ng-deep .operator-toggle-btn.p-button .p-button-icon,
+:host ::ng-deep .operator-toggle-btn.p-button .pi {
+  color: currentColor !important;
+}
+
 :host ::ng-deep .operator-toggle-btn.operator-or.p-button {
-  border-color: #d0d9e6;
-  background: #f2f6fb;
-  color: #334a62;
+  border-color: #d0d9e6 !important;
+  background: #f2f6fb !important;
+  color: #334a62 !important;
 }
 
 :host ::ng-deep .operator-toggle-btn.p-button:hover {
-  background: #dceeff;
-  border-color: #a7c7e4;
+  background: #dceeff !important;
+  border-color: #a7c7e4 !important;
 }
 
 :host ::ng-deep .action-btn.p-button {
-  color: #4c6178;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  border: 1px solid transparent !important;
+  background: #eef3f8 !important;
+  color: #4c6178 !important;
+}
+
+:host ::ng-deep .action-btn.p-button .p-button-icon,
+:host ::ng-deep .action-btn.p-button .pi {
+  color: currentColor !important;
+  opacity: 1 !important;
 }
 
 :host ::ng-deep .action-btn.action-add.p-button,
 :host ::ng-deep .action-btn.action-group.p-button {
-  color: var(--color-primary, #0b6aa2);
+  background: rgba(11, 106, 162, 0.1) !important;
+  color: var(--color-primary, #0b6aa2) !important;
+}
+
+:host ::ng-deep .action-btn.action-add.p-button:hover,
+:host ::ng-deep .action-btn.action-group.p-button:hover {
+  background: rgba(11, 106, 162, 0.18) !important;
+  border-color: rgba(11, 106, 162, 0.22) !important;
 }
 
 :host ::ng-deep .action-btn.action-remove.p-button {
-  color: var(--color-danger, #c53030);
+  background: rgba(197, 48, 48, 0.1) !important;
+  color: var(--color-danger, #c53030) !important;
+}
+
+:host ::ng-deep .action-btn.action-remove.p-button:hover {
+  background: rgba(197, 48, 48, 0.16) !important;
+  border-color: rgba(197, 48, 48, 0.2) !important;
 }
 
 :host ::ng-deep .apply-btn.p-button {

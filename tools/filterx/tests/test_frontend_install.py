@@ -144,6 +144,32 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
         tmp_path / "frontend/src/app/features/books/book-list-new.component.ts",
         "export class BookListComponent {}\n",
     )
+    _write_file(
+        tmp_path / "frontend/angular.json",
+        json.dumps(
+            {
+                "projects": {
+                    "frontend": {
+                        "architect": {
+                            "build": {
+                                "options": {"styles": ["src/styles.css"]},
+                                "configurations": {
+                                    "production": {
+                                        "budgets": [
+                                            {"type": "anyComponentStyle", "maximumWarning": "4kB", "maximumError": "8kB"}
+                                        ]
+                                    }
+                                },
+                            },
+                            "serve": {"options": {}},
+                            "test": {"options": {"styles": ["src/styles.css"]}},
+                        }
+                    }
+                }
+            },
+            indent=2,
+        ),
+    )
 
     exit_code = frontend.run_install(_args(tmp_path, config_path))
     assert exit_code == 0
@@ -152,10 +178,19 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
     assert (generated / "index.ts").exists()
     assert (generated / "routes.ts").exists()
     assert (generated / "entities/book.config.ts").exists()
+    assert (generated / "pages/book.page.ts").exists()
+    assert (tmp_path / "frontend/src/app/shared/components/entity-list/entity-list.component.ts").exists()
+    assert (tmp_path / "frontend/src/app/core/services/generic-query.service.ts").exists()
+    assert "BookFilterxPageComponent" in (generated / "routes.ts").read_text(encoding="utf-8")
 
     routes_content = (tmp_path / "frontend/src/app/app.routes.ts").read_text(encoding="utf-8")
     assert "FILTERX GENERATED ROUTES START" in routes_content
     assert "path: 'books'" in routes_content
+    angular_json = json.loads((tmp_path / "frontend/angular.json").read_text(encoding="utf-8"))
+    styles = angular_json["projects"]["frontend"]["architect"]["build"]["options"]["styles"]
+    test_styles = angular_json["projects"]["frontend"]["architect"]["test"]["options"]["styles"]
+    assert styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
+    assert test_styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
 
 
 def test_frontend_install_blocks_when_routes_anchor_missing(tmp_path: Path) -> None:
@@ -196,6 +231,9 @@ def test_frontend_install_is_idempotent_on_route_patch(tmp_path: Path) -> None:
 
     routes_content = (tmp_path / "frontend/src/app/app.routes.ts").read_text(encoding="utf-8")
     assert routes_content.count("FILTERX GENERATED ROUTES START") == 1
+    generated_routes = (tmp_path / "frontend/src/app/filterx-generated/routes.ts").read_text(encoding="utf-8")
+    assert "path: 'books'" in generated_routes
+    assert "BookFilterxPageComponent" in generated_routes
 
 
 def test_frontend_remove_rolls_back_generated_files_and_route_patch(tmp_path: Path) -> None:
