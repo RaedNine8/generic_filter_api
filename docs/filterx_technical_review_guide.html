@@ -1,0 +1,1596 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FilterX Technical Review Guide</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --panel: #0d0d0f;
+        --panel-2: #141417;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --line: #27272a;
+        --soft-line: #1f1f23;
+        --accent: #8bdbff;
+        --accent-2: #a7f3d0;
+        --purple: #c4b5fd;
+        --yellow: #fcd34d;
+        --red: #fca5a5;
+        --code-bg: #09090b;
+        --shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at 10% 0%,
+            rgba(139, 219, 255, 0.08),
+            transparent 36rem
+          ),
+          radial-gradient(
+            circle at 90% 10%,
+            rgba(196, 181, 253, 0.065),
+            transparent 32rem
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.62;
+      }
+
+      .page {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 44px 24px 72px;
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        background: linear-gradient(
+          145deg,
+          rgba(20, 20, 23, 0.94),
+          rgba(8, 8, 10, 0.96)
+        );
+        border-radius: 28px;
+        padding: 42px;
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        color: var(--accent-2);
+        font-size: 13px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent-2);
+        box-shadow: 0 0 22px rgba(167, 243, 208, 0.8);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.15;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(38px, 5.4vw, 68px);
+        letter-spacing: -0.055em;
+      }
+      h2 {
+        margin-top: 52px;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: -0.035em;
+      }
+      h3 {
+        margin-top: 26px;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+      h4 {
+        margin-top: 18px;
+        font-size: 16px;
+        color: var(--accent);
+      }
+
+      p {
+        color: var(--muted);
+      }
+
+      .lead {
+        max-width: 900px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 19px;
+      }
+
+      .toc {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .toc a {
+        display: block;
+        color: var(--text);
+        border: 1px solid var(--line);
+        background: #0b0b0d;
+        padding: 14px 16px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .toc a span {
+        color: var(--muted);
+        display: block;
+        font-size: 12px;
+        margin-top: 3px;
+      }
+
+      .card,
+      .callout,
+      .flow-box,
+      .step {
+        border: 1px solid var(--line);
+        background: rgba(13, 13, 15, 0.9);
+        border-radius: 18px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .card {
+        padding: 22px;
+      }
+      .card h3 {
+        margin-top: 0;
+      }
+      .card ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+        color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 9px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: #0b0b0d;
+        font-size: 12px;
+        font-weight: 650;
+        margin-bottom: 12px;
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 16px 0 0;
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px solid var(--soft-line);
+        background: var(--code-bg);
+        color: #e4e4e7;
+        font:
+          13.5px/1.55 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+      }
+
+      code {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+      }
+      .kw {
+        color: #8bdbff;
+      }
+      .str {
+        color: #a7f3d0;
+      }
+      .num {
+        color: #fcd34d;
+      }
+      .fn {
+        color: #c4b5fd;
+      }
+      .com {
+        color: #71717a;
+      }
+      .err {
+        color: #fca5a5;
+      }
+
+      .code-walkthrough {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+        gap: 16px;
+        align-items: start;
+        margin-top: 18px;
+      }
+
+      .code-note {
+        border: 1px solid var(--line);
+        background: rgba(13, 13, 15, 0.9);
+        border-radius: 18px;
+        padding: 20px;
+      }
+
+      .code-note h4 {
+        margin-top: 0;
+      }
+
+      .code-note ol,
+      .code-note ul {
+        margin: 12px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+      }
+
+      .code-note li + li {
+        margin-top: 8px;
+      }
+
+      .code-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #0b0b0d;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .plain-list {
+        color: var(--muted);
+        padding-left: 20px;
+      }
+
+      .flow {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .flow-row {
+        display: grid;
+        grid-template-columns: 1fr 42px 1fr 42px 1fr;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .flow-box {
+        padding: 18px;
+        min-height: 120px;
+      }
+
+      .flow-box strong {
+        display: block;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .flow-box span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .arrow {
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        font-size: 26px;
+      }
+
+      .callout {
+        margin-top: 18px;
+        padding: 20px;
+        border-color: rgba(139, 219, 255, 0.28);
+        background: rgba(10, 18, 24, 0.8);
+      }
+
+      .callout strong {
+        color: var(--accent);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        display: table;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--soft-line);
+        vertical-align: top;
+      }
+
+      th {
+        background: #111114;
+        color: var(--text);
+        font-size: 12px;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      td {
+        color: var(--muted);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .sequence {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+        counter-reset: sequence;
+      }
+
+      .step {
+        position: relative;
+        padding: 18px 18px 18px 64px;
+        counter-increment: sequence;
+      }
+
+      .step::before {
+        content: counter(sequence);
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        width: 32px;
+        height: 32px;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        background: #101820;
+        border: 1px solid rgba(139, 219, 255, 0.28);
+        font-weight: 800;
+      }
+
+      .step h3 {
+        margin-top: 0;
+      }
+      .step p {
+        margin-bottom: 0;
+      }
+
+      .footer {
+        margin-top: 56px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 960px) {
+        .grid-2,
+        .grid-3,
+        .code-walkthrough,
+        .toc,
+        .flow-row {
+          grid-template-columns: 1fr;
+        }
+        .arrow {
+          transform: rotate(90deg);
+          min-height: 24px;
+        }
+        .page {
+          padding: 28px 16px 48px;
+        }
+        .hero {
+          padding: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="eyebrow">
+          <span class="dot"></span> FilterX Technical Review Guide
+        </div>
+        <h1>How the generic filtering system works internally.</h1>
+        <p class="lead">
+          This guide focuses on the mandatory implementation details reviewers
+          need to understand: CLI generation, metadata scanning, frontend-driven
+          filter definitions, URL and tree filters, dependency injection, query
+          construction, joins, grouping, and the request/response flow.
+        </p>
+        <nav class="toc" aria-label="Table of contents">
+          <a href="#architecture"
+            >Architecture
+            <span>CLI, generated backend, frontend metadata</span></a
+          >
+          <a href="#flow"
+            >Request flow <span>Frontend to SQLAlchemy and back</span></a
+          >
+          <a href="#tree"
+            >Filter trees <span>Nested AND / OR custom filtering</span></a
+          >
+          <a href="#odoo"
+            >Odoo-style search <span>URL grammar and field-type input</span></a
+          >
+          <a href="#joins"
+            >Joins <span>Dot notation across relationships</span></a
+          >
+          <a href="#cli"
+            >CLI internals <span>Why each FilterX command exists</span></a
+          >
+        </nav>
+      </section>
+
+      <section id="architecture">
+        <h2>1. Architecture at review level</h2>
+        <div class="grid-3">
+          <article class="card">
+            <span class="badge">Configuration</span>
+            <h3><code>filterx.yaml</code></h3>
+            <p>
+              Defines import paths, generated locations, anchors, enabled
+              layers, scan depth, and safety behavior.
+            </p>
+          </article>
+          <article class="card">
+            <span class="badge">Scanner</span>
+            <h3>Model graph discovery</h3>
+            <p>
+              Imports SQLAlchemy models, reads mapper metadata, fields, primary
+              keys, relationships, and existing API routes.
+            </p>
+          </article>
+          <article class="card">
+            <span class="badge">Generated backend</span>
+            <h3>Runtime query router</h3>
+            <p>
+              Creates <code>/api/filterx</code> endpoints for metadata, query,
+              tree filtering, and grouping.
+            </p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <strong>Core idea:</strong>
+          FilterX does not require a project to rewrite its models. It reads the
+          existing ORM graph and generates an API layer that speaks in model
+          names, field paths, operations, and relationship paths.
+        </div>
+
+        <span class="code-label">First files to review</span>
+        <div class="code-walkthrough">
+          <pre><code>filter_test_project/
+  tools/filterx/filterx/
+    cli.py                         <span class="com"># command entrypoint</span>
+    core/scanner.py                 <span class="com"># reads SQLAlchemy models</span>
+    commands/backend.py             <span class="com"># generates backend router</span>
+
+filterx_robustness_lab/
+  filterx.yaml                      <span class="com"># integration contract</span>
+  app/main.py                       <span class="com"># FastAPI app + mount anchor</span>
+  app/models/*.py                   <span class="com"># source models scanned by CLI</span>
+  app/filterx_generated/router.py   <span class="com"># generated mountable router</span>
+  app/filterx_generated/entities.py <span class="com"># generated scanned registry</span></code></pre>
+          <div class="code-note">
+            <h4>How to read the codebase without getting lost</h4>
+            <ol>
+              <li>
+                Start with <code>filterx.yaml</code>. It tells you what project
+                is being injected into.
+              </li>
+              <li>
+                Then inspect <code>scanner.py</code>. It explains where the
+                metadata comes from.
+              </li>
+              <li>
+                Then inspect <code>backend.py</code>. It explains what files the
+                CLI generates.
+              </li>
+              <li>
+                Finally inspect
+                <code>app/filterx_generated/router_factory.py</code>. That is
+                the generated runtime API reviewers will call.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <span class="code-label">Generated router bootstrap</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="com"># app/filterx_generated/router.py</span>
+<span class="kw">from</span> .entities <span class="kw">import</span> ENTITIES
+<span class="kw">from</span> .router_factory <span class="kw">import</span> create_router
+
+API_PREFIX = <span class="str">"/api"</span>
+SESSION_DEPENDENCY_IMPORT = <span class="str">"app.database:get_db"</span>
+
+router = create_router(
+    api_prefix=API_PREFIX,
+    entities=ENTITIES,
+    session_dependency_import=SESSION_DEPENDENCY_IMPORT,
+)</code></pre>
+          <div class="code-note">
+            <h4>Human explanation</h4>
+            <p>
+              This tiny file is the generated integration point. It does not
+              know anything about a specific model like <code>Company</code> or
+              <code>Task</code>.
+            </p>
+            <ul>
+              <li><code>ENTITIES</code> is the scanned model registry.</li>
+              <li><code>API_PREFIX</code> decides where the API is exposed.</li>
+              <li>
+                <code>SESSION_DEPENDENCY_IMPORT</code> keeps DB session
+                ownership inside the host project.
+              </li>
+              <li>
+                <code>create_router()</code> turns metadata into actual FastAPI
+                endpoints.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="flow">
+        <h2>2. Information flow: frontend to backend to database</h2>
+        <div class="flow">
+          <div class="flow-row">
+            <div class="flow-box">
+              <strong>Frontend screen</strong>
+              <span
+                >Loads <code>/api/filterx/metadata</code>, renders fields,
+                operators, input widgets, and relationship fields.</span
+              >
+            </div>
+            <div class="arrow">→</div>
+            <div class="flow-box">
+              <strong>Filter request</strong>
+              <span
+                >Sends URL filters for quick search or a JSON filter tree for
+                advanced search.</span
+              >
+            </div>
+            <div class="arrow">→</div>
+            <div class="flow-box">
+              <strong>Generated router</strong>
+              <span
+                >Resolves entity, imports model class, gets DB session through
+                the configured dependency.</span
+              >
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">
+              <strong>SQLAlchemy query</strong>
+              <span
+                >Applies filters, joins, search, count, sort, offset, and
+                limit.</span
+              >
+            </div>
+            <div class="arrow">→</div>
+            <div class="flow-box">
+              <strong>Serializer</strong>
+              <span
+                >Returns root columns and shallow many-to-one relationship
+                objects.</span
+              >
+            </div>
+            <div class="arrow">→</div>
+            <div class="flow-box">
+              <strong>Frontend result</strong>
+              <span
+                >Receives <code>{ data, meta }</code> for tables or
+                <code>[{ key, count }]</code> for grouping.</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <h3>Standard response shape</h3>
+        <pre><code>{
+  <span class="str">"data"</span>: [
+    { <span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"name"</span>: <span class="str">"Acme Labs"</span> }
+  ],
+  <span class="str">"meta"</span>: {
+    <span class="str">"page"</span>: <span class="num">1</span>,
+    <span class="str">"size"</span>: <span class="num">20</span>,
+    <span class="str">"total_items"</span>: <span class="num">42</span>,
+    <span class="str">"total_pages"</span>: <span class="num">3</span>
+  }
+}</code></pre>
+
+        <span class="code-label">Endpoint code path</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">@router.get</span>(<span class="str">"/{entity}/query"</span>)
+<span class="kw">def</span> <span class="fn">query_entity</span>(
+    entity: str,
+    request: Request,
+    page: int = Query(<span class="num">1</span>, ge=<span class="num">1</span>),
+    size: int = Query(<span class="num">20</span>, ge=<span class="num">1</span>, le=<span class="num">100</span>),
+    sort_by: Optional[str] = Query(None),
+    order: str = Query(<span class="str">"asc"</span>, pattern=<span class="str">"^(asc|desc)$"</span>),
+    search: Optional[str] = Query(None),
+    db: Any = Depends(get_db),
+) -&gt; dict[str, Any]:
+    entity_meta = <span class="fn">_get_entity</span>(registry, entity)
+    model = <span class="fn">_model_for_entity</span>(entity_meta)
+    filters = <span class="fn">_parse_url_filters</span>(request)
+    <span class="kw">return</span> <span class="fn">_run_query</span>(
+        db, entity_meta, model,
+        page=page, size=size,
+        sort_by=sort_by, order=order,
+        search=search, filters=filters,
+        filter_tree=None,
+    )</code></pre>
+          <div class="code-note">
+            <h4>What this means in plain language</h4>
+            <ol>
+              <li>
+                The URL says which entity to query: <code>companies</code>,
+                <code>departments</code>, <code>tasks</code>, and so on.
+              </li>
+              <li>
+                The router looks up that entity in the generated registry
+                instead of using hardcoded routes.
+              </li>
+              <li>
+                The registry tells it the Python module for the real SQLAlchemy
+                model.
+              </li>
+              <li>
+                FastAPI injects the database session through
+                <code>Depends(get_db)</code>.
+              </li>
+              <li>The request query string is converted into filter rules.</li>
+              <li>
+                <code>_run_query()</code> performs the actual SQLAlchemy query
+                pipeline.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <span class="code-label">Query pipeline</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_run_query</span>(db, entity, model, *, page, size,
+               sort_by, order, search, filters, filter_tree):
+    query = db.query(model)
+
+    <span class="kw">for</span> filter_rule <span class="kw">in</span> filters:
+        query, _ = <span class="fn">_apply_filter</span>(query, model, filter_rule)
+
+    query, _ = <span class="fn">_apply_tree</span>(query, model, filter_tree)
+    query = <span class="fn">_apply_search</span>(query, model, entity, search)
+
+    total = <span class="fn">_count_query</span>(query, model)
+    query = <span class="fn">_apply_sort</span>(query, model, entity, sort_by, order)
+
+    rows = query.offset((page - <span class="num">1</span>) * size).limit(size).all()
+    <span class="kw">return</span> { <span class="str">"data"</span>: serialize(rows), <span class="str">"meta"</span>: page_meta }</code></pre>
+          <div class="code-note">
+            <h4>Why the order matters</h4>
+            <ul>
+              <li>
+                Filters run before count so pagination metadata reflects the
+                filtered dataset.
+              </li>
+              <li>Search runs before count for the same reason.</li>
+              <li>
+                Sorting happens before offset/limit so each page is
+                deterministic.
+              </li>
+              <li>
+                Serialization happens last so SQLAlchemy does the database work
+                first.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="tree">
+        <h2>3. Filter tree system demystified</h2>
+        <p>
+          The tree system exists because real users need filters more complex
+          than a flat list. A tree lets the UI express nested logic:
+          <code>(A AND B) OR (C AND D)</code>. The backend recursively evaluates
+          the tree into SQLAlchemy boolean expressions.
+        </p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h3>Condition node</h3>
+            <p>
+              A leaf. It maps one field path, one operation, and one value into
+              a SQLAlchemy predicate.
+            </p>
+            <pre><code>{
+  <span class="str">"node_type"</span>: <span class="str">"condition"</span>,
+  <span class="str">"field"</span>: <span class="str">"company.name"</span>,
+  <span class="str">"operation"</span>: <span class="str">"ilike"</span>,
+  <span class="str">"value"</span>: <span class="str">"acme"</span>
+}</code></pre>
+          </article>
+          <article class="card">
+            <h3>Operator node</h3>
+            <p>
+              A group. It combines child conditions or child groups with
+              <code>AND</code> or <code>OR</code>.
+            </p>
+            <pre><code>{
+  <span class="str">"node_type"</span>: <span class="str">"operator"</span>,
+  <span class="str">"operator"</span>: <span class="str">"AND"</span>,
+  <span class="str">"children"</span>: [
+    { <span class="str">"node_type"</span>: <span class="str">"condition"</span>, <span class="str">"field"</span>: <span class="str">"budget"</span>, <span class="str">"operation"</span>: <span class="str">"gte"</span>, <span class="str">"value"</span>: <span class="num">1000</span> },
+    { <span class="str">"node_type"</span>: <span class="str">"condition"</span>, <span class="str">"field"</span>: <span class="str">"company.name"</span>, <span class="str">"operation"</span>: <span class="str">"ilike"</span>, <span class="str">"value"</span>: <span class="str">"acme"</span> }
+  ]
+}</code></pre>
+          </article>
+        </div>
+
+        <h3>Backend evaluation rules</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>What happens</th>
+              <th>Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Validate node shape</td>
+              <td>Each node must be a condition or an operator.</td>
+              <td>
+                Prevents ambiguous filter input from reaching SQL construction.
+              </td>
+            </tr>
+            <tr>
+              <td>Resolve field path</td>
+              <td>
+                <code>company.name</code> becomes a relationship join to
+                <code>company</code> and a column access to <code>name</code>.
+              </td>
+              <td>The UI can filter relationships without custom endpoints.</td>
+            </tr>
+            <tr>
+              <td>Build predicate</td>
+              <td>
+                <code>ilike</code> becomes <code>column.ilike("%value%")</code>.
+              </td>
+              <td>Operations stay consistent across all entities.</td>
+            </tr>
+            <tr>
+              <td>Combine clauses</td>
+              <td>
+                Child clauses are combined with SQLAlchemy <code>and_</code> or
+                <code>or_</code>.
+              </td>
+              <td>Nested business filters are represented exactly.</td>
+            </tr>
+            <tr>
+              <td>Depth guard</td>
+              <td>The generated runtime limits tree depth.</td>
+              <td>
+                Protects the API from pathological or accidental recursive
+                filters.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <span class="code-label">Tree evaluator code</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_evaluate_tree</span>(query, model, node, depth=<span class="num">0</span>):
+    <span class="kw">if</span> depth &gt; MAX_FILTER_TREE_DEPTH:
+        <span class="kw">raise</span> HTTPException(<span class="num">400</span>, <span class="str">"Filter tree too deep"</span>)
+
+    <span class="kw">if</span> node[<span class="str">"node_type"</span>] == <span class="str">"condition"</span>:
+        column, query, joined = <span class="fn">_resolve_field</span>(
+            query, model, node[<span class="str">"field"</span>], node[<span class="str">"operation"</span>]
+        )
+        clause = <span class="fn">_filter_expression</span>(
+            column, node[<span class="str">"operation"</span>], node.get(<span class="str">"value"</span>)
+        )
+        <span class="kw">return</span> query, clause, joined
+
+    clauses = []
+    <span class="kw">for</span> child <span class="kw">in</span> node[<span class="str">"children"</span>]:
+        query, child_clause, _ = <span class="fn">_evaluate_tree</span>(query, model, child, depth + <span class="num">1</span>)
+        clauses.append(child_clause)
+
+    <span class="kw">if</span> node[<span class="str">"operator"</span>] == <span class="str">"AND"</span>:
+        <span class="kw">return</span> query, and_(*clauses), True
+    <span class="kw">return</span> query, or_(*clauses), True</code></pre>
+          <div class="code-note">
+            <h4>Mental model for reviewers</h4>
+            <p>
+              Think of the JSON tree as a safe, structured way to build a SQL
+              <code>WHERE</code> clause.
+            </p>
+            <ul>
+              <li>A condition node becomes one SQL predicate.</li>
+              <li>
+                An operator node becomes a parenthesized group of predicates.
+              </li>
+              <li>Nested operators become nested parentheses.</li>
+              <li>
+                The backend never executes raw user SQL; it maps known
+                operations to SQLAlchemy expressions.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <span class="code-label">Operation mapping</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_filter_expression</span>(column, operation, value):
+    <span class="kw">if</span> operation == <span class="str">"eq"</span>:    <span class="kw">return</span> column == value
+    <span class="kw">if</span> operation == <span class="str">"ne"</span>:    <span class="kw">return</span> column != value
+    <span class="kw">if</span> operation == <span class="str">"gte"</span>:   <span class="kw">return</span> column &gt;= value
+    <span class="kw">if</span> operation == <span class="str">"ilike"</span>: <span class="kw">return</span> column.ilike(<span class="str">f"%{value}%"</span>)
+    <span class="kw">if</span> operation == <span class="str">"in"</span>:    <span class="kw">return</span> column.in_(value)
+    <span class="kw">if</span> operation == <span class="str">"between"</span>:
+        <span class="kw">return</span> column.between(value[<span class="num">0</span>], value[<span class="num">1</span>])</code></pre>
+          <div class="code-note">
+            <h4>Why this is review-critical</h4>
+            <p>
+              This is where user intent becomes a database predicate. Reviewers
+              should verify three things:
+            </p>
+            <ol>
+              <li>Only supported operation names are accepted.</li>
+              <li>
+                Operations validate value shape, especially <code>in</code> and
+                <code>between</code>.
+              </li>
+              <li>
+                SQLAlchemy expressions are used instead of string-built SQL.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="odoo">
+        <h2>4. Odoo-style searching and field-type input</h2>
+        <p>
+          FilterX supports quick filters through URL parameters. The pattern is
+          simple: <code>field_operation=value</code>. If no operation suffix is
+          provided, the default operation is <code>eq</code>.
+        </p>
+
+        <pre><code><span class="com"># String contains search</span>
+GET /api/filterx/companies/query?name_ilike=acme
+
+<span class="com"># Numeric range-style comparison</span>
+GET /api/filterx/projects/query?budget_gte=10000&amp;budget_lte=50000
+
+<span class="com"># Relationship path filter</span>
+GET /api/filterx/employees/query?department.company.name_ilike=acme</code></pre>
+
+        <h3>Field type controls frontend input</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Field type</th>
+              <th>Typical UI input</th>
+              <th>Allowed operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>string</code>, <code>text</code>, <code>enum</code></td>
+              <td>Text input or select</td>
+              <td>
+                <code>eq</code>, <code>ne</code>, <code>like</code>,
+                <code>ilike</code>, <code>starts_with</code>,
+                <code>ends_with</code>, <code>in</code>, <code>not_in</code>,
+                null checks
+              </td>
+            </tr>
+            <tr>
+              <td><code>integer</code>, <code>float</code></td>
+              <td>Number input, range input</td>
+              <td>
+                <code>eq</code>, <code>ne</code>, comparisons,
+                <code>between</code>, <code>in</code>, <code>not_in</code>, null
+                checks
+              </td>
+            </tr>
+            <tr>
+              <td><code>boolean</code></td>
+              <td>Toggle or tri-state select</td>
+              <td><code>eq</code>, <code>ne</code>, null checks</td>
+            </tr>
+            <tr>
+              <td><code>date</code>, <code>datetime</code></td>
+              <td>Date picker or range picker</td>
+              <td>
+                <code>eq</code>, <code>ne</code>, comparisons,
+                <code>between</code>, null checks
+              </td>
+            </tr>
+            <tr>
+              <td><code>json</code></td>
+              <td>Advanced / restricted input</td>
+              <td><code>eq</code>, <code>ne</code>, null checks</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <strong>Why this matters:</strong>
+          The frontend should not guess which operations are valid. It reads
+          field metadata from <code>/api/filterx/metadata</code> and renders
+          only the inputs and operators that make sense for that field type.
+        </div>
+
+        <span class="code-label">URL grammar parser</span>
+        <div class="code-walkthrough">
+          <pre><code>VALID_OPS = { <span class="str">"eq"</span>, <span class="str">"ne"</span>, <span class="str">"gte"</span>, <span class="str">"ilike"</span>, <span class="str">"in"</span>, <span class="str">"between"</span>, ... }
+
+<span class="kw">def</span> <span class="fn">_parse_filter_param</span>(key: str, value: str):
+    <span class="kw">for</span> op <span class="kw">in</span> sorted(VALID_OPS, key=len, reverse=True):
+        suffix = <span class="str">f"_{op}"</span>
+        <span class="kw">if</span> key.endswith(suffix):
+            field = key[:-len(suffix)]
+            <span class="kw">return</span> {
+                <span class="str">"field"</span>: field,
+                <span class="str">"operation"</span>: op,
+                <span class="str">"value"</span>: <span class="fn">_parse_value</span>(value, op),
+            }
+
+    <span class="com"># No suffix means equality</span>
+    <span class="kw">return</span> { <span class="str">"field"</span>: key, <span class="str">"operation"</span>: <span class="str">"eq"</span>, <span class="str">"value"</span>: <span class="fn">_parse_value</span>(value, <span class="str">"eq"</span>) }</code></pre>
+          <div class="code-note">
+            <h4>Human explanation</h4>
+            <p>
+              The parser turns a query string into the same internal filter
+              format used by the tree system.
+            </p>
+            <ul>
+              <li>
+                <code>name_ilike=acme</code> becomes field <code>name</code>,
+                operation <code>ilike</code>, value <code>acme</code>.
+              </li>
+              <li>
+                <code>budget_gte=1000</code> becomes field <code>budget</code>,
+                operation <code>gte</code>, numeric value <code>1000</code>.
+              </li>
+              <li>
+                <code>is_active=true</code> becomes equality with boolean
+                <code>true</code>.
+              </li>
+              <li>
+                <code>department.company.name_ilike=acme</code> remains a
+                dot-path field and is resolved later by join logic.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <span class="code-label">Metadata-driven frontend input</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="com">// Example metadata field returned to the UI</span>
+{
+  <span class="str">"name"</span>: <span class="str">"budget"</span>,
+  <span class="str">"type"</span>: <span class="str">"float"</span>,
+  <span class="str">"ops"</span>: [<span class="str">"eq"</span>, <span class="str">"ne"</span>, <span class="str">"gt"</span>, <span class="str">"gte"</span>, <span class="str">"lt"</span>, <span class="str">"lte"</span>, <span class="str">"between"</span>]
+}
+
+<span class="com">// UI behavior</span>
+field.type === <span class="str">"float"</span>    → show number input
+field.ops includes <span class="str">"between"</span> → allow min/max range
+field.ops excludes <span class="str">"ilike"</span>   → do not show text contains operator</code></pre>
+          <div class="code-note">
+            <h4>Why this matters to reviewers</h4>
+            <p>
+              The frontend is not an independent source of truth. It is a
+              renderer of the backend metadata contract.
+            </p>
+            <p>
+              That is what makes the UI generic: when a new model is scanned,
+              the UI can build the correct filter controls without a
+              hand-written config file for that model.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="di">
+        <h2>5. Dependency injection and query execution</h2>
+        <p>
+          The generated router does not create database sessions manually. It
+          imports the configured session dependency from
+          <code>python.session_dependency_import</code>, then uses FastAPI
+          <code>Depends</code>. This keeps FilterX aligned with the host
+          project's transaction/session lifecycle.
+        </p>
+
+        <pre><code><span class="kw">def</span> <span class="fn">create_router</span>(api_prefix=<span class="str">"/api"</span>, entities=None, session_dependency_import=<span class="str">"app.database:get_db"</span>):
+    get_db = <span class="fn">_import_object</span>(session_dependency_import)
+
+    <span class="kw">@router.get</span>(<span class="str">"/{entity}/query"</span>)
+    <span class="kw">def</span> <span class="fn">query_entity</span>(..., db = Depends(get_db)):
+        entity_meta = <span class="fn">_get_entity</span>(registry, entity)
+        model = <span class="fn">_model_for_entity</span>(entity_meta)
+        <span class="kw">return</span> <span class="fn">_run_query</span>(db, entity_meta, model, ...)</code></pre>
+
+        <span class="code-label">Host project contract</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="com"># app/database.py in the host project</span>
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+Base = declarative_base()
+
+<span class="kw">def</span> <span class="fn">get_db</span>():
+    db = SessionLocal()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> db
+    <span class="kw">finally</span>:
+        db.close()
+
+<span class="com"># filterx.yaml points to it</span>
+python:
+  session_dependency_import: app.database:get_db</code></pre>
+          <div class="code-note">
+            <h4>What FilterX assumes</h4>
+            <p>
+              FilterX only assumes that the host exposes a function compatible
+              with FastAPI dependencies.
+            </p>
+            <ul>
+              <li>The host decides how sessions are created.</li>
+              <li>The host decides when sessions are closed.</li>
+              <li>
+                FilterX simply asks FastAPI to inject <code>db</code> for each
+                request.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Why dependency injection is mandatory</h3>
+        <div class="grid-3">
+          <article class="card">
+            <h3>Project compatibility</h3>
+            <p>
+              Each host project may use different session setup, middleware, or
+              transaction rules.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Testability</h3>
+            <p>
+              FastAPI dependency overrides can replace the database during
+              tests.
+            </p>
+          </article>
+          <article class="card">
+            <h3>No global coupling</h3>
+            <p>
+              Generated code uses the configured import path rather than
+              hardcoding a session factory.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="joins">
+        <h2>6. Joins and relationship paths</h2>
+        <p>
+          Joins are driven by dot notation. A path like
+          <code>department.company.name</code> is resolved one segment at a
+          time: each middle segment must be a SQLAlchemy relationship, and the
+          final segment must be a column.
+        </p>
+
+        <div class="sequence">
+          <article class="step">
+            <h3>Start from the root model</h3>
+            <p>
+              For <code>/api/filterx/employees/query</code>, the root model is
+              <code>Employee</code>.
+            </p>
+          </article>
+          <article class="step">
+            <h3>Walk relationship segments</h3>
+            <p>
+              <code>department</code> joins <code>Employee.department</code>.
+              <code>company</code> joins <code>Department.company</code>.
+            </p>
+          </article>
+          <article class="step">
+            <h3>Resolve the final field</h3>
+            <p>
+              <code>name</code> becomes the column used in the predicate, sort,
+              or group-by expression.
+            </p>
+          </article>
+          <article class="step">
+            <h3>Apply SQL expression</h3>
+            <p>
+              The generated runtime applies the operation, such as
+              <code>company.name ILIKE '%acme%'</code>.
+            </p>
+          </article>
+        </div>
+
+        <pre><code><span class="com"># Multi-hop relationship query</span>
+GET /api/filterx/employees/query?department.company.name_ilike=acme
+
+<span class="com"># Relationship group-by</span>
+GET /api/filterx/employees/group-by/department.company.name</code></pre>
+
+        <span class="code-label">Relationship resolver code</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_resolve_field</span>(query, root_model, field_path, operation=None):
+    parts = field_path.split(<span class="str">"."</span>)
+    current = root_model
+
+    <span class="kw">for</span> rel_name <span class="kw">in</span> parts[:-<span class="num">1</span>]:
+        rel_attr = getattr(current, rel_name)
+        related_alias = aliased(rel_attr.property.mapper.class_)
+        query = query.join(related_alias, rel_attr)
+        current = related_alias
+
+    column_name = parts[-<span class="num">1</span>]
+    <span class="kw">return</span> getattr(current, column_name), query, True</code></pre>
+          <div class="code-note">
+            <h4>Human explanation</h4>
+            <p>
+              Each dot segment before the last one is treated as a relationship
+              to join through.
+            </p>
+            <ol>
+              <li>
+                <code>department.company.name</code> is split into
+                <code>department</code>, <code>company</code>, and
+                <code>name</code>.
+              </li>
+              <li>
+                The backend starts at the requested root model, for example
+                <code>Employee</code>.
+              </li>
+              <li>
+                It joins from <code>Employee</code> to <code>Department</code>.
+              </li>
+              <li>
+                Then it joins from <code>Department</code> to
+                <code>Company</code>.
+              </li>
+              <li>
+                The final part, <code>name</code>, becomes the column used in
+                the filter, sort, or group-by.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <span class="code-label">Why aliases are used</span>
+        <div class="code-walkthrough">
+          <pre><code>related_alias = aliased(rel_attr.property.mapper.class_)
+query = query.join(related_alias, rel_attr)
+current = related_alias</code></pre>
+          <div class="code-note">
+            <h4>Reviewer note</h4>
+            <p>
+              Aliases make joins safer when the same table can appear more than
+              once, especially with self-relations like
+              <code>Employee.manager</code>.
+            </p>
+            <p>
+              Without aliases, SQLAlchemy can produce ambiguous SQL when a model
+              joins to itself or when multiple paths reach the same target
+              table.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Important review note:</strong>
+          The generated code supports arbitrary dot paths that SQLAlchemy can
+          resolve. Practical limits should still be controlled by scan depth, UI
+          choices, indexing, and project-specific performance policies.
+        </div>
+      </section>
+
+      <section id="grouping">
+        <h2>7. Grouping flow</h2>
+        <p>
+          Grouping is server-side. The backend applies any filters first,
+          resolves the group field, then emits <code>GROUP BY</code> with
+          <code>COUNT</code>. The frontend receives a simple analytics-ready
+          array.
+        </p>
+
+        <pre><code><span class="com"># Request</span>
+GET /api/filterx/tasks/group-by/status
+
+<span class="com"># Response</span>
+[
+  { <span class="str">"key"</span>: <span class="str">"open"</span>, <span class="str">"count"</span>: <span class="num">12</span> },
+  { <span class="str">"key"</span>: <span class="str">"done"</span>, <span class="str">"count"</span>: <span class="num">7</span> }
+]</code></pre>
+
+        <h3>Filtered grouping</h3>
+        <pre><code>POST /api/filterx/tasks/group-by/status/filter
+
+{
+  <span class="str">"node_type"</span>: <span class="str">"condition"</span>,
+  <span class="str">"field"</span>: <span class="str">"project.department.company.name"</span>,
+  <span class="str">"operation"</span>: <span class="str">"ilike"</span>,
+  <span class="str">"value"</span>: <span class="str">"acme"</span>
+}</code></pre>
+
+        <span class="code-label">Grouping implementation</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_run_group_by</span>(db, entity, model, *, field, search, filters, filter_tree):
+    query = db.query(model)
+
+    <span class="kw">for</span> filter_rule <span class="kw">in</span> filters:
+        query, _ = <span class="fn">_apply_filter</span>(query, model, filter_rule)
+
+    query, _ = <span class="fn">_apply_tree</span>(query, model, filter_tree)
+    query = <span class="fn">_apply_search</span>(query, model, entity, search)
+
+    column, query, _ = <span class="fn">_resolve_field</span>(query, model, field)
+    rows = (
+        query.with_entities(column, func.count().label(<span class="str">"count"</span>))
+             .group_by(column)
+             .order_by(func.count().desc())
+             .all()
+    )
+    <span class="kw">return</span> [{ <span class="str">"key"</span>: row[<span class="num">0</span>], <span class="str">"count"</span>: row[<span class="num">1</span>] } <span class="kw">for</span> row <span class="kw">in</span> rows]</code></pre>
+          <div class="code-note">
+            <h4>Human explanation</h4>
+            <p>
+              Grouping is not a separate query language. It reuses the same
+              filtering machinery first, then groups what remains.
+            </p>
+            <ol>
+              <li>Start with the entity table.</li>
+              <li>Apply URL filters, tree filters, and search.</li>
+              <li>Resolve the group-by field, including relationship paths.</li>
+              <li>
+                Replace normal row selection with <code>field, count(*)</code>.
+              </li>
+              <li>
+                Return a small array the frontend can use for chips, charts,
+                facets, or summaries.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="generic">
+        <h2>8. What makes it generic</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>No hardcoded entity routers</h3>
+            <p>
+              The same generated endpoint receives an <code>{entity}</code> path
+              parameter and resolves it against the scanned registry.
+            </p>
+          </article>
+          <article class="card">
+            <h3>No hand-written response schemas required</h3>
+            <p>
+              The runtime serializes ORM columns generically and includes
+              shallow many-to-one relationships for common table rendering.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Runtime model import</h3>
+            <p>
+              Each entity stores its original module path, so the router can
+              import the correct model class dynamically.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Field-type driven behavior</h3>
+            <p>
+              The scanner maps SQLAlchemy types to filter types and valid
+              operations, allowing the UI and backend to share the same
+              contract.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="cli">
+        <h2>9. Critical CLI parts and why they exist</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>CLI part</th>
+              <th>Mandatory role</th>
+              <th>Why it exists</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>filterx.yaml</code></td>
+              <td>Contract between FilterX and the host project.</td>
+              <td>
+                Prevents assumptions about project structure. The project tells
+                FilterX where the app, Base, models, session dependency, and
+                anchors live.
+              </td>
+            </tr>
+            <tr>
+              <td><code>scan</code></td>
+              <td>
+                Builds <code>.filterx/scan.json</code>, diagnostics, and plan.
+              </td>
+              <td>
+                Generation must be based on real model metadata, not static
+                templates.
+              </td>
+            </tr>
+            <tr>
+              <td><code>backend install</code></td>
+              <td>Generates runtime query router and mounts it.</td>
+              <td>
+                This is the core integration: it turns scanned models into a
+                usable API.
+              </td>
+            </tr>
+            <tr>
+              <td><code>frontend install</code></td>
+              <td>Generates frontend entity config and optional routes.</td>
+              <td>
+                Lets UI screens consume the same metadata contract instead of
+                redefining fields manually.
+              </td>
+            </tr>
+            <tr>
+              <td><code>db install</code></td>
+              <td>
+                Generates optional persistence migration for saved filters,
+                sharing, and auditing.
+              </td>
+              <td>
+                Saved filters need project-local persistence, not external
+                state.
+              </td>
+            </tr>
+            <tr>
+              <td><code>validate</code></td>
+              <td>Checks generated files and mount snippets.</td>
+              <td>
+                Confirms the integration is present before runtime testing.
+              </td>
+            </tr>
+            <tr>
+              <td><code>rollback</code></td>
+              <td>Restores patch bundle backups.</td>
+              <td>
+                Generated code must be reversible for safe adoption in existing
+                projects.
+              </td>
+            </tr>
+            <tr>
+              <td>Anchor patching</td>
+              <td>Host file insertion at known comments.</td>
+              <td>
+                Avoids blind modifications to app startup files and preserves
+                user code ownership.
+              </td>
+            </tr>
+            <tr>
+              <td>Manifest and patches</td>
+              <td>Tracks written files and backups.</td>
+              <td>Supports idempotency, conflict handling, and rollback.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <span class="code-label">Scanner core</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">run_scan</span>(config, project_root):
+    sys.path.insert(<span class="num">0</span>, str(project_root))
+
+    <span class="fn">_walk_and_import_package</span>(config[<span class="str">"python"</span>][<span class="str">"models_package"</span>])
+    base_cls = <span class="fn">_import_object</span>(config[<span class="str">"python"</span>][<span class="str">"base_class_import"</span>])
+
+    mapper_classes = [m.class_ <span class="kw">for</span> m <span class="kw">in</span> base_cls.registry.mappers]
+    entities = [<span class="fn">_build_entity</span>(cls) <span class="kw">for</span> cls <span class="kw">in</span> mapper_classes]
+
+    <span class="kw">return</span> {
+      <span class="str">"entities"</span>: entities,
+      <span class="str">"relationship_graph"</span>: graph,
+      <span class="str">"routes"</span>: route_scan,
+      <span class="str">"diagnostics"</span>: diagnostics,
+    }</code></pre>
+          <div class="code-note">
+            <h4>Why scan must exist before generation</h4>
+            <p>
+              The generator should never invent model knowledge. It must read
+              the host project first.
+            </p>
+            <ul>
+              <li>
+                <code>models_package</code> decides which models are
+                discoverable.
+              </li>
+              <li>
+                <code>Base.registry.mappers</code> is the source of ORM truth.
+              </li>
+              <li>
+                Diagnostics expose risky model graph facts like cycles, deep
+                joins, and composite keys.
+              </li>
+              <li>
+                The generated API is only as accurate as the scan artifact.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <span class="code-label">Backend generation plan</span>
+        <div class="code-walkthrough">
+          <pre><code><span class="kw">def</span> <span class="fn">_build_patch_ops</span>(generated_root, entities, api_prefix, session_dependency_import, ...):
+    <span class="kw">return</span> [
+        PatchOp(<span class="str">"generated_file"</span>, <span class="str">"app/filterx_generated/entities.py"</span>, <span class="fn">_render_entities_py</span>(entities)),
+        PatchOp(<span class="str">"generated_file"</span>, <span class="str">"app/filterx_generated/router_factory.py"</span>, <span class="fn">_render_router_factory_py</span>()),
+        PatchOp(<span class="str">"generated_file"</span>, <span class="str">"app/filterx_generated/router.py"</span>, <span class="fn">_render_router_py</span>(api_prefix, session_dependency_import)),
+        PatchOp(<span class="str">"anchor_insert"</span>, <span class="str">"app/main.py"</span>, snippet=<span class="str">"app.include_router(...)"</span>),
+    ]</code></pre>
+          <div class="code-note">
+            <h4>Why generated files are patch operations</h4>
+            <p>
+              FilterX treats every write as an operation. That allows dry-run,
+              validation, idempotency, and rollback to all work from the same
+              plan.
+            </p>
+            <ol>
+              <li>Generated files are owned by FilterX.</li>
+              <li>Host files are only touched through anchor inserts.</li>
+              <li>
+                The patcher can preview, apply, skip unchanged files, or roll
+                back.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <span class="code-label">Safety preflight</span>
+        <div class="code-walkthrough">
+          <pre><code>candidate_paths = [
+    <span class="str">"/api/filterx/metadata"</span>,
+    <span class="str">"/api/filterx/{entity}/query"</span>,
+    <span class="str">"/api/filterx/{entity}/filter"</span>,
+    <span class="str">"/api/filterx/{entity}/group-by/{field:path}"</span>,
+]
+
+route_conflicts = <span class="fn">check_route_path_conflicts</span>(existing_routes, candidate_paths)
+anchor_conflicts = <span class="fn">check_anchor_exists</span>(mount_file, mount_anchor)
+
+<span class="kw">if</span> strict_conflict_mode <span class="kw">and</span> conflicts:
+    <span class="kw">return</span> blocked_install</code></pre>
+          <div class="code-note">
+            <h4>Why reviewers should care</h4>
+            <p>
+              Generated code is powerful, so the CLI blocks unsafe installs
+              before writing files.
+            </p>
+            <ul>
+              <li>If the route already exists, generation is stopped.</li>
+              <li>If the anchor is missing, generation is stopped.</li>
+              <li>
+                If generated files changed and overwrites are disabled,
+                generation is stopped.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="review-checklist">
+        <h2>10. Code review checklist</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Backend runtime</h3>
+            <ul>
+              <li>Unknown entity returns 404.</li>
+              <li>Invalid field path returns 400.</li>
+              <li>Invalid operation returns 400.</li>
+              <li>Pagination uses offset and limit.</li>
+              <li>Joined counts use distinct root primary key.</li>
+              <li>Tree depth is guarded.</li>
+              <li>Session is injected through the configured dependency.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>CLI safety</h3>
+            <ul>
+              <li>Dry-run produces no writes.</li>
+              <li>Missing anchors block installation in strict mode.</li>
+              <li>Generated files are idempotent.</li>
+              <li>Route conflicts are detected before writes.</li>
+              <li>Rollback restores or removes touched files.</li>
+              <li>
+                Scan diagnostics reveal cycles, composite PKs, and depth issues.
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="mandatory-tests">
+        <h2>11. Mandatory tests to run</h2>
+        <pre><code><span class="com"># CLI regression suite</span>
+<span class="fn">Set-Location</span> <span class="str">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\filter_test_project"</span>
+<span class="fn">&amp;</span> <span class="str">"c:/Users/raedn/OneDrive/Bureau/FILES/DEV FILES/MAIN_PROJECTS/.venv/Scripts/python.exe"</span> -m pytest tools/filterx/tests -q
+
+<span class="com"># Robustness lab integration check</span>
+<span class="fn">Set-Location</span> <span class="str">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\filterx_robustness_lab"</span>
+<span class="fn">&amp;</span> <span class="str">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> backend validate --project-root . --config filterx.yaml --json</code></pre>
+      </section>
+
+      <footer class="footer">
+        FilterX technical review guide. Focused on mandatory code-review
+        concepts, request flow, runtime query generation, and CLI safety.
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FilterX Pitch Guide</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --panel: #0d0d0f;
+        --panel-2: #141417;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --line: #27272a;
+        --soft-line: #1f1f23;
+        --accent: #8bdbff;
+        --accent-2: #a7f3d0;
+        --warn: #fcd34d;
+        --danger: #fca5a5;
+        --code-bg: #09090b;
+        --shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(139, 219, 255, 0.08),
+            transparent 35rem
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(167, 243, 208, 0.06),
+            transparent 32rem
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 48px 24px 72px;
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        background: linear-gradient(
+          145deg,
+          rgba(20, 20, 23, 0.94),
+          rgba(8, 8, 10, 0.96)
+        );
+        border-radius: 28px;
+        padding: 44px;
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 18px;
+        color: var(--accent-2);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent-2);
+        box-shadow: 0 0 22px rgba(167, 243, 208, 0.8);
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.15;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(40px, 6vw, 72px);
+        letter-spacing: -0.06em;
+      }
+      h2 {
+        margin-top: 48px;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: -0.035em;
+      }
+      h3 {
+        margin-top: 26px;
+        font-size: 21px;
+        letter-spacing: -0.015em;
+      }
+
+      .lead {
+        max-width: 850px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 20px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 32px;
+      }
+
+      .stat,
+      .card,
+      .step,
+      .callout {
+        border: 1px solid var(--line);
+        background: rgba(13, 13, 15, 0.9);
+        border-radius: 18px;
+      }
+
+      .stat {
+        padding: 20px;
+      }
+      .stat strong {
+        display: block;
+        font-size: 26px;
+        letter-spacing: -0.03em;
+      }
+      .stat span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .section {
+        margin-top: 28px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+      .card h3 {
+        margin-top: 0;
+      }
+      .card p,
+      .card li {
+        color: var(--muted);
+      }
+      .card ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: #0b0b0d;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .steps {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+        counter-reset: steps;
+      }
+
+      .step {
+        position: relative;
+        padding: 22px 22px 22px 72px;
+        counter-increment: steps;
+      }
+
+      .step::before {
+        content: counter(steps);
+        position: absolute;
+        left: 22px;
+        top: 22px;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: #101820;
+        color: var(--accent);
+        border: 1px solid rgba(139, 219, 255, 0.3);
+        font-weight: 800;
+      }
+
+      .step h3 {
+        margin-top: 0;
+      }
+      .step p {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 16px 0 0;
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px solid var(--soft-line);
+        background: var(--code-bg);
+        color: #e4e4e7;
+        font:
+          13.5px/1.55 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+      }
+
+      code {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+      }
+      .cmd {
+        color: #a7f3d0;
+      }
+      .path {
+        color: #8bdbff;
+      }
+      .comment {
+        color: #71717a;
+      }
+      .flag {
+        color: #fcd34d;
+      }
+      .value {
+        color: #c4b5fd;
+      }
+
+      .callout {
+        padding: 20px;
+        margin-top: 18px;
+        border-color: rgba(139, 219, 255, 0.26);
+        background: rgba(10, 18, 24, 0.8);
+      }
+
+      .callout strong {
+        color: var(--accent);
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        display: table;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--soft-line);
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--text);
+        background: #111114;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      td {
+        color: var(--muted);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .footer {
+        margin-top: 56px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          padding: 28px;
+        }
+        .hero-grid,
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+        .page {
+          padding: 28px 16px 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="eyebrow"><span class="dot"></span> FilterX Pitch Guide</div>
+        <h1>
+          Plug a complete filtering API into any FastAPI + SQLAlchemy project.
+        </h1>
+        <p class="lead">
+          FilterX is a CLI-driven integration system that scans existing
+          SQLAlchemy models, generates a reusable query API, mounts it safely
+          into FastAPI, and gives frontend teams metadata to build advanced
+          filtering screens without rewriting model-specific filtering code for
+          every entity.
+        </p>
+        <div class="hero-grid">
+          <div class="stat">
+            <strong>1 CLI</strong
+            ><span>Scan, generate, validate, rollback.</span>
+          </div>
+          <div class="stat">
+            <strong>Any model graph</strong
+            ><span
+              >Fields, relationships, joins, and types are discovered.</span
+            >
+          </div>
+          <div class="stat">
+            <strong>Real API</strong
+            ><span
+              >Query, filter trees, sorting, pagination, search, grouping.</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>The problem</h2>
+        <div class="grid-3">
+          <article class="card">
+            <span class="badge">Repeated work</span>
+            <h3>Every list page repeats the same backend logic</h3>
+            <p>
+              Teams write one-off endpoints for pagination, search, sorting,
+              filters, joins, and grouping for every model.
+            </p>
+          </article>
+          <article class="card">
+            <span class="badge">Drift</span>
+            <h3>Frontend and backend definitions go out of sync</h3>
+            <p>
+              Fields, filter operators, types, and relationships are duplicated
+              in multiple layers and eventually diverge.
+            </p>
+          </article>
+          <article class="card">
+            <span class="badge">Risk</span>
+            <h3>Manual integration is fragile</h3>
+            <p>
+              Blind code edits and copy-pasted routers make adoption risky in
+              existing projects.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>The FilterX answer</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Generate from your real models</h3>
+            <p>
+              FilterX imports the configured SQLAlchemy model package, reads
+              columns and relationships, and builds an entity registry.
+            </p>
+            <ul>
+              <li>Field names and SQL types</li>
+              <li>Permitted operations by type</li>
+              <li>Primary keys and foreign keys</li>
+              <li>Relationship paths for joins</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Patch only where explicitly allowed</h3>
+            <p>
+              Host files are modified only at anchor comments. No blind rewrite,
+              no guessing, and every write has rollback metadata.
+            </p>
+            <pre><code><span class="comment"># In app/main.py</span>
+<span class="path"># FILTERX:ROUTER_MOUNT</span></code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>What you get after integration</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GET /api/filterx/metadata</code></td>
+              <td>
+                Frontend discovers entities, fields, relationship metadata, and
+                valid operators.
+              </td>
+            </tr>
+            <tr>
+              <td><code>GET /api/filterx/{entity}/query</code></td>
+              <td>
+                Odoo-style URL search with pagination, sorting, text search, and
+                field filters.
+              </td>
+            </tr>
+            <tr>
+              <td><code>POST /api/filterx/{entity}/filter</code></td>
+              <td>
+                Advanced custom filter trees with nested <code>AND</code> /
+                <code>OR</code> conditions.
+              </td>
+            </tr>
+            <tr>
+              <td><code>GET /api/filterx/{entity}/group-by/{field}</code></td>
+              <td>Server-side counts by field or relationship field.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>POST /api/filterx/{entity}/group-by/{field}/filter</code>
+              </td>
+              <td>Grouped analytics after applying an advanced filter tree.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <h2>Why the CLI exists</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Repeatable adoption</h3>
+            <p>
+              The same workflow works for a demo app, an ERP, or a new customer
+              project because the integration contract is declarative.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Safe operations</h3>
+            <p>
+              Dry-run, diagnostics, manifest tracking, conflict detection, and
+              rollback reduce the risk of introducing generated code into an
+              existing codebase.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Integration guide for the dummy project</h2>
+        <div class="callout">
+          <strong>Target directory:</strong>
+          <span class="muted"
+            >Run the following commands from
+            <code>filterx_robustness_lab</code>.</span
+          >
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <h3>Move into the project</h3>
+            <p>
+              This makes every relative path in
+              <code>filterx.yaml</code> resolve correctly.
+            </p>
+            <pre><code><span class="cmd">Set-Location</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\filterx_robustness_lab"</span></code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Install the target app and local CLI</h3>
+            <p>
+              This installs the dummy app dependencies and the editable FilterX
+              CLI from the local source project.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\python.exe"</span> <span class="flag">-m</span> pip install <span class="flag">-e</span> .
+<span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\python.exe"</span> <span class="flag">-m</span> pip install <span class="flag">-e</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\filter_test_project\tools\filterx"</span></code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Prepare the database</h3>
+            <p>
+              FilterX itself does not require a DB during scanning, but runtime
+              testing needs actual tables and rows.
+            </p>
+            <pre><code><span class="cmd">Copy-Item</span> .env.example .env <span class="flag">-Force</span>
+<span class="comment"># Confirm DATABASE_URL in .env points to PostgreSQL:</span>
+<span class="path">DATABASE_URL=postgresql://postgres:postgres@localhost:5432/filterx_robustness_lab</span></code></pre>
+            <p>Create the database once in PostgreSQL:</p>
+            <pre><code><span class="cmd">CREATE DATABASE</span> filterx_robustness_lab;</code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Create domain tables</h3>
+            <p>
+              This creates the normal business tables for companies,
+              departments, employees, projects, assignments, and tasks.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\alembic.exe"</span> revision <span class="flag">--autogenerate</span> <span class="flag">-m</span> <span class="value">"init_domain_models"</span>
+<span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\alembic.exe"</span> upgrade head</code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Seed test data</h3>
+            <p>
+              This gives the generated filter endpoints real relational data to
+              query.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\python.exe"</span> seed_data.py</code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Scan the project</h3>
+            <p>
+              FilterX imports the configured models package and writes the model
+              graph into <code>.filterx</code>.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> scan <span class="flag">--project-root</span> . <span class="flag">--config</span> filterx.yaml <span class="flag">--no-dry-run</span> <span class="flag">--json</span></code></pre>
+            <p>
+              Expected: 6 entities. Warnings about relationship cycles and
+              composite keys are acceptable in this robustness lab.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3>Generate the backend API</h3>
+            <p>
+              This creates <code>app/filterx_generated</code> and mounts the
+              router at the configured anchor.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> backend install <span class="flag">--project-root</span> . <span class="flag">--config</span> filterx.yaml <span class="flag">--no-dry-run</span> <span class="flag">--yes</span> <span class="flag">--json</span></code></pre>
+          </article>
+
+          <article class="step">
+            <h3>Validate the generated backend</h3>
+            <p>
+              This confirms generated files exist and the mount snippet is
+              present.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> backend validate <span class="flag">--project-root</span> . <span class="flag">--config</span> filterx.yaml <span class="flag">--json</span></code></pre>
+            <p>
+              Expected: <code>error_count: 0</code> and
+              <code>warning_count: 0</code>.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3>Run the backend</h3>
+            <p>
+              The generated API is now available under
+              <code>/api/filterx</code>.
+            </p>
+            <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\uvicorn.exe"</span> app.main:app <span class="flag">--reload</span></code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Testing URLs to show the reviewer</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Metadata discovery</h3>
+            <pre><code>GET http://127.0.0.1:8000/api/filterx/metadata</code></pre>
+          </article>
+          <article class="card">
+            <h3>Paginated query</h3>
+            <pre><code>GET http://127.0.0.1:8000/api/filterx/companies/query?page=1&amp;size=20&amp;sort_by=id&amp;order=asc</code></pre>
+          </article>
+          <article class="card">
+            <h3>Odoo-style URL filtering</h3>
+            <pre><code>GET http://127.0.0.1:8000/api/filterx/companies/query?name_ilike=acme&amp;sort_by=id</code></pre>
+          </article>
+          <article class="card">
+            <h3>Relationship filtering</h3>
+            <pre><code>GET http://127.0.0.1:8000/api/filterx/departments/query?company.name_ilike=acme&amp;sort_by=id</code></pre>
+          </article>
+          <article class="card">
+            <h3>Grouped result</h3>
+            <pre><code>GET http://127.0.0.1:8000/api/filterx/tasks/group-by/status</code></pre>
+          </article>
+          <article class="card">
+            <h3>Advanced filter tree</h3>
+            <pre><code>POST http://127.0.0.1:8000/api/filterx/departments/filter?sort_by=id
+
+{
+  "node_type": "condition",
+  "field": "company.name",
+  "operation": "ilike",
+  "value": "acme"
+}</code></pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Why a project should adopt it</h2>
+        <div class="grid-3">
+          <article class="card">
+            <h3>Faster delivery</h3>
+            <p>
+              New list screens get filtering, sorting, pagination, grouping, and
+              search without writing custom query endpoints per model.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Consistent behavior</h3>
+            <p>
+              Every entity uses the same API contract, response shape, operator
+              names, and filter tree language.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Safer integration</h3>
+            <p>
+              The CLI makes changes visible, reversible, and anchored to known
+              host files.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Rollback if needed</h2>
+        <p class="muted">
+          Every write is backed by patch metadata. If a generated integration
+          needs to be reversed:
+        </p>
+        <pre><code><span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> rollback <span class="flag">--project-root</span> . <span class="flag">--config</span> filterx.yaml <span class="flag">--list</span>
+<span class="cmd">&amp;</span> <span class="value">"c:\Users\raedn\OneDrive\Bureau\FILES\DEV FILES\MAIN_PROJECTS\.venv\Scripts\filterx.exe"</span> rollback <span class="flag">--project-root</span> . <span class="flag">--config</span> filterx.yaml</code></pre>
+      </section>
+
+      <footer class="footer">
+        FilterX pitch guide. Designed for reviewer demos and adoption
+        discussions.
+      </footer>
+    </main>
+  </body>
+</html>
