@@ -1,34 +1,88 @@
 # FilterX
 
-FilterX is a CLI that injects a generic filtering layer into your existing project.
-You configure where your app and models live, then FilterX generates safe integration files and patches only where you explicitly allow it.
+FilterX is a CLI that adds a generic filtering API **and a ready-to-use Angular filtering UI** to an existing FastAPI + SQLAlchemy + Angular project.
 
-## Why this approach exists
+It scans your SQLAlchemy models, generates a backend query/filter router, copies the shared Angular UI runtime, generates model-specific Angular pages/configs, and patches only the host files where you placed explicit anchor comments.
 
-Most teams rewrite the same filtering logic for every model and every list screen.
-FilterX centralizes that boilerplate into generation, so teams keep control but stop repeating low-value plumbing work.
+## What problem does it solve?
 
-## Start here in 5 minutes
+Most apps rebuild the same list-screen plumbing for every model:
 
-This is the fastest first run for backend integration.
-You can add frontend and DB generation later.
+- search
+- filters
+- nested `AND` / `OR` filter trees
+- sorting
+- pagination
+- grouping
+- relationship fields such as `company.name`
 
-1. Install the CLI in your project environment.
+FilterX turns that repeated work into generation. Your models stay yours; FilterX only creates integration code around them.
 
-```powershell
-pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
+## How FilterX works
+
+1. **Scan**: imports your FastAPI app, SQLAlchemy `Base`, and models package.
+2. **Generate backend**: creates `/api/filterx/...` endpoints for metadata, query, filter, and grouping.
+3. **Generate frontend**: installs the same reusable Angular list/filter UI and generates pages/configs for your models.
+4. **Patch anchors only**: inserts router/routes/providers only where you added FilterX comments.
+5. **Validate**: checks that generated files, routes, and config are coherent.
+
+No blind rewrites. No hidden magic. The `.filterx` folder stores scan output, diagnostics, generated-file hashes, and rollback metadata.
+
+## Requirements
+
+- Python 3.10+
+- FastAPI app object importable from Python
+- SQLAlchemy `Base` importable from Python
+- SQLAlchemy models package importable from Python
+- Angular app with standalone routing
+- Node.js + npm
+
+Frontend generation is mandatory for the standard FilterX integration flow.
+
+## Directory assumptions
+
+The examples below use this common layout:
+
+```text
+your-project/
+  app/
+    main.py
+    database.py
+    models/
+  frontend/
+    src/app/app.routes.ts
+    src/app/app.config.ts
+  filterx.yaml
+```
+
+Your project does **not** need to match this layout. Update `filterx.yaml` paths/imports to match your project and OS.
+
+Examples:
+
+- If your backend is in `backend/app`, set `project.backend_root: backend/app` and paths like `backend/app/main.py`.
+- If your Angular app is in `client`, set `project.frontend_root: client` and `frontend.workspace_root: client`.
+- Use forward slashes in `filterx.yaml` paths; they work on Windows, Linux, and macOS.
+
+## Step-by-step setup
+
+Run all FilterX CLI commands from your own project root, the folder that contains `filterx.yaml`.
+
+### 1. Install the CLI
+
+```bash
+python -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
 filterx --help
 ```
 
-2. Create filterx.yaml at your project root.
+For contributors working inside this repository:
 
-filterx.yaml is the map that tells FilterX:
+```bash
+python -m pip install -e tools/filterx
+```
 
-- what to scan,
-- where to generate files,
-- where it is allowed to patch host code.
+### 2. Create `filterx.yaml`
 
-Minimal backend-first template:
+Place this file at your project root and adjust every path/import to your project.
 
 ```yaml
 version: 1
@@ -58,7 +112,7 @@ backend:
   global_predicate_hooks: []
 
 frontend:
-  enabled: false
+  enabled: true
   workspace_root: frontend
   generated_root: frontend/src/app/filterx-generated
   routes_file: frontend/src/app/app.routes.ts
@@ -76,6 +130,12 @@ database:
     shared_filters: false
     auditing: false
 
+scan:
+  max_relationship_depth: 3
+  include_views: false
+  include_hybrid_properties: false
+  respect_soft_delete: true
+
 safety:
   dry_run_default: true
   require_anchor_comments: true
@@ -90,64 +150,167 @@ output:
   patch_dir: .filterx/patches
 ```
 
-3. Add one backend anchor comment.
+### 3. Add required anchors
 
-Anchor comments are mandatory only for enabled patch operations.
-They are safety markers so FilterX never inserts code into unknown places.
+FilterX patches only these explicit locations.
 
-In the file configured by backend.mount_file, add:
+In the file configured by `backend.mount_file`, usually your FastAPI entrypoint:
 
 ```python
 # FILTERX:ROUTER_MOUNT
 ```
 
-4. Run preview, apply, then validate.
-
-```powershell
-filterx install --project-root . --config filterx.yaml --dry-run --json
-filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
-filterx validate --project-root . --config filterx.yaml --json
-```
-
-5. Runtime sanity check.
-
-```text
-GET /api/filterx/metadata
-```
-
-## Add frontend later (optional)
-
-Enable frontend when you are ready to generate UI integration files and route snippets.
-If frontend.enabled is true, add these anchors in your configured host files:
+In the file configured by `frontend.routes_file`, inside the Angular `Routes` array:
 
 ```ts
 // FILTERX:ROUTES
+```
+
+In the file configured by `frontend.app_config_file`, inside the Angular providers array:
+
+```ts
 // FILTERX:PROVIDERS
 ```
 
-## Do I need the same folder structure as this repo?
+Example route file shape:
 
-No.
-Your project can use any structure, as long as the paths and imports in filterx.yaml are correct.
+```ts
+import { Routes } from "@angular/router";
 
-## What commands should I remember?
+export const routes: Routes = [
+  { path: "", redirectTo: "companies", pathMatch: "full" },
+  // FILTERX:ROUTES
+];
+```
 
-- filterx scan: discover models and routes, writes .filterx scan artifacts
-- filterx install: orchestrates scan + enabled installs + validate
-- filterx validate: health check for generated integration
-- filterx rollback: restore previous state from patch bundles
+Example app config shape:
 
-## What is the .filterx folder?
+```ts
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    // FILTERX:PROVIDERS
+  ],
+};
+```
 
-It is FilterX operational state, not business data.
-It stores scan output, plan, diagnostics, manifest, and rollback metadata.
+### 4. Preview the generated changes
+
+```bash
+filterx install --project-root . --config filterx.yaml --dry-run --json
+```
+
+Review the output before applying. In strict mode, missing anchors or route conflicts block installation.
+
+### 5. Apply backend + frontend generation
+
+```bash
+filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
+```
+
+This generates and patches both layers:
+
+- backend FilterX package under `backend.generated_package`
+- Angular runtime under `frontend.workspace_root/src/app/core` and `frontend.workspace_root/src/app/shared`
+- model-specific Angular configs/pages under `frontend.generated_root`
+- Angular routes/providers/proxy/style config
+
+### 6. Install frontend dependencies
+
+FilterX patches `package.json` with UI dependencies such as PrimeNG and PrimeIcons. Install them after generation.
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+If your Angular folder is not `frontend`, replace `frontend` with your configured `frontend.workspace_root`.
+
+### 7. Validate and build
+
+```bash
+filterx validate --project-root . --config filterx.yaml --json
+```
+
+Then build the Angular app from your frontend workspace:
+
+```bash
+cd frontend
+npm run build
+cd ..
+```
+
+### 8. Run the app
+
+Terminal 1, from project root:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Change `app.main:app` if your FastAPI import path is different.
+
+Terminal 2, from your Angular folder:
+
+```bash
+cd frontend
+npm start
+```
+
+Open the Angular dev URL, usually `http://localhost:4200`, then visit a generated entity route such as `/companies`, `/employees`, or whatever route names match your tables.
+
+## Expected generated API
+
+With the default `backend.api_prefix: /api`, FilterX exposes:
+
+- `GET /api/filterx/metadata`
+- `GET /api/filterx/{entity}/metadata`
+- `GET /api/filterx/{entity}`
+- `GET /api/filterx/{entity}/query`
+- `POST /api/filterx/{entity}/filter`
+- `GET /api/filterx/{entity}/group-by/{field}`
+- `POST /api/filterx/{entity}/group-by/{field}/filter`
+
+The generated Angular UI calls these endpoints through the configured dev proxy.
+
+## Useful commands
+
+```bash
+filterx scan --project-root . --config filterx.yaml --no-dry-run --json
+filterx install --project-root . --config filterx.yaml --dry-run --json
+filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx validate --project-root . --config filterx.yaml --json
+filterx rollback --project-root . --config filterx.yaml --list
+```
+
+Layer-specific commands are also available:
+
+```bash
+filterx backend install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx frontend install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx db install --project-root . --config filterx.yaml --no-dry-run --yes --json
+```
+
+Use layer-specific commands only when you intentionally want to operate on one layer.
 
 ## Common first-run issues
 
-- SCAN_FILE_MISSING: run install or scan with writes enabled first
-- ANCHOR_NOT_FOUND: add the configured anchor in the configured file
-- Route conflict on /api/filterx/metadata: change backend.api_prefix or remove conflicting host route
+- `ANCHOR_NOT_FOUND`: add the configured anchor to the configured file.
+- `SCAN_FILE_MISSING`: run `filterx install` or `filterx scan` with writes enabled first.
+- Route conflict on `/api/filterx/...`: change `backend.api_prefix` or remove the conflicting host route.
+- Angular icons appear as empty circles: restart `npm start` after generation; `angular.json` must load `node_modules/primeicons/primeicons.css`.
+- Frontend API calls fail: confirm the backend is running and `frontend/proxy.conf.cjs` points to the right backend URL.
 
-## Need full CLI reference?
+## Rollback
 
-See tools/filterx/README.md for complete command reference and advanced flows.
+FilterX writes patch bundles under `.filterx/patches`.
+
+```bash
+filterx rollback --project-root . --config filterx.yaml --list
+filterx rollback --project-root . --config filterx.yaml --patch-id <patch-id>
+```
+
+## Full CLI reference
+
+See [tools/filterx/README.md](tools/filterx/README.md).

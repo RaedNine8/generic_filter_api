@@ -23,10 +23,11 @@ Required:
 - Importable FastAPI app object
 - Importable SQLAlchemy Base
 - Importable SQLAlchemy models package
+- Angular workspace for generated UI integration
+- Node.js + npm
 
 Optional:
 
-- Angular workspace (only if frontend generation is enabled)
 - Alembic migration folder (only if db generation is enabled)
 
 ## Install
@@ -52,10 +53,15 @@ filterx --help
 ## First successful run (copy/paste)
 
 1. Create filterx.yaml in your project root.
-2. Add backend anchor in your configured mount file:
+2. Add anchors in your configured backend and frontend host files:
 
 ```python
 # FILTERX:ROUTER_MOUNT
+```
+
+```ts
+// FILTERX:ROUTES
+// FILTERX:PROVIDERS
 ```
 
 3. Run:
@@ -66,7 +72,18 @@ filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
 filterx validate --project-root . --config filterx.yaml --json
 ```
 
-4. Verify endpoint:
+4. Install generated frontend dependencies and build your Angular app:
+
+```powershell
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+Replace `frontend` with your configured `frontend.workspace_root` if your Angular app lives elsewhere.
+
+5. Verify endpoint:
 
 ```text
 GET /api/filterx/metadata
@@ -85,6 +102,9 @@ Minimum keys you must set correctly:
 - python.session_dependency_import
 - backend.mount_file
 - backend.mount_anchor
+- frontend.workspace_root
+- frontend.routes_file
+- frontend.app_config_file
 
 ## Are anchors mandatory?
 
