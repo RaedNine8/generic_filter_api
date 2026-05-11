@@ -72,7 +72,7 @@ python -m pip install -e .
 Install the FilterX CLI:
 
 ```bash
-python -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
+python -m pip install "https://github.com/RaedNine8/generic_filter_api.git"
 filterx --help
 ```
 
@@ -564,10 +564,6 @@ The CLI also creates `proxy.conf.cjs` so local Angular dev requests can reach yo
 - Route conflict on `/api/filterx/...`: change `backend.api_prefix` or remove the conflicting host route.
 - Angular icons appear as empty circles: restart `npm start`; `angular.json` must include `node_modules/primeicons/primeicons.css`.
 - Frontend API calls fail: confirm the backend is running and `proxy.conf.cjs` targets the correct backend URL.
-
-## Can this README include GIFs?
-
-Not automatically. The commands above are text-first so they work on every OS and in CI. If you want terminal GIFs later, record them locally with a tool such as VHS or asciinema, then add the generated media under a docs/assets folder.
 
 ## Full CLI reference
 
