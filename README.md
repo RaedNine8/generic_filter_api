@@ -1,87 +1,97 @@
 # FilterX
 
-FilterX adds a generic filtering backend **and a generated Angular filtering UI** to an existing FastAPI + SQLAlchemy + Angular project.
+FilterX injects a generic filtering system into **your existing FastAPI + SQLAlchemy + Angular project**.
 
-It is not a new framework. It is a generator:
+It generates both sides of the feature:
+
+- a backend API for metadata, search, filtering, grouping, sorting, and pagination
+- an Angular UI with list pages, advanced search, filter trees, grouping, tables, and pagination
+
+Frontend integration is part of the standard flow and is included in the steps below.
+
+## What FilterX does
+
+FilterX is a generator, not a framework replacement.
 
 1. It scans your SQLAlchemy models.
-2. It generates `/api/filterx/...` query/filter/group endpoints.
-3. It copies the reusable Angular list/filter UI runtime.
+2. It generates `/api/filterx/...` backend endpoints.
+3. It copies the reusable Angular filtering UI runtime.
 4. It generates one Angular page/config per model.
-5. It patches only the files where you added explicit anchor comments.
+5. It patches only the host files where you added explicit anchor comments.
 
-Frontend integration is part of the standard flow. The guide below always includes it.
+The goal is to avoid rebuilding the same filtering/list-screen logic for every model.
 
-## Repository example
+## Before you start
 
-The clearest end-to-end example is `filterx_robustness_lab`, a dummy project with:
+You need a project with:
 
-- FastAPI backend
+- Python 3.10+
+- FastAPI
 - SQLAlchemy models
-- Alembic migrations
+- an importable SQLAlchemy `Base`
+- an importable DB session dependency
+- Alembic if you want migration support
 - Angular frontend
-- `filterx.yaml`
-- all required FilterX anchors already present
+- Node.js + npm
+- PostgreSQL or another database supported by your app
 
-The guide below is written for that dummy project, but every path can be changed through `filterx.yaml`.
+All commands below are written so they can be run from **your target project root**.
 
-## 0. Go to the target project
+## 0. Go to your target project
 
-Use the project that contains `filterx.yaml` as your working directory.
-
-For the included robustness lab:
-
-```bash
-cd ../filterx_robustness_lab
-```
-
-For your own project:
+Go to the project where you want to inject FilterX.
 
 ```bash
 cd path/to/your-project
 ```
 
-From this point on, commands assume the current directory is the project root.
+From this point on, `.` means your project root.
 
-## 1. Activate or use the Python environment
+## 1. Activate/use the Python environment
 
-In this repository, the shared virtual environment is one level above the dummy project: `../.venv`.
+Use your project virtual environment.
 
-Windows PowerShell:
+Windows PowerShell example:
 
 ```powershell
-..\.venv\Scripts\Activate.ps1
-python -m pip install -e .
-python -m pip install -e ../filter_test_project/tools/filterx
-filterx --help
+.\.venv\Scripts\Activate.ps1
 ```
 
-macOS/Linux:
+macOS/Linux example:
 
 ```bash
-source ../.venv/bin/activate
-python -m pip install -e .
-python -m pip install -e ../filter_test_project/tools/filterx
-filterx --help
+source .venv/bin/activate
 ```
 
-If you are not using this repository layout, create or activate your own environment, then install your project and the CLI:
+Install your project dependencies if needed:
 
 ```bash
 python -m pip install -e .
+```
+
+Install the FilterX CLI:
+
+```bash
 python -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
+filterx --help
+```
+
+If you cloned this repository and are developing FilterX locally, install the CLI in editable mode from the cloned repo instead:
+
+```bash
+python -m pip install -e path/to/generic_filter_api/tools/filterx
 filterx --help
 ```
 
 This gives you:
 
 - your project dependencies
-- the local/editable `filterx` CLI
-- the `filterx` command available in the active environment
+- the `filterx` command
+- access to the generated backend and frontend installers
 
 ## 2. Configure the database
 
-Create `.env` from `.env.example` if your project provides one.
+Create your `.env` file if your project uses one.
 
 Windows PowerShell:
 
@@ -95,84 +105,82 @@ macOS/Linux:
 cp .env.example .env
 ```
 
-Open `.env` and make sure `DATABASE_URL` points to your PostgreSQL database.
+Open `.env` and make sure `DATABASE_URL` points to your database.
 
 Example:
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/filterx_robustness_lab
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/my_project_db
 ```
 
-Create the database in pgAdmin or `psql`:
+Create the database if it does not exist yet.
+
+Example with `psql`:
 
 ```sql
-CREATE DATABASE filterx_robustness_lab;
+CREATE DATABASE my_project_db;
 ```
 
-For your own project, replace the database name, user, password, host, and port with your local values.
+Use your own database name, user, password, host, and port.
 
-## 3. Generate and apply domain tables
+## 3. Generate/apply your normal domain tables
 
-This creates the normal application tables before FilterX is installed.
+Before adding FilterX, your normal application tables should exist.
 
-For `filterx_robustness_lab`, this means tables for:
-
-- Company
-- Department
-- Employee
-- Project
-- ProjectAssignment
-- Task
-
-Commands:
+If your project uses Alembic and needs a first migration:
 
 ```bash
 alembic revision --autogenerate -m "init_domain_models"
 alembic upgrade head
 ```
 
-Expected result:
-
-- a new migration file under `alembic/versions`
-- all domain tables created in PostgreSQL
-
-If your project already has migrations, you may only need:
+If your project already has migrations:
 
 ```bash
 alembic upgrade head
 ```
 
-## 4. Seed test data
+Expected:
 
-The query/filter/group endpoints need real data to test.
+- your normal domain tables exist in the database
+- your SQLAlchemy models can be imported successfully
 
-For the robustness lab:
+## 4. Seed data
+
+Filter/search/group endpoints are easier to verify with real data.
+
+Run your project seed script if you have one:
 
 ```bash
 python seed_data.py
 ```
 
-For your own project, run your own seed script or insert data manually.
+If your project does not have a seed script, insert a few rows manually or use your existing app flow.
 
-## 5. Check `filterx.yaml`
+## 5. Create `filterx.yaml`
 
-`filterx.yaml` is the contract between FilterX and your project. It tells the CLI:
+Create `filterx.yaml` at your project root.
 
-- where the backend app is
-- where SQLAlchemy models are
-- where generated backend files go
-- where the Angular app is
-- where generated frontend files go
-- which host files may be patched
+This file tells FilterX where your backend, models, frontend, and patch locations are.
 
-For the robustness lab, the important paths are:
+Start with this template and edit the paths/imports to match your project:
 
 ```yaml
+version: 1
+
+project:
+  name: my_project
+  root: .
+  backend_root: app
+  frontend_root: frontend
+  alembic_ini: alembic.ini
+
 python:
   app_import: app.main:app
   base_class_import: app.database:Base
   models_package: app.models
   session_dependency_import: app.database:get_db
+  sqlalchemy_url_env: DATABASE_URL
 
 backend:
   enabled: true
@@ -180,6 +188,9 @@ backend:
   generated_package: app/filterx_generated
   mount_file: app/main.py
   mount_anchor: "# FILTERX:ROUTER_MOUNT"
+  entities: []
+  exclude_entities: []
+  global_predicate_hooks: []
 
 frontend:
   enabled: true
@@ -189,84 +200,125 @@ frontend:
   routes_anchor: "// FILTERX:ROUTES"
   app_config_file: frontend/src/app/app.config.ts
   app_config_anchor: "// FILTERX:PROVIDERS"
+  entity_style: kebab
+
+database:
+  enabled: false
+  provider: alembic
+  migration_dir: alembic/versions
+  features:
+    saved_filters: true
+    shared_filters: false
+    auditing: false
+
+scan:
+  max_relationship_depth: 3
+  include_views: false
+  include_hybrid_properties: false
+  respect_soft_delete: true
+
+safety:
+  dry_run_default: true
+  require_anchor_comments: true
+  idempotency_manifest: .filterx/manifest.json
+  allow_overwrite_generated: true
+  strict_conflict_mode: true
+
+output:
+  scan_file: .filterx/scan.json
+  plan_file: .filterx/plan.json
+  diagnostics_file: .filterx/diagnostics.json
+  patch_dir: .filterx/patches
 ```
 
-For a different project layout, change these values. Examples:
+Important path rules:
 
-- backend in `backend/app`: use paths like `backend/app/main.py`
-- frontend in `client`: set `frontend.workspace_root: client`
-- models in `backend/app/models`: set `python.models_package` to the actual import package
-
-Use forward slashes in `filterx.yaml` paths. They work on Windows, Linux, and macOS.
+- Use paths relative to your project root.
+- Use forward slashes in `filterx.yaml`; they work on Windows, Linux, and macOS.
+- If your backend is under `backend/app`, use paths such as `backend/app/main.py`.
+- If your Angular app is under `client`, set `frontend.workspace_root: client` and update the frontend paths.
+- If your models package is not `app.models`, set `python.models_package` to the actual Python import path.
 
 ## 6. Add the required anchors
 
-Anchors are not optional. They are the exact locations where FilterX is allowed to patch host files.
+Anchors are mandatory. They are the exact places where FilterX is allowed to patch your files.
 
-### Backend router mount anchor
+### 6.1 Backend router mount anchor
 
 Open the file configured by `backend.mount_file`.
 
-For the robustness lab:
+Example from the template:
 
 ```text
 app/main.py
 ```
 
-Add this comment after your FastAPI app and normal routers are defined:
+Add this comment where the generated FilterX router should be mounted:
 
 ```python
 # FILTERX:ROUTER_MOUNT
 ```
 
-FilterX will replace/expand code around that anchor to mount the generated `/api/filterx` router.
+Example shape:
 
-### Frontend route anchor
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# your existing routers here
+
+# FILTERX:ROUTER_MOUNT
+```
+
+FilterX will mount the generated `/api/filterx` router at this anchor.
+
+### 6.2 Frontend route anchor
 
 Open the file configured by `frontend.routes_file`.
 
-For the robustness lab:
+Example from the template:
 
 ```text
 frontend/src/app/app.routes.ts
 ```
 
-Add this comment inside the `Routes` array:
+Add this comment inside the Angular `Routes` array:
 
 ```ts
 // FILTERX:ROUTES
 ```
 
-Example:
+Example shape:
 
 ```ts
 import { Routes } from "@angular/router";
 
 export const routes: Routes = [
-  { path: "", redirectTo: "companies", pathMatch: "full" },
+  { path: "", redirectTo: "your-default-page", pathMatch: "full" },
   // FILTERX:ROUTES
 ];
 ```
 
-FilterX will insert generated entity routes at that anchor.
+FilterX will insert generated model routes at this anchor.
 
-### Frontend provider anchor
+### 6.3 Frontend provider anchor
 
 Open the file configured by `frontend.app_config_file`.
 
-For the robustness lab:
+Example from the template:
 
 ```text
 frontend/src/app/app.config.ts
 ```
 
-Add this comment inside the `providers` array:
+Add this comment inside the Angular providers array:
 
 ```ts
 // FILTERX:PROVIDERS
 ```
 
-Example:
+Example shape:
 
 ```ts
 export const appConfig: ApplicationConfig = {
@@ -277,9 +329,9 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-FilterX will add Angular providers required by the generated UI, such as HTTP, animations, and PrimeNG configuration.
+FilterX will add required Angular providers at this anchor.
 
-## 7. Scan the project
+## 7. Scan your project
 
 This reads `filterx.yaml`, imports your app/models, and writes `.filterx` artifacts.
 
@@ -287,26 +339,24 @@ This reads `filterx.yaml`, imports your app/models, and writes `.filterx` artifa
 filterx scan --project-root . --config filterx.yaml --no-dry-run --json
 ```
 
-Expected for `filterx_robustness_lab`:
+Expected:
 
-- 6 entities found
-- cycle/composite-PK warnings may appear and are acceptable for this robustness lab
+- your SQLAlchemy entities are discovered
+- `.filterx/scan.json` is created
+- `.filterx/diagnostics.json` is created
+- `.filterx/plan.json` is created
 
-Generated:
-
-- `.filterx/scan.json`
-- `.filterx/diagnostics.json`
-- `.filterx/plan.json`
+Warnings can be normal if your model graph has cycles, composite keys, or relationships FilterX intentionally skips.
 
 ## 8. Generate the backend FilterX API
 
-This creates the generic query/filter/group backend and mounts it in your FastAPI app.
+This creates the generated backend package and mounts it in your FastAPI app.
 
 ```bash
 filterx backend install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
 
-Generated under `backend.generated_package`, which is `app/filterx_generated` in the robustness lab:
+Generated under `backend.generated_package`:
 
 - `entities.py`
 - `metadata.py`
@@ -317,7 +367,7 @@ Generated under `backend.generated_package`, which is `app/filterx_generated` in
 Patched:
 
 - the file configured by `backend.mount_file`
-- for the robustness lab: `app/main.py`, around `# FILTERX:ROUTER_MOUNT`
+- the patch is applied around `backend.mount_anchor`
 
 ## 9. Validate backend integration
 
@@ -325,21 +375,23 @@ Patched:
 filterx backend validate --project-root . --config filterx.yaml --json
 ```
 
-Then start the backend:
+Start your backend.
+
+Example:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Change `app.main:app` if your `python.app_import` uses a different import path.
+Use your actual FastAPI import path if it is different.
 
-Check in a browser or API client:
+Check the generated metadata endpoint:
 
 ```text
 GET http://localhost:8000/api/filterx/metadata
 ```
 
-Expected API routes with default `backend.api_prefix: /api`:
+With the default `backend.api_prefix: /api`, generated endpoints include:
 
 - `GET /api/filterx/metadata`
 - `GET /api/filterx/{entity}/metadata`
@@ -349,38 +401,40 @@ Expected API routes with default `backend.api_prefix: /api`:
 - `GET /api/filterx/{entity}/group-by/{field}`
 - `POST /api/filterx/{entity}/group-by/{field}/filter`
 
-Stop the backend only if you need the terminal for the next commands. Otherwise keep it running.
+Keep the backend running for frontend testing.
 
 ## 10. Generate the frontend FilterX UI
 
-This step is mandatory for the full FilterX integration.
+This step is mandatory for the standard FilterX integration.
 
 ```bash
 filterx frontend install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
 
-Generated/copied under the configured Angular workspace:
+Generated/copied under your configured Angular workspace:
 
-- `frontend/src/app/core/**`
-- `frontend/src/app/shared/**`
-- `frontend/src/app/filterx-generated/entities/*.config.ts`
-- `frontend/src/app/filterx-generated/pages/*.page.ts`
-- `frontend/src/app/filterx-generated/routes.ts`
+- `src/app/core/**`
+- `src/app/shared/**`
+- `src/app/filterx-generated/entities/*.config.ts`
+- `src/app/filterx-generated/pages/*.page.ts`
+- `src/app/filterx-generated/routes.ts`
 
-Patched:
+Patched under your Angular workspace:
 
-- `frontend/package.json`
-- `frontend/angular.json`
-- `frontend/proxy.conf.cjs`
-- `frontend/src/styles.css`
-- `frontend/src/app/app.routes.ts`
-- `frontend/src/app/app.config.ts`
+- `package.json`
+- `angular.json`
+- `proxy.conf.cjs`
+- `src/styles.css`
+- `src/app/app.routes.ts`
+- `src/app/app.config.ts`
 
-If your Angular workspace is not named `frontend`, replace `frontend` with `frontend.workspace_root` from your `filterx.yaml`.
+If your Angular workspace is not named `frontend`, use the directory configured by `frontend.workspace_root`.
 
 ## 11. Install frontend dependencies
 
-The frontend generator adds Angular/PrimeNG dependencies to `package.json`. Install them now.
+The frontend generator updates `package.json` with UI dependencies such as PrimeNG and PrimeIcons.
+
+If your Angular workspace is `frontend`:
 
 ```bash
 cd frontend
@@ -388,7 +442,7 @@ npm install
 cd ..
 ```
 
-If your Angular workspace is `client`, run:
+If your Angular workspace is `client`:
 
 ```bash
 cd client
@@ -402,7 +456,7 @@ cd ..
 filterx validate --project-root . --config filterx.yaml --json
 ```
 
-Expected:
+Expected shape:
 
 ```json
 {
@@ -413,7 +467,11 @@ Expected:
 }
 ```
 
+If warnings appear, read them. Some warnings may be acceptable; errors must be fixed.
+
 ## 13. Build the frontend
+
+If your Angular workspace is `frontend`:
 
 ```bash
 cd frontend
@@ -421,40 +479,46 @@ npm run build
 cd ..
 ```
 
+If your Angular workspace is `client`:
+
+```bash
+cd client
+npm run build
+cd ..
+```
+
 Expected:
 
 - Angular build completes successfully
-- warnings about unused imports may appear and are not necessarily blocking
+- generated pages are included in the build
+- non-blocking Angular warnings may appear depending on your project
 
 ## 14. Run backend and frontend together
 
-Terminal 1, project root:
+Terminal 1, from project root:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Terminal 2, Angular workspace:
+Terminal 2, from your Angular workspace:
 
 ```bash
 cd frontend
 npm start
 ```
 
-Open:
+Open the Angular dev server URL, usually:
 
 ```text
 http://localhost:4200
 ```
 
-For the robustness lab, generated entity routes include:
+Then open one of the generated entity routes. The route names are based on your tables/entities, for example:
 
-- `http://localhost:4200/companies`
-- `http://localhost:4200/departments`
-- `http://localhost:4200/employees`
-- `http://localhost:4200/projects`
-- `http://localhost:4200/project-assignments`
-- `http://localhost:4200/tasks`
+```text
+http://localhost:4200/<your-entity-route>
+```
 
 You should see the generated list UI with search, filter tree, grouping, sorting, pagination, and relationship fields.
 
@@ -474,24 +538,24 @@ filterx rollback --project-root . --config filterx.yaml --patch-id <patch-id>
 
 ## One-command install alternative
 
-After anchors and `filterx.yaml` are correct, this command runs scan, enabled installs, and validation together:
+After `filterx.yaml` and anchors are correct, this command runs scan, enabled installs, and validation together:
 
 ```bash
 filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
 
-For first-time debugging, the numbered manual path above is easier to understand.
+For first-time integration, the numbered manual path above is easier to debug.
 
 ## What the generated UI calls
 
 The Angular UI talks to the generated backend through `/api/filterx`:
 
-- the list screen calls `GET /api/filterx/{entity}`
-- the advanced search panel calls `GET /api/filterx/{entity}/metadata`
+- list pages call `GET /api/filterx/{entity}`
+- metadata panels call `GET /api/filterx/{entity}/metadata`
 - filter trees call `POST /api/filterx/{entity}/filter`
 - grouping calls `/api/filterx/{entity}/group-by/{field}`
 
-The CLI also creates `proxy.conf.cjs` so local Angular dev requests can reach your FastAPI server.
+The CLI also creates `proxy.conf.cjs` so local Angular dev requests can reach your backend.
 
 ## Common issues
 
@@ -503,7 +567,7 @@ The CLI also creates `proxy.conf.cjs` so local Angular dev requests can reach yo
 
 ## Can this README include GIFs?
 
-Not automatically. The commands above are text-first so they work on every OS and in CI. If you want terminal GIFs later, record them with a local tool such as VHS or asciinema after the commands are stable, then add the generated media under a docs/assets folder.
+Not automatically. The commands above are text-first so they work on every OS and in CI. If you want terminal GIFs later, record them locally with a tool such as VHS or asciinema, then add the generated media under a docs/assets folder.
 
 ## Full CLI reference
 
