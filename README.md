@@ -72,7 +72,7 @@ python -m pip install -e .
 Install the FilterX CLI:
 
 ```bash
-python -m pip install git+https://github.com/RaedNine8/generic_filter_api.git
+python.exe -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
 filterx --help
 ```
 
