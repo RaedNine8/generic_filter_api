@@ -20,6 +20,19 @@ GENERATED_ROUTES_RE = re.compile(
     re.DOTALL,
 )
 
+ROUTES_ARRAY_RE = re.compile(
+    r"(const\s+routes\s*:\s*Routes\s*=\s*\[)(.*?)(\]\s*;)",
+    re.DOTALL,
+)
+
+DEFAULT_ROUTE_CANDIDATES = (
+    "src/app/app.routes.ts",
+    "src/app/app-routing.module.ts",
+)
+
+DEFAULT_APP_CONFIG_CANDIDATE = "src/app/app.config.ts"
+DEFAULT_APP_MODULE_CANDIDATE = "src/app/app.module.ts"
+
 REFERENCE_RUNTIME_FILES = [
     "core/index.ts",
     "core/enums/index.ts",
@@ -71,6 +84,42 @@ def _csv_list(raw: str | None) -> list[str]:
     if not raw:
         return []
     return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def _frontend_rel(frontend_root: str, suffix: str) -> str:
+    return f"{frontend_root.rstrip('/')}/{suffix}"
+
+
+def _resolve_routes_file(project_root: Path, frontend_root: str, configured_path: str) -> str:
+    preferred = configured_path.strip()
+    preferred_path = project_root / preferred
+    if preferred and preferred_path.exists():
+        return preferred
+
+    for candidate in DEFAULT_ROUTE_CANDIDATES:
+        rel = _frontend_rel(frontend_root, candidate)
+        if (project_root / rel).exists():
+            return rel
+
+    return preferred or _frontend_rel(frontend_root, DEFAULT_ROUTE_CANDIDATES[0])
+
+
+def _resolve_app_config_file(project_root: Path, frontend_root: str, configured_path: str) -> str:
+    preferred = configured_path.strip()
+    preferred_path = project_root / preferred
+    if preferred and preferred_path.exists():
+        return preferred
+
+    default_config_rel = _frontend_rel(frontend_root, DEFAULT_APP_CONFIG_CANDIDATE)
+    if (project_root / default_config_rel).exists():
+        return default_config_rel
+
+    module_rel = _frontend_rel(frontend_root, DEFAULT_APP_MODULE_CANDIDATE)
+    if (project_root / module_rel).exists():
+        # NgModule projects often have no app.config.ts.
+        return ""
+
+    return preferred
 
 
 def _to_snake(value: str) -> str:
@@ -764,11 +813,40 @@ def _build_package_json_with_ui_deps(project_root: Path, frontend_root: str) -> 
     return package_rel, json.dumps(payload, indent=2) + "\n"
 
 
+def _detect_angular_major(project_root: Path, frontend_root: str) -> int | None:
+    package_rel = f"{frontend_root.rstrip('/')}/package.json"
+    package_path = project_root / package_rel
+    if not package_path.exists():
+        return None
+    try:
+        payload = json.loads(package_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+
+    dependencies = payload.get("dependencies")
+    if not isinstance(dependencies, dict):
+        return None
+
+    angular_core = dependencies.get("@angular/core")
+    if not isinstance(angular_core, str):
+        return None
+
+    match = re.search(r"(\d+)", angular_core)
+    if not match:
+        return None
+    return int(match.group(1))
+
+
 def _build_app_config_with_primeng(project_root: Path, app_config_file: str, app_config_anchor: str) -> tuple[str, str] | None:
     path = project_root / app_config_file
     if not path.exists():
         return None
     content = path.read_text(encoding="utf-8")
+
+    # Only patch standalone app.config.ts style files.
+    if "ApplicationConfig" not in content:
+        return None
+
     changed = False
     if "provideAnimationsAsync" not in content:
         content = content.replace(
@@ -805,13 +883,34 @@ def _build_app_config_with_primeng(project_root: Path, app_config_file: str, app
     return app_config_file, content
 
 
-def _build_routes_file_with_generated_block(routes_file: Path, snippet: str) -> str | None:
+def _build_routes_file_with_generated_block(routes_file: Path, snippet: str, routes_anchor: str) -> str | None:
     if not routes_file.exists():
         return None
     content = routes_file.read_text(encoding="utf-8")
+    if snippet in content:
+        return None
     if GENERATED_ROUTES_RE.search(content):
         return GENERATED_ROUTES_RE.sub("\n" + snippet + "\n", content)
-    return None
+
+    if routes_anchor and routes_anchor in content:
+        lines = content.splitlines(keepends=True)
+        for idx, line in enumerate(lines):
+            if routes_anchor in line:
+                insert_text = snippet
+                if not insert_text.endswith("\n"):
+                    insert_text += "\n"
+                lines.insert(idx + 1, insert_text)
+                return "".join(lines)
+
+    match = ROUTES_ARRAY_RE.search(content)
+    if not match:
+        return None
+
+    body_start = match.start(2)
+    body_end = match.end(2)
+    body = content[body_start:body_end]
+    insertion = (body.rstrip() + "\n" if body.strip() else "\n") + snippet + "\n"
+    return content[:body_start] + insertion + content[body_end:]
 
 
 def _extract_existing_route_paths(routes_file: Path) -> set[str]:
@@ -828,6 +927,7 @@ def _extract_existing_route_paths(routes_file: Path) -> set[str]:
 
 def _reference_app_root() -> Path | None:
     candidates = [
+        Path(__file__).resolve().parents[1] / "reference_runtime" / "app",
         Path(__file__).resolve().parents[4] / "frontend" / "src" / "app",
         Path.cwd() / "filter_test_project" / "frontend" / "src" / "app",
         Path.cwd().parent / "filter_test_project" / "frontend" / "src" / "app",
@@ -838,7 +938,545 @@ def _reference_app_root() -> Path | None:
     return None
 
 
-def _copy_reference_runtime_ops(frontend_root: str) -> list[PatchOp]:
+def _legacy_runtime_template(rel: str) -> str | None:
+        if rel == "shared/components/advanced-search-panel/advanced-search-panel.component.html":
+                return r'''<div class="advanced-search-container">
+    <div class="search-bar">
+        <div class="search-bar-content">
+            <span class="filter-icon" aria-hidden="true"></span>
+
+            <div class="filter-tags">
+                <span *ngIf="searchQuery" class="filter-tag search-tag">
+                    Search: {{ searchQuery }}
+                    <button
+                        type="button"
+                        class="tag-remove"
+                        (mousedown)="removeSearchTag()"
+                    >
+                        x
+                    </button>
+                </span>
+
+                <span *ngFor="let filter of activeFilters; let i = index" class="filter-tag">
+                    {{ getFilterTagLabel(filter) }}
+                    <button
+                        type="button"
+                        class="tag-remove"
+                        (click)="removeFilterTag(i)"
+                    >
+                        x
+                    </button>
+                </span>
+
+                <ng-container *ngIf="activeTree">
+                    <span *ngFor="let cond of getTreeConditions()" class="filter-tag advanced-tag">
+                        {{ cond.label }}
+                        <button
+                            type="button"
+                            class="tag-remove"
+                            (click)="removeTreeCondition(cond.id)"
+                        >
+                            x
+                        </button>
+                    </span>
+                </ng-container>
+            </div>
+
+            <div class="search-input-wrapper">
+                <input
+                    #searchInput
+                    type="text"
+                    class="search-input"
+                    data-testid="global-search-input"
+                    [placeholder]="placeholder"
+                    (input)="onSearchInput($event)"
+                    (keydown)="onSearchKeydown($event)"
+                    (focus)="showSearchDropdown()"
+                    (blur)="hideSearchDropdown()"
+                />
+
+                <div *ngIf="isSearchDropdownOpen" class="search-dropdown" data-testid="search-options-dropdown">
+                    <ng-container *ngFor="let option of searchOptions">
+                        <div
+                            *ngIf="option.isCustom"
+                            class="search-option custom-filter-option"
+                            data-testid="search-option"
+                            (mousedown)="selectSearchOption(option)"
+                        >
+                            <span class="option-icon">+</span>
+                            <span class="option-label">Custom Filter...</span>
+                            <span *ngIf="option.typeHint" class="option-type">{{ option.typeHint }}</span>
+                        </div>
+
+                        <ng-container *ngIf="!option.isCustom && option.isFkHeader">
+                            <div
+                                class="search-option fk-header"
+                                data-testid="search-option"
+                                [class.disabled]="option.isDisabled"
+                                (mousedown)="selectSearchOption(option)"
+                            >
+                                <span
+                                    class="option-arrow"
+                                    [class.expanded]="expandedFkHeaders.has(option.fkRelationshipName!)"
+                                    >></span
+                                >
+                                <ng-container *ngIf="getOptionLabelParts(option.label); let parts; else noPartsHeader">
+                                    <span class="option-label">
+                                        <span class="option-prefix">{{ parts.prefix }}</span>
+                                        <span class="option-field">{{ parts.field }}</span>
+                                        <span class="option-suffix">{{ parts.suffix }}</span>
+                                    </span>
+                                </ng-container>
+                                <ng-template #noPartsHeader>
+                                    <span class="option-label">{{ option.label }}</span>
+                                </ng-template>
+                                <span *ngIf="option.typeHint" class="option-type">{{ option.typeHint }}</span>
+                            </div>
+
+                            <ng-container *ngIf="option.subOptions && option.subOptions.length > 0">
+                                <div
+                                    *ngFor="let sub of option.subOptions"
+                                    class="search-option fk-sub-option"
+                                    data-testid="search-option"
+                                    (mousedown)="selectSearchOption(sub)"
+                                >
+                                    <ng-container *ngIf="getOptionLabelParts(sub.label); let parts; else noPartsSub">
+                                        <span class="option-label">
+                                            <span class="option-prefix">{{ parts.prefix }}</span>
+                                            <span class="option-field">{{ parts.field }}</span>
+                                            <span class="option-suffix">{{ parts.suffix }}</span>
+                                        </span>
+                                    </ng-container>
+                                    <ng-template #noPartsSub>
+                                        <span class="option-label">{{ sub.label }}</span>
+                                    </ng-template>
+                                    <span *ngIf="sub.typeHint" class="option-type">{{ sub.typeHint }}</span>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+
+                        <div
+                            *ngIf="!option.isCustom && !option.isFkHeader"
+                            class="search-option"
+                            data-testid="search-option"
+                            [class.disabled]="option.isDisabled"
+                            (mousedown)="selectSearchOption(option)"
+                        >
+                            <ng-container *ngIf="getOptionLabelParts(option.label); let parts; else noPartsDefault">
+                                <span class="option-label">
+                                    <span class="option-prefix">{{ parts.prefix }}</span>
+                                    <span class="option-field">{{ parts.field }}</span>
+                                    <span class="option-suffix">{{ parts.suffix }}</span>
+                                </span>
+                            </ng-container>
+                            <ng-template #noPartsDefault>
+                                <span class="option-label">{{ option.label }}</span>
+                            </ng-template>
+                            <span *ngIf="option.typeHint" class="option-type">{{ option.typeHint }}</span>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+
+            <button
+                *ngIf="hasActiveFilters"
+                type="button"
+                class="clear-btn"
+                (click)="clearAllFilters()"
+                title="Clear all filters"
+            >
+                x
+            </button>
+        </div>
+
+        <button
+            type="button"
+            class="dropdown-toggle"
+            data-testid="custom-filters-toggle"
+            [class.active]="isPanelOpen"
+            [attr.aria-expanded]="isPanelOpen"
+            [attr.aria-label]="
+                isPanelOpen ? 'Hide custom filters panel' : 'Show custom filters panel'
+            "
+            title="Custom filters"
+            (click)="togglePanel()"
+        >
+            <span class="toggle-icon"
+                >Custom filters {{ isPanelOpen ? '▲' : '▼' }}</span
+            >
+        </button>
+    </div>
+
+    <div *ngIf="isPanelOpen" class="dropdown-panel">
+        <div class="panel-columns">
+            <div class="panel-column favorites-column">
+                <div class="column-header">
+                    <span class="column-title">Custom Filters</span>
+                </div>
+
+                <div class="column-content">
+                    <div *ngIf="groupByOptions.length > 0" class="group-by-block">
+                        <label for="groupBySelect" class="group-by-label"
+                            >Group results by</label
+                        >
+                        <select
+                            id="groupBySelect"
+                            class="group-by-select"
+                            data-testid="group-by-select"
+                            [ngModel]="currentGroupBy"
+                            (ngModelChange)="setGroupBy($event || null)"
+                        >
+                            <option [ngValue]="null">No grouping</option>
+                            <option *ngFor="let option of groupByOptions" [ngValue]="option.field">{{ option.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="favorites-actions">
+                        <button
+                            type="button"
+                            class="filter-item add-custom"
+                            (click)="toggleCustomFilterTree()"
+                        >
+                            New custom filter
+                        </button>
+
+                        <button
+                            type="button"
+                            class="save-current-btn"
+                            data-testid="save-current-search"
+                            [disabled]="!hasActiveFilters"
+                            (click)="openSaveDialog()"
+                        >
+                            Save current search
+                        </button>
+                    </div>
+
+                    <div *ngIf="savedFilters.length > 0" class="saved-filters-list">
+                        <div
+                            *ngFor="let saved of savedFilters"
+                            class="saved-filter-item"
+                            data-testid="saved-filter-item"
+                            (click)="onApplySavedFilter(saved)"
+                        >
+                            <span class="saved-name">{{ saved.name }}</span>
+                            <button
+                                type="button"
+                                class="saved-delete"
+                                data-testid="saved-filter-delete"
+                                (click)="onDeleteSavedFilter($event, saved.id)"
+                                title="Delete"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="savedFilters.length === 0" class="no-favorites">
+                        <p>No custom filters saved yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        *ngIf="showCustomFilterTree"
+        class="filter-builder-modal-overlay"
+        (click)="toggleCustomFilterTree()"
+    >
+        <div class="filter-builder-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Custom Filter Builder</h3>
+                <button
+                    type="button"
+                    class="close-btn"
+                    (click)="toggleCustomFilterTree()"
+                >
+                    x
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-filter-builder
+                    [fields]="filterBuilderFields"
+                    [tree]="draftTree"
+                    (treeChange)="onTreeChange($event)"
+                    (apply)="onApplyTree($event)"
+                    (clear)="onClearTree()"
+                ></app-filter-builder>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showSaveDialog" class="dialog-overlay" (click)="closeSaveDialog()">
+        <div class="dialog" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h3>Save Filter</h3>
+                <button
+                    type="button"
+                    class="dialog-close"
+                    (click)="closeSaveDialog()"
+                >
+                    x
+                </button>
+            </div>
+
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label for="filterName">Name *</label>
+                    <input
+                        type="text"
+                        id="filterName"
+                        class="form-control"
+                        [(ngModel)]="newFilterName"
+                        placeholder="e.g., My Open Tasks"
+                        autofocus
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="filterDesc">Description</label>
+                    <textarea
+                        id="filterDesc"
+                        class="form-control"
+                        [(ngModel)]="newFilterDescription"
+                        placeholder="Optional description..."
+                        rows="2"
+                    ></textarea>
+                </div>
+
+                <div class="current-filters-preview">
+                    <strong>Current filters:</strong>
+                    <ul>
+                        <li *ngFor="let filter of activeFilters">{{ getFilterTagLabel(filter) }}</li>
+                        <li *ngIf="searchQuery">Search: "{{ searchQuery }}"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="closeSaveDialog()"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="!newFilterName.trim()"
+                    (click)="saveCurrentFilter()"
+                >
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+'''
+
+        if rel == "shared/components/filter-builder/filter-builder.component.html":
+                return r'''<div class="filter-builder">
+    <div class="filter-header">
+        <div class="header-left">
+            <i class="pi pi-filter mr-2"></i>
+            <h4 class="filter-title">Advanced Search Builder</h4>
+        </div>
+        <p-button
+            label="Clear All"
+            icon="pi pi-trash"
+            severity="secondary"
+            [text]="true"
+            size="small"
+            (onClick)="clearAll()"
+        ></p-button>
+    </div>
+
+    <div class="filter-content">
+        <div class="tree-surface">
+            <p-tree [value]="primeNodes" scrollHeight="400px" class="filter-tree">
+                <ng-template let-node pTemplate="operator">
+                    <div class="operator-node-row">
+                        <p-button
+                            [label]="node.data.node.operator"
+                            size="small"
+                            [styleClass]="
+                                node.data.node.operator === 'AND'
+                                    ? 'operator-toggle-btn operator-and'
+                                    : 'operator-toggle-btn operator-or'
+                            "
+                            (onClick)="toggleOperator(node.data.node)"
+                        ></p-button>
+
+                        <div class="node-actions ml-auto">
+                            <p-button
+                                icon="pi pi-plus"
+                                [rounded]="true"
+                                [text]="true"
+                                size="small"
+                                styleClass="action-btn action-add"
+                                (onClick)="addCondition(node.data.node)"
+                                pTooltip="Add Condition"
+                            ></p-button>
+                            <p-button
+                                icon="pi pi-folder-plus"
+                                [rounded]="true"
+                                [text]="true"
+                                size="small"
+                                severity="secondary"
+                                styleClass="action-btn action-group"
+                                (onClick)="addGroup(node.data.node)"
+                                pTooltip="Add Group"
+                            ></p-button>
+                            <p-button
+                                *ngIf="node.data.parent"
+                                icon="pi pi-times"
+                                [rounded]="true"
+                                [text]="true"
+                                size="small"
+                                severity="danger"
+                                styleClass="action-btn action-remove"
+                                (onClick)="removeNode(node.data.parent, node.data.node)"
+                                pTooltip="Remove Group"
+                            ></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template let-node pTemplate="condition">
+                    <div class="condition-node-row">
+                        <select
+                            class="builder-select flex-1"
+                            [(ngModel)]="node.data.node.field"
+                            (ngModelChange)="onFieldChange(node.data.node)"
+                        >
+                            <option [ngValue]="''" disabled>Field</option>
+                            <option *ngFor="let field of fields" [ngValue]="field.name">{{ field.label }}</option>
+                        </select>
+
+                        <select
+                            class="builder-select flex-none w-32"
+                            [(ngModel)]="node.data.node.operation"
+                            (ngModelChange)="onOperationChange(node.data.node)"
+                        >
+                            <option *ngFor="let op of getAvailableOperations(node.data.node.field || '')" [ngValue]="op">{{ getOpLabel(op) }}</option>
+                        </select>
+
+                        <div *ngIf="needsValue(node.data.node.operation)" class="value-container">
+                            <ng-container *ngIf="needsMultipleValues(node.data.node.operation)">
+                                <input
+                                    class="builder-input"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                    placeholder="v1, v2..."
+                                />
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && needsRange(node.data.node.operation)">
+                                <div class="flex gap-1 align-items-center">
+                                    <input
+                                        class="builder-input builder-input-sm"
+                                        type="number"
+                                        [(ngModel)]="node.data.node.value[0]"
+                                        (ngModelChange)="onValueChange()"
+                                        placeholder="Min"
+                                    />
+                                    <span>-</span>
+                                    <input
+                                        class="builder-input builder-input-sm"
+                                        type="number"
+                                        [(ngModel)]="node.data.node.value[1]"
+                                        (ngModelChange)="onValueChange()"
+                                        placeholder="Max"
+                                    />
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && !needsRange(node.data.node.operation) && getFieldConfig(node.data.node.field || '')?.type === 'boolean'">
+                                <select
+                                    class="builder-select"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                >
+                                    <option [ngValue]="true">True</option>
+                                    <option [ngValue]="false">False</option>
+                                </select>
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && !needsRange(node.data.node.operation) && getFieldConfig(node.data.node.field || '')?.type !== 'boolean' && (getFieldConfig(node.data.node.field || '')?.type === 'select' || getFieldConfig(node.data.node.field || '')?.type === 'enum')">
+                                <select
+                                    class="builder-select"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                >
+                                    <option [ngValue]="''" disabled>Select</option>
+                                    <option *ngFor="let opt of getFieldConfig(node.data.node.field || '')?.options || []" [ngValue]="opt.value">{{ opt.label }}</option>
+                                </select>
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && !needsRange(node.data.node.operation) && getFieldConfig(node.data.node.field || '')?.type !== 'boolean' && getFieldConfig(node.data.node.field || '')?.type !== 'select' && getFieldConfig(node.data.node.field || '')?.type !== 'enum' && (getFieldConfig(node.data.node.field || '')?.type === 'date' || getFieldConfig(node.data.node.field || '')?.type === 'datetime')">
+                                <input
+                                    class="builder-input"
+                                    [type]="getFieldConfig(node.data.node.field || '')?.type === 'datetime' ? 'datetime-local' : 'date'"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                />
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && !needsRange(node.data.node.operation) && getFieldConfig(node.data.node.field || '')?.type !== 'boolean' && getFieldConfig(node.data.node.field || '')?.type !== 'select' && getFieldConfig(node.data.node.field || '')?.type !== 'enum' && getFieldConfig(node.data.node.field || '')?.type !== 'date' && getFieldConfig(node.data.node.field || '')?.type !== 'datetime' && getFieldConfig(node.data.node.field || '')?.type === 'number'">
+                                <input
+                                    class="builder-input"
+                                    type="number"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                />
+                            </ng-container>
+
+                            <ng-container *ngIf="!needsMultipleValues(node.data.node.operation) && !needsRange(node.data.node.operation) && getFieldConfig(node.data.node.field || '')?.type !== 'boolean' && getFieldConfig(node.data.node.field || '')?.type !== 'select' && getFieldConfig(node.data.node.field || '')?.type !== 'enum' && getFieldConfig(node.data.node.field || '')?.type !== 'date' && getFieldConfig(node.data.node.field || '')?.type !== 'datetime' && getFieldConfig(node.data.node.field || '')?.type !== 'number'">
+                                <input
+                                    class="builder-input"
+                                    [(ngModel)]="node.data.node.value"
+                                    (ngModelChange)="onValueChange()"
+                                    placeholder="Value"
+                                />
+                            </ng-container>
+                        </div>
+
+                        <p-button
+                            icon="pi pi-times"
+                            [rounded]="true"
+                            [text]="true"
+                            size="small"
+                            severity="danger"
+                            styleClass="action-btn action-remove"
+                            (onClick)="removeNode(node.data.parent, node.data.node)"
+                            [disabled]="!node.data.parent"
+                            pTooltip="Remove Filter"
+                        ></p-button>
+                    </div>
+                </ng-template>
+            </p-tree>
+        </div>
+    </div>
+
+    <div class="filter-footer">
+        <div class="footer-actions">
+            <p-button
+                *ngIf="showApplyButton"
+                [label]="applyButtonLabel"
+                icon="pi pi-check"
+                styleClass="apply-btn"
+                (onClick)="applyFilters()"
+                class="w-full"
+            ></p-button>
+        </div>
+    </div>
+</div>
+'''
+
+        return None
+
+
+def _copy_reference_runtime_ops(frontend_root: str, prefer_legacy_templates: bool = False) -> list[PatchOp]:
     source_root = _reference_app_root()
     if source_root is None:
         return []
@@ -848,6 +1486,11 @@ def _copy_reference_runtime_ops(frontend_root: str) -> list[PatchOp]:
         if not source.exists():
             continue
         content = source.read_text(encoding="utf-8")
+
+        if prefer_legacy_templates:
+            legacy_template = _legacy_runtime_template(rel)
+            if legacy_template is not None:
+                content = legacy_template
         if rel == "core/services/generic-query.service.ts":
             content = content.replace(
                 ".get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })",
@@ -1068,7 +1711,11 @@ def _run_install_impl(args: Any) -> int:
     style = str(getattr(args, "style", None) or cfg["frontend"].get("entity_style", "kebab"))
     frontend_root = str(cfg["frontend"].get("workspace_root", "frontend"))
     generated_root = str(cfg["frontend"]["generated_root"])
-    routes_file = str(getattr(args, "routes_file", None) or cfg["frontend"]["routes_file"])
+    routes_file_arg = getattr(args, "routes_file", None)
+    if routes_file_arg:
+        routes_file = str(routes_file_arg)
+    else:
+        routes_file = _resolve_routes_file(project_root, frontend_root, str(cfg["frontend"]["routes_file"]))
     routes_anchor = str(getattr(args, "routes_anchor", None) or cfg["frontend"]["routes_anchor"])
     include_route_patch = not bool(getattr(args, "no_route_patch", False))
     force_routes = bool(getattr(args, "force", False))
@@ -1119,7 +1766,15 @@ def _run_install_impl(args: Any) -> int:
             )
         )
 
-    app_config_file = str(getattr(args, "app_config_file", None) or cfg["frontend"].get("app_config_file", ""))
+    app_config_file_arg = getattr(args, "app_config_file", None)
+    if app_config_file_arg is not None:
+        app_config_file = str(app_config_file_arg)
+    else:
+        app_config_file = _resolve_app_config_file(
+            project_root,
+            frontend_root,
+            str(cfg["frontend"].get("app_config_file", "")),
+        )
     app_config_anchor = str(getattr(args, "app_config_anchor", None) or cfg["frontend"].get("app_config_anchor", ""))
     if app_config_file:
         app_config_patch = _build_app_config_with_primeng(project_root, app_config_file, app_config_anchor)
@@ -1135,7 +1790,13 @@ def _run_install_impl(args: Any) -> int:
                 )
             )
 
-    ops.extend(_copy_reference_runtime_ops(frontend_root))
+    angular_major = _detect_angular_major(project_root, frontend_root)
+    ops.extend(
+        _copy_reference_runtime_ops(
+            frontend_root,
+            prefer_legacy_templates=angular_major is not None and angular_major < 17,
+        )
+    )
     ops.extend(
         [
             PatchOp(kind="delete_file", path=f"{root}/filterx.models.ts", description="Remove legacy generated explorer model contracts"),
@@ -1218,7 +1879,7 @@ def _run_install_impl(args: Any) -> int:
 
     if include_route_patch and host_routes_entries:
         snippet = "// FILTERX GENERATED ROUTES START\n" + "\n".join(host_routes_entries) + "\n// FILTERX GENERATED ROUTES END"
-        replaced_routes = _build_routes_file_with_generated_block(project_root / routes_file, snippet)
+        replaced_routes = _build_routes_file_with_generated_block(project_root / routes_file, snippet, routes_anchor)
         if replaced_routes is not None:
             ops.append(
                 PatchOp(
@@ -1330,13 +1991,18 @@ def run_validate(args: Any) -> int:
         if not (project_root / rel).exists():
             errors.append({"code": "FRONTEND_GENERATED_FILE_MISSING", "path": str(project_root / rel)})
 
-    routes_file = project_root / cfg["frontend"]["routes_file"]
+    frontend_root = str(cfg["frontend"].get("workspace_root", "frontend"))
+    routes_file = project_root / _resolve_routes_file(
+        project_root,
+        frontend_root,
+        str(cfg["frontend"]["routes_file"]),
+    )
     routes_anchor = cfg["frontend"]["routes_anchor"]
     if not routes_file.exists():
         errors.append({"code": "FRONTEND_ROUTES_FILE_MISSING", "path": str(routes_file)})
     else:
         content = routes_file.read_text(encoding="utf-8")
-        if routes_anchor not in content:
+        if routes_anchor not in content and "FILTERX GENERATED ROUTES START" not in content:
             warnings.append(
                 {
                     "code": "FRONTEND_ROUTES_ANCHOR_NOT_FOUND",

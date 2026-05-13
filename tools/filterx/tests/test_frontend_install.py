@@ -193,7 +193,40 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
     assert test_styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
 
 
-def test_frontend_install_blocks_when_routes_anchor_missing(tmp_path: Path) -> None:
+def test_frontend_install_supports_app_routing_module_without_anchor(tmp_path: Path) -> None:
+    config_path = _write_config(tmp_path)
+    _write_scan(tmp_path)
+
+    _write_file(
+        tmp_path / "frontend/src/app/app-routing.module.ts",
+        "import { NgModule } from '@angular/core';\n"
+        "import { RouterModule, Routes } from '@angular/router';\n\n"
+        "const routes: Routes = [\n"
+        "  { path: '', redirectTo: 'books', pathMatch: 'full' },\n"
+        "];\n\n"
+        "@NgModule({\n"
+        "  imports: [RouterModule.forRoot(routes)],\n"
+        "  exports: [RouterModule],\n"
+        "})\n"
+        "export class AppRoutingModule {}\n",
+    )
+    _write_file(
+        tmp_path / "frontend/src/app/app.module.ts",
+        "import { NgModule } from '@angular/core';\n"
+        "@NgModule({})\n"
+        "export class AppModule {}\n",
+    )
+
+    exit_code = frontend.run_install(_args(tmp_path, config_path))
+    assert exit_code == 0
+
+    routes_content = (tmp_path / "frontend/src/app/app-routing.module.ts").read_text(encoding="utf-8")
+    assert "FILTERX GENERATED ROUTES START" in routes_content
+    assert "path: 'books'" in routes_content
+    assert (tmp_path / "frontend/src/app/filterx-generated/pages/book.page.ts").exists()
+
+
+def test_frontend_install_patches_routes_array_when_anchor_missing(tmp_path: Path) -> None:
     config_path = _write_config(tmp_path)
     _write_scan(tmp_path)
 
@@ -207,7 +240,37 @@ def test_frontend_install_blocks_when_routes_anchor_missing(tmp_path: Path) -> N
     )
 
     exit_code = frontend.run_install(_args(tmp_path, config_path))
-    assert exit_code == 3
+    assert exit_code == 0
+    routes_content = (tmp_path / "frontend/src/app/app.routes.ts").read_text(encoding="utf-8")
+    assert "FILTERX GENERATED ROUTES START" in routes_content
+
+
+def test_frontend_install_uses_legacy_templates_for_angular16(tmp_path: Path) -> None:
+    config_path = _write_config(tmp_path)
+    _write_scan(tmp_path)
+
+    _write_file(
+        tmp_path / "frontend/src/app/app.routes.ts",
+        "import { Routes } from '@angular/router';\n\n"
+        "export const routes: Routes = [\n"
+        "  // FILTERX:ROUTES\n"
+        "];\n",
+    )
+    _write_file(
+        tmp_path / "frontend/package.json",
+        json.dumps({"dependencies": {"@angular/core": "^16.2.0"}}, indent=2),
+    )
+
+    assert frontend.run_install(_args(tmp_path, config_path)) == 0
+
+    advanced_template = (tmp_path / "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html").read_text(encoding="utf-8")
+    filter_builder_template = (tmp_path / "frontend/src/app/shared/components/filter-builder/filter-builder.component.html").read_text(encoding="utf-8")
+    assert "@if" not in advanced_template
+    assert "@for" not in advanced_template
+    assert "@if" not in filter_builder_template
+    assert "@for" not in filter_builder_template
+    assert "*ngIf" in advanced_template
+    assert "*ngFor" in filter_builder_template
 
 
 def test_frontend_install_is_idempotent_on_route_patch(tmp_path: Path) -> None:

@@ -7,6 +7,37 @@ from typing import Any
 from filterx.core.config import load_effective_config
 
 
+def _frontend_rel(frontend_root: str, suffix: str) -> str:
+    return f"{frontend_root.rstrip('/')}/{suffix}"
+
+
+def _resolve_routes_file(project_root: Path, frontend_root: str, configured_path: str) -> Path:
+    configured = (project_root / configured_path).resolve()
+    if configured.exists():
+        return configured
+    for candidate in ("src/app/app.routes.ts", "src/app/app-routing.module.ts"):
+        path = (project_root / _frontend_rel(frontend_root, candidate)).resolve()
+        if path.exists():
+            return path
+    return configured
+
+
+def _resolve_app_config_file(project_root: Path, frontend_root: str, configured_path: str) -> Path | None:
+    configured = (project_root / configured_path).resolve()
+    if configured.exists():
+        return configured
+
+    default_config = (project_root / _frontend_rel(frontend_root, "src/app/app.config.ts")).resolve()
+    if default_config.exists():
+        return default_config
+
+    module_file = (project_root / _frontend_rel(frontend_root, "src/app/app.module.ts")).resolve()
+    if module_file.exists():
+        return None
+
+    return configured
+
+
 def run(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
@@ -45,28 +76,38 @@ def run(args: Any) -> int:
                 )
 
     if cfg["frontend"]["enabled"]:
-        routes_file = project_root / cfg["frontend"]["routes_file"]
+        frontend_root = str(cfg["frontend"].get("workspace_root", "frontend"))
+        routes_file = _resolve_routes_file(
+            project_root,
+            frontend_root,
+            str(cfg["frontend"]["routes_file"]),
+        )
         routes_anchor = cfg["frontend"]["routes_anchor"]
-        app_config_file = project_root / cfg["frontend"]["app_config_file"]
+        app_config_file = _resolve_app_config_file(
+            project_root,
+            frontend_root,
+            str(cfg["frontend"]["app_config_file"]),
+        )
         app_config_anchor = cfg["frontend"]["app_config_anchor"]
 
-        for path, code in [
-            (routes_file, "FRONTEND_ROUTES_FILE_MISSING"),
-            (app_config_file, "FRONTEND_APP_CONFIG_FILE_MISSING"),
-        ]:
-            if not path.exists():
-                errors.append({"code": code, "path": str(path)})
+        if not routes_file.exists():
+            errors.append({"code": "FRONTEND_ROUTES_FILE_MISSING", "path": str(routes_file)})
 
-        if routes_file.exists() and routes_anchor not in routes_file.read_text(encoding="utf-8"):
-            warnings.append(
-                {
-                    "code": "FRONTEND_ROUTES_ANCHOR_NOT_FOUND",
-                    "path": str(routes_file),
-                    "anchor": routes_anchor,
-                }
-            )
+        if app_config_file is not None and not app_config_file.exists():
+            errors.append({"code": "FRONTEND_APP_CONFIG_FILE_MISSING", "path": str(app_config_file)})
 
-        if app_config_file.exists() and app_config_anchor not in app_config_file.read_text(encoding="utf-8"):
+        if routes_file.exists():
+            routes_content = routes_file.read_text(encoding="utf-8")
+            if routes_anchor not in routes_content and "FILTERX GENERATED ROUTES START" not in routes_content:
+                warnings.append(
+                    {
+                        "code": "FRONTEND_ROUTES_ANCHOR_NOT_FOUND",
+                        "path": str(routes_file),
+                        "anchor": routes_anchor,
+                    }
+                )
+
+        if app_config_file is not None and app_config_file.exists() and app_config_anchor not in app_config_file.read_text(encoding="utf-8"):
             warnings.append(
                 {
                     "code": "FRONTEND_APP_CONFIG_ANCHOR_NOT_FOUND",

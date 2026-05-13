@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -175,6 +176,12 @@ def _setup_synthetic_project(tmp_path: Path, include_anchor: bool = True, add_ro
     return project_root
 
 
+def _enable_frontend_in_config(config_path: Path) -> None:
+    content = config_path.read_text(encoding="utf-8")
+    content = content.replace("frontend:\n  enabled: false\n", "frontend:\n  enabled: true\n", 1)
+    config_path.write_text(content, encoding="utf-8")
+
+
 def test_full_workflow_scan_install_validate_and_rollback(tmp_path: Path) -> None:
     project_root = _setup_synthetic_project(tmp_path, include_anchor=True, add_route_conflict=False)
     config_path = project_root / "filterx.yaml"
@@ -248,3 +255,130 @@ def test_orchestrated_install_accepts_install_parser_style_namespace(tmp_path: P
     assert install.run(args) == 0
     assert (project_root / ".filterx/scan.json").exists()
     assert (project_root / "app/filterx_generated/router.py").exists()
+
+
+def test_orchestrated_install_supports_ngmodule_frontend_layout(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path, include_anchor=True, add_route_conflict=False)
+    config_path = project_root / "filterx.yaml"
+    _enable_frontend_in_config(config_path)
+
+    _write_file(
+        project_root / "frontend/src/app/app-routing.module.ts",
+        "import { NgModule } from '@angular/core';\n"
+        "import { RouterModule, Routes } from '@angular/router';\n\n"
+        "const routes: Routes = [\n"
+        "  { path: '', redirectTo: 'books', pathMatch: 'full' },\n"
+        "];\n\n"
+        "@NgModule({\n"
+        "  imports: [RouterModule.forRoot(routes)],\n"
+        "  exports: [RouterModule],\n"
+        "})\n"
+        "export class AppRoutingModule {}\n",
+    )
+    _write_file(
+        project_root / "frontend/src/app/app.module.ts",
+        "import { NgModule } from '@angular/core';\n"
+        "@NgModule({})\n"
+        "export class AppModule {}\n",
+    )
+
+    assert install.run(_args(project_root, config_path)) == 0
+
+    routes_content = (project_root / "frontend/src/app/app-routing.module.ts").read_text(encoding="utf-8")
+    assert "FILTERX GENERATED ROUTES START" in routes_content
+    assert "path: 'authors'" in routes_content
+
+
+def test_scan_uses_backend_root_for_import_resolution(tmp_path: Path) -> None:
+    project_root = tmp_path / "mono_backend"
+    project_root.mkdir(parents=True, exist_ok=True)
+
+    _write_file(project_root / "POS-back-main/app/__init__.py", "")
+    _write_file(project_root / "POS-back-main/app/models/__init__.py", "")
+    _write_file(
+        project_root / "POS-back-main/app/database.py",
+        "from sqlalchemy.orm import declarative_base\n\n"
+        "Base = declarative_base()\n\n"
+        "def get_db():\n"
+        "    raise RuntimeError('test stub')\n",
+    )
+    _write_file(
+        project_root / "POS-back-main/app/models/employee.py",
+        "from sqlalchemy import Column, Integer, String\n"
+        "from app.database import Base\n\n"
+        "class Employee(Base):\n"
+        "    __tablename__ = 'employees'\n"
+        "    id = Column(Integer, primary_key=True)\n"
+        "    full_name = Column(String, nullable=False)\n",
+    )
+    _write_file(
+        project_root / "POS-back-main/app/main.py",
+        "from fastapi import FastAPI\n\n"
+        "app = FastAPI()\n",
+    )
+
+    config = (
+        "version: 1\n\n"
+        "project:\n"
+        "  name: mono_backend\n"
+        "  root: .\n"
+        "  backend_root: POS-back-main/app\n"
+        "  frontend_root: frontend\n"
+        "  alembic_ini: alembic.ini\n\n"
+        "python:\n"
+        "  app_import: app.main:app\n"
+        "  base_class_import: app.database:Base\n"
+        "  models_package: app.models\n"
+        "  session_dependency_import: app.database:get_db\n"
+        "  sqlalchemy_url_env: DATABASE_URL\n\n"
+        "backend:\n"
+        "  enabled: false\n"
+        "  api_prefix: /api\n"
+        "  generated_package: POS-back-main/app/filterx_generated\n"
+        "  mount_file: POS-back-main/app/main.py\n"
+        "  mount_anchor: '# FILTERX:ROUTER_MOUNT'\n"
+        "  entities: []\n"
+        "  exclude_entities: []\n"
+        "  global_predicate_hooks: []\n\n"
+        "frontend:\n"
+        "  enabled: false\n"
+        "  workspace_root: frontend\n"
+        "  generated_root: frontend/src/app/filterx-generated\n"
+        "  routes_file: frontend/src/app/app.routes.ts\n"
+        "  routes_anchor: '// FILTERX:ROUTES'\n"
+        "  app_config_file: frontend/src/app/app.config.ts\n"
+        "  app_config_anchor: '// FILTERX:PROVIDERS'\n"
+        "  entity_style: kebab\n\n"
+        "database:\n"
+        "  enabled: false\n"
+        "  provider: alembic\n"
+        "  migration_dir: alembic/versions\n"
+        "  features:\n"
+        "    saved_filters: true\n"
+        "    shared_filters: false\n"
+        "    auditing: false\n\n"
+        "scan:\n"
+        "  max_relationship_depth: 3\n"
+        "  include_views: false\n"
+        "  include_hybrid_properties: false\n"
+        "  respect_soft_delete: true\n\n"
+        "safety:\n"
+        "  dry_run_default: false\n"
+        "  require_anchor_comments: true\n"
+        "  idempotency_manifest: .filterx/manifest.json\n"
+        "  allow_overwrite_generated: true\n"
+        "  strict_conflict_mode: true\n\n"
+        "output:\n"
+        "  scan_file: .filterx/scan.json\n"
+        "  plan_file: .filterx/plan.json\n"
+        "  diagnostics_file: .filterx/diagnostics.json\n"
+        "  patch_dir: .filterx/patches\n"
+    )
+    config_path = project_root / "filterx.yaml"
+    _write_file(config_path, config)
+
+    assert scan.run(_args(project_root, config_path)) == 0
+
+    scan_payload = json.loads((project_root / ".filterx/scan.json").read_text(encoding="utf-8"))
+    assert scan_payload["graph_stats"]["entity_count"] == 1
+    assert scan_payload["entities"][0]["model"] == "Employee"

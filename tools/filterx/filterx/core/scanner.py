@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import os
 import pkgutil
 import sys
 from dataclasses import dataclass
@@ -30,6 +31,58 @@ def _purge_module_cache(prefixes: Iterable[str]) -> None:
             if module_name == prefix or module_name.startswith(prefix + "."):
                 sys.modules.pop(module_name, None)
                 break
+
+
+def _prepend_sys_path(path: Path) -> None:
+    resolved = str(path.resolve())
+    if resolved not in sys.path:
+        sys.path.insert(0, resolved)
+
+
+class _WorkingDirectory:
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        self._previous: str | None = None
+
+    def __enter__(self) -> None:
+        self._previous = os.getcwd()
+        os.chdir(self.path)
+
+    def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
+        if self._previous is not None:
+            os.chdir(self._previous)
+
+
+def _frontend_rel(frontend_root: str, suffix: str) -> str:
+    return f"{frontend_root.rstrip('/')}/{suffix}"
+
+
+def _resolve_frontend_routes_file(project_root: Path, configured_rel: str, frontend_root: str) -> Path:
+    configured = (project_root / configured_rel).resolve()
+    if configured.exists():
+        return configured
+    for candidate in ("src/app/app.routes.ts", "src/app/app-routing.module.ts"):
+        path = (project_root / _frontend_rel(frontend_root, candidate)).resolve()
+        if path.exists():
+            return path
+    return configured
+
+
+def _resolve_frontend_app_config_file(project_root: Path, configured_rel: str, frontend_root: str) -> Path | None:
+    configured = (project_root / configured_rel).resolve()
+    if configured.exists():
+        return configured
+
+    default_config = (project_root / _frontend_rel(frontend_root, "src/app/app.config.ts")).resolve()
+    if default_config.exists():
+        return default_config
+
+    # NgModule apps may not provide app.config.ts.
+    module_file = (project_root / _frontend_rel(frontend_root, "src/app/app.module.ts")).resolve()
+    if module_file.exists():
+        return None
+
+    return configured
 
 
 def _normalize_sqlalchemy_type(type_obj: Any) -> str:
@@ -222,8 +275,13 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
         "info": [],
     }
 
-    if str(project_root) not in sys.path:
-        sys.path.insert(0, str(project_root))
+    _prepend_sys_path(project_root)
+
+    backend_root = str(config.get("project", {}).get("backend_root", "app")).strip("/")
+    if backend_root:
+        backend_path = (project_root / backend_root).resolve()
+        if backend_path.exists():
+            _prepend_sys_path(backend_path.parent)
 
     py_cfg = config["python"]
     backend_cfg = config["backend"]
@@ -240,67 +298,68 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
     }
     _purge_module_cache([model_package_name, app_module_name, base_module_name, *sorted(root_packages)])
 
-    try:
-        _walk_and_import_package(py_cfg["models_package"])
-    except Exception as exc:  # pragma: no cover
-        diagnostics["errors"].append(
-            {
-                "code": "MODELS_IMPORT_FAILED",
-                "message": f"Could not import models package '{py_cfg['models_package']}'.",
-                "context": {"error": str(exc)},
-            }
-        )
-
-    entities: List[Dict[str, Any]] = []
-    route_scan: List[Dict[str, Any]] = []
-
-    try:
-        base_cls = _import_object(py_cfg["base_class_import"])
-        mapper_classes = sorted(
-            [m.class_ for m in base_cls.registry.mappers],
-            key=lambda c: c.__name__,
-        )
-
-        allow_entities = set(backend_cfg.get("entities") or [])
-        deny_entities = set(backend_cfg.get("exclude_entities") or [])
-
-        for cls in mapper_classes:
-            model_name = cls.__name__
-            if allow_entities and model_name not in allow_entities:
-                continue
-            if model_name in deny_entities:
-                continue
-            entities.append(_build_entity(cls))
-
-        if not entities:
-            diagnostics["warnings"].append(
+    with _WorkingDirectory(project_root):
+        try:
+            _walk_and_import_package(py_cfg["models_package"])
+        except Exception as exc:  # pragma: no cover
+            diagnostics["errors"].append(
                 {
-                    "code": "NO_ENTITIES_SELECTED",
-                    "message": "No entities were selected from SQLAlchemy models.",
-                    "context": {},
+                    "code": "MODELS_IMPORT_FAILED",
+                    "message": f"Could not import models package '{py_cfg['models_package']}'.",
+                    "context": {"error": str(exc)},
                 }
             )
 
-    except Exception as exc:  # pragma: no cover
-        diagnostics["errors"].append(
-            {
-                "code": "BASE_IMPORT_OR_MAPPING_FAILED",
-                "message": "Could not load Base registry and mapped model classes.",
-                "context": {"error": str(exc)},
-            }
-        )
+        entities: List[Dict[str, Any]] = []
+        route_scan: List[Dict[str, Any]] = []
 
-    try:
-        app_obj = _import_object(py_cfg["app_import"])
-        route_scan = _scan_routes(app_obj)
-    except Exception as exc:  # pragma: no cover
-        diagnostics["warnings"].append(
-            {
-                "code": "APP_IMPORT_FAILED",
-                "message": f"Could not import app from '{py_cfg['app_import']}' for route scan.",
-                "context": {"error": str(exc)},
-            }
-        )
+        try:
+            base_cls = _import_object(py_cfg["base_class_import"])
+            mapper_classes = sorted(
+                [m.class_ for m in base_cls.registry.mappers],
+                key=lambda c: c.__name__,
+            )
+
+            allow_entities = set(backend_cfg.get("entities") or [])
+            deny_entities = set(backend_cfg.get("exclude_entities") or [])
+
+            for cls in mapper_classes:
+                model_name = cls.__name__
+                if allow_entities and model_name not in allow_entities:
+                    continue
+                if model_name in deny_entities:
+                    continue
+                entities.append(_build_entity(cls))
+
+            if not entities:
+                diagnostics["warnings"].append(
+                    {
+                        "code": "NO_ENTITIES_SELECTED",
+                        "message": "No entities were selected from SQLAlchemy models.",
+                        "context": {},
+                    }
+                )
+
+        except Exception as exc:  # pragma: no cover
+            diagnostics["errors"].append(
+                {
+                    "code": "BASE_IMPORT_OR_MAPPING_FAILED",
+                    "message": "Could not load Base registry and mapped model classes.",
+                    "context": {"error": str(exc)},
+                }
+            )
+
+        try:
+            app_obj = _import_object(py_cfg["app_import"])
+            route_scan = _scan_routes(app_obj)
+        except Exception as exc:  # pragma: no cover
+            diagnostics["warnings"].append(
+                {
+                    "code": "APP_IMPORT_FAILED",
+                    "message": f"Could not import app from '{py_cfg['app_import']}' for route scan.",
+                    "context": {"error": str(exc)},
+                }
+            )
 
     graph: Dict[str, Set[str]] = {}
     for ent in entities:
@@ -348,19 +407,30 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
                 }
             )
 
-    frontend_files = {
-        "routes_file": str((project_root / frontend_cfg["routes_file"]).resolve()),
-        "app_config_file": str((project_root / frontend_cfg["app_config_file"]).resolve()),
-    }
-    for key, raw_path in frontend_files.items():
-        if not Path(raw_path).exists():
-            diagnostics["warnings"].append(
-                {
-                    "code": "FRONTEND_FILE_NOT_FOUND",
-                    "message": f"Frontend target file '{key}' not found.",
-                    "context": {"path": raw_path},
-                }
-            )
+    frontend_root = str(frontend_cfg.get("workspace_root", "frontend"))
+    routes_target = _resolve_frontend_routes_file(project_root, str(frontend_cfg["routes_file"]), frontend_root)
+    if not routes_target.exists():
+        diagnostics["warnings"].append(
+            {
+                "code": "FRONTEND_FILE_NOT_FOUND",
+                "message": "Frontend target file 'routes_file' not found.",
+                "context": {"path": str(routes_target)},
+            }
+        )
+
+    app_config_target = _resolve_frontend_app_config_file(
+        project_root,
+        str(frontend_cfg["app_config_file"]),
+        frontend_root,
+    )
+    if app_config_target is not None and not app_config_target.exists():
+        diagnostics["warnings"].append(
+            {
+                "code": "FRONTEND_FILE_NOT_FOUND",
+                "message": "Frontend target file 'app_config_file' not found.",
+                "context": {"path": str(app_config_target)},
+            }
+        )
 
     scan_payload: Dict[str, Any] = {
         "generated_at": utc_now_iso(),

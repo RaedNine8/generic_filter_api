@@ -115,3 +115,37 @@ def test_patch_ids_are_unique_across_consecutive_applies(tmp_path: Path):
     )
 
     assert first.patch_id != second.patch_id
+
+
+def test_apply_and_rollback_supports_paths_outside_project_root(tmp_path: Path):
+    project_root = tmp_path / "backend"
+    frontend_root = tmp_path / "frontend"
+    project_root.mkdir(parents=True, exist_ok=True)
+    frontend_root.mkdir(parents=True, exist_ok=True)
+
+    manifest_path = project_root / ".filterx" / "manifest.json"
+    patch_dir = project_root / ".filterx" / "patches"
+
+    result = apply_patch_operations(
+        project_root=project_root,
+        operations=[
+            PatchOp(
+                kind="generated_file",
+                path="../frontend/generated.txt",
+                content="generated from backend patcher\n",
+            )
+        ],
+        manifest_path=manifest_path,
+        patch_dir=patch_dir,
+        dry_run=False,
+        check_mode=False,
+        strict_conflict_mode=True,
+        description="outside root",
+    )
+
+    assert result.applied_ops == 1
+    assert (frontend_root / "generated.txt").exists()
+
+    rollback = rollback_patch_bundle(project_root, patch_dir, result.patch_id)
+    assert rollback["count"] == 1
+    assert not (frontend_root / "generated.txt").exists()

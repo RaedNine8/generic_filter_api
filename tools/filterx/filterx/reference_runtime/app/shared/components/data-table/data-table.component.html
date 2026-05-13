@@ -1,0 +1,148 @@
+<div class="data-table-container" data-testid="data-table-container">
+  <div class="loading-progress" *ngIf="loading" aria-hidden="true"></div>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">Loading...</span>
+  </div>
+
+  <div class="table-wrapper" [class.loading]="loading">
+    <table
+      class="data-table"
+      data-testid="data-table"
+      [class.striped]="striped"
+      [class.hover]="hoverRows"
+    >
+      <thead>
+        <tr>
+          <th
+            *ngFor="let column of columns; trackBy: trackByColumn"
+            [style.width]="column.width"
+            [class]="column.cssClass"
+            [class.numeric]="isNumericColumn(column)"
+          >
+            <ng-container *ngIf="column.sortable; else plainHeader">
+              <app-sort-header
+                [field]="column.field"
+                [label]="column.header"
+                [currentSortField]="sortField"
+                [currentSortOrder]="sortOrder"
+                (sortChange)="onSortChange($event)"
+              ></app-sort-header>
+            </ng-container>
+            <ng-template #plainHeader>
+              {{ column.header }}
+            </ng-template>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="data.length === 0 && !loading" class="empty-row">
+          <td [attr.colspan]="columns.length" class="empty-cell">
+            <div class="empty-state">
+              <span class="empty-icon">📭</span>
+              <span class="empty-message">{{ emptyMessage }}</span>
+            </div>
+          </td>
+        </tr>
+
+        <tr
+          *ngIf="loading && data.length === 0"
+          class="skeleton-row"
+          aria-hidden="true"
+        >
+          <td [attr.colspan]="columns.length">
+            <div class="skeleton-lines">
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+              <span class="skeleton-line"></span>
+            </div>
+          </td>
+        </tr>
+
+        <ng-container *ngIf="data.length > 0">
+          <ng-container *ngIf="rowTemplate; else defaultRows">
+            <tr
+              *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+              [class.clickable]="clickableRows"
+              (click)="onRowClick(row)"
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  rowTemplate;
+                  context: { $implicit: row, index: i, columns: columns }
+                "
+              ></ng-container>
+            </tr>
+          </ng-container>
+
+          <ng-template #defaultRows>
+            <tr
+              *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+              [class.clickable]="clickableRows"
+              (click)="onRowClick(row)"
+            >
+              <td
+                *ngFor="let column of columns; trackBy: trackByColumn"
+                [class]="column.cssClass"
+                [class.numeric]="isNumericColumn(column)"
+              >
+                <ng-container
+                  *ngIf="
+                    column.type === 'custom' && cellTemplate;
+                    else defaultCell
+                  "
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      cellTemplate;
+                      context: {
+                        $implicit: getCellValue(row, column),
+                        row: row,
+                        column: column,
+                      }
+                    "
+                  ></ng-container>
+                </ng-container>
+
+                <ng-template #defaultCell>
+                  <ng-container
+                    *ngIf="!isBooleanColumn(column); else booleanCell"
+                  >
+                    {{ formatCellValue(getCellValue(row, column), column) }}
+                  </ng-container>
+                  <ng-template #booleanCell>
+                    <span
+                      class="boolean-badge"
+                      [class.true]="
+                        getBooleanState(getCellValue(row, column)) === 'true'
+                      "
+                      [class.false]="
+                        getBooleanState(getCellValue(row, column)) === 'false'
+                      "
+                      [class.unknown]="
+                        getBooleanState(getCellValue(row, column)) === 'unknown'
+                      "
+                    >
+                      {{ formatBooleanLabel(getCellValue(row, column)) }}
+                    </span>
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    *ngIf="showPagination && pagination"
+    [meta]="pagination"
+    [pageSizeOptions]="pageSizeOptions"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  ></app-pagination>
+</div>

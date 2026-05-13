@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -74,11 +75,35 @@ def _resolve(project_root: Path, rel_or_abs: str) -> Path:
     return p if p.is_absolute() else (project_root / p)
 
 
+def _project_relative_path(project_root: Path, target_path: Path) -> str:
+    root = project_root.resolve()
+    target = target_path.resolve()
+    try:
+        return target.relative_to(root).as_posix()
+    except ValueError:
+        try:
+            return Path(os.path.relpath(target, root)).as_posix()
+        except ValueError:
+            return target.as_posix()
+
+
+def _safe_backup_relative_path(relative_path: str) -> str:
+    parts: list[str] = []
+    for part in Path(relative_path).parts:
+        if part in {"", "."}:
+            continue
+        if part == "..":
+            parts.append("__up__")
+            continue
+        parts.append(part.replace(":", ""))
+    return "/".join(parts) if parts else "__root__"
+
+
 
 def _backup_file(project_root: Path, bundle_root: Path, target_path: Path) -> Dict[str, str | bool]:
-    rel = target_path.resolve().relative_to(project_root.resolve()).as_posix()
+    rel = _project_relative_path(project_root, target_path)
     backup_dir = bundle_root / "backup"
-    backup_file = backup_dir / rel
+    backup_file = backup_dir / _safe_backup_relative_path(rel)
 
     existed = target_path.exists()
     if existed:
@@ -168,7 +193,7 @@ def apply_patch_operations(
 
     for op in operations:
         target = _resolve(project_root, op.path)
-        rel = target.resolve().relative_to(project_root.resolve()).as_posix()
+        rel = _project_relative_path(project_root, target)
 
         if op.kind == "generated_file":
             new_content = op.content

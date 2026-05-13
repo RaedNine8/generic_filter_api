@@ -17,6 +17,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "."}
+include-package-data = true
 
 [tool.setuptools.packages.find]
 include = ["filterx*"]
+
+[tool.setuptools.package-data]
+filterx = ["reference_runtime/**/*"]

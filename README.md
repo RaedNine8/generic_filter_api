@@ -236,6 +236,7 @@ Important path rules:
 - Use paths relative to your project root.
 - Use forward slashes in `filterx.yaml`; they work on Windows, Linux, and macOS.
 - If your backend is under `backend/app`, use paths such as `backend/app/main.py`.
+- `project.backend_root` is also used as a Python import root hint during scan. For example, with `backend_root: POS-back-main/app`, imports like `app.main:app` resolve from `POS-back-main`.
 - If your Angular app is under `client`, set `frontend.workspace_root: client` and update the frontend paths.
 - If your models package is not `app.models`, set `python.models_package` to the actual Python import path.
 
@@ -302,6 +303,8 @@ export const routes: Routes = [
 
 FilterX will insert generated model routes at this anchor.
 
+Note: for NgModule projects that use `app-routing.module.ts`, FilterX can also patch the `const routes: Routes = [...]` array directly even if the anchor is missing.
+
 ### 6.3 Frontend provider anchor
 
 Open the file configured by `frontend.app_config_file`.
@@ -330,6 +333,8 @@ export const appConfig: ApplicationConfig = {
 ```
 
 FilterX will add required Angular providers at this anchor.
+
+Note: this step only applies when your project uses `app.config.ts` (standalone setup). NgModule projects with `app.module.ts` can omit `app.config.ts`.
 
 ## 7. Scan your project
 
@@ -425,8 +430,8 @@ Patched under your Angular workspace:
 - `angular.json`
 - `proxy.conf.cjs`
 - `src/styles.css`
-- `src/app/app.routes.ts`
-- `src/app/app.config.ts`
+- `src/app/app.routes.ts` or `src/app/app-routing.module.ts`
+- `src/app/app.config.ts` (when present)
 
 If your Angular workspace is not named `frontend`, use the directory configured by `frontend.workspace_root`.
 
