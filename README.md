@@ -35,17 +35,35 @@ You need a project with:
 - Node.js + npm
 - PostgreSQL or another database supported by your app
 
-All commands below are written so they can be run from **your target project root**.
+FilterX expects a shared parent directory that contains both the backend project and the frontend project.
+Create `filterx.yaml` in that shared parent directory, not inside only the backend or only the frontend.
 
-## 0. Go to your target project
+Recommended layout:
 
-Go to the project where you want to inject FilterX.
-
-```bash
-cd path/to/your-project
+```text
+your-workspace/
+├── backend_user_project/
+├── frontend_user_project/
+└── filterx.yaml
 ```
 
-From this point on, `.` means your project root.
+All commands below assume `.` is that shared workspace root, the same directory that contains:
+
+- `backend_user_project/`
+- `frontend_user_project/`
+- `filterx.yaml`
+
+Backend-only commands such as `alembic`, seed scripts, and `uvicorn` are usually run from inside `backend_user_project/`.
+
+## 0. Go to your shared workspace root
+
+Go to the directory that contains both user projects and where you will create `filterx.yaml`.
+
+```bash
+cd path/to/your-workspace
+```
+
+From this point on, `.` means the shared workspace root.
 
 ## 1. Activate/use the Python environment
 
@@ -72,16 +90,34 @@ python -m pip install -e .
 Install the FilterX CLI:
 
 ```bash
-python.exe -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
+python -m pip install git+https://github.com/RaedNine8/generic_filter_api.git
 filterx --help
 ```
 
 If you cloned this repository and are developing FilterX locally, install the CLI in editable mode from the cloned repo instead:
 
 ```bash
-python -m pip install -e path/to/generic_filter_api/tools/filterx
+pip install -e path/to/generic_filter_api/tools/filterx
 filterx --help
 ```
+
+If your Python environment lives inside `backend_user_project/.venv`, activate it there and then come back to the shared workspace root before running FilterX.
+
+Example:
+
+```powershell
+cd backend_user_project
+.\.venv\Scripts\Activate.ps1
+cd ..
+```
+
+If you prefer to stay inside `backend_user_project` when running the CLI, point FilterX back to the shared root with `../`:
+
+```bash
+filterx scan --project-root ../ --config ../filterx.yaml --no-dry-run --json
+```
+
+Use that same `../` pattern for the other `filterx` commands whenever you run them from inside `backend_user_project`.
 
 This gives you:
 
@@ -159,7 +195,7 @@ If your project does not have a seed script, insert a few rows manually or use y
 
 ## 5. Create `filterx.yaml`
 
-Create `filterx.yaml` at your project root.
+Create `filterx.yaml` at the shared workspace root.
 
 This file tells FilterX where your backend, models, frontend, and patch locations are.
 
@@ -170,23 +206,23 @@ version: 1
 
 project:
   name: my_project
-  root: .
-  backend_root: app
-  frontend_root: frontend
+  root: . # FilterX overwrites this from --project-root; keep the file at the shared workspace root
+  backend_root: backend_user_project # sibling backend directory under the shared workspace root
+  frontend_root: frontend_user_project # keep this aligned with frontend.workspace_root for clarity
   alembic_ini: alembic.ini
 
 python:
-  app_import: app.main:app
-  base_class_import: app.database:Base
-  models_package: app.models
-  session_dependency_import: app.database:get_db
+  app_import: app.main:app # imported from the backend project; backend_root is added to sys.path during scan/install
+  base_class_import: app.database:Base # backend import path
+  models_package: app.models # backend import path to your SQLAlchemy models package
+  session_dependency_import: app.database:get_db # backend import path to your DB session dependency
   sqlalchemy_url_env: DATABASE_URL
 
 backend:
   enabled: true
   api_prefix: /api
-  generated_package: app/filterx_generated
-  mount_file: app/main.py
+  generated_package: app/filterx_generated # resolved inside backend_root unless you already prefix it with backend_user_project/
+  mount_file: app/main.py # resolved inside backend_root unless you already prefix it with backend_user_project/
   mount_anchor: "# FILTERX:ROUTER_MOUNT"
   entities: []
   exclude_entities: []
@@ -194,13 +230,14 @@ backend:
 
 frontend:
   enabled: true
-  workspace_root: frontend
-  generated_root: frontend/src/app/filterx-generated
-  routes_file: frontend/src/app/app.routes.ts
+  workspace_root: frontend_user_project # resolved from the shared workspace root where filterx.yaml lives
+  generated_root: frontend_user_project/src/app/filterx-generated # frontend paths are relative to the shared workspace root
+  routes_file: frontend_user_project/src/app/app.routes.ts # frontend paths are not resolved under backend_root
   routes_anchor: "// FILTERX:ROUTES"
-  app_config_file: frontend/src/app/app.config.ts
+  app_config_file: frontend_user_project/src/app/app.config.ts
   app_config_anchor: "// FILTERX:PROVIDERS"
   entity_style: kebab
+  route_prefix: "" # set to filterx if your app already owns routes like /books or /authors
 
 database:
   enabled: false
@@ -236,7 +273,6 @@ Important path rules:
 - Use paths relative to your project root.
 - Use forward slashes in `filterx.yaml`; they work on Windows, Linux, and macOS.
 - If your backend is under `backend/app`, use paths such as `backend/app/main.py`.
-- `project.backend_root` is also used as a Python import root hint during scan. For example, with `backend_root: POS-back-main/app`, imports like `app.main:app` resolve from `POS-back-main`.
 - If your Angular app is under `client`, set `frontend.workspace_root: client` and update the frontend paths.
 - If your models package is not `app.models`, set `python.models_package` to the actual Python import path.
 
@@ -303,8 +339,6 @@ export const routes: Routes = [
 
 FilterX will insert generated model routes at this anchor.
 
-Note: for NgModule projects that use `app-routing.module.ts`, FilterX can also patch the `const routes: Routes = [...]` array directly even if the anchor is missing.
-
 ### 6.3 Frontend provider anchor
 
 Open the file configured by `frontend.app_config_file`.
@@ -333,8 +367,6 @@ export const appConfig: ApplicationConfig = {
 ```
 
 FilterX will add required Angular providers at this anchor.
-
-Note: this step only applies when your project uses `app.config.ts` (standalone setup). NgModule projects with `app.module.ts` can omit `app.config.ts`.
 
 ## 7. Scan your project
 
@@ -416,6 +448,27 @@ This step is mandatory for the standard FilterX integration.
 filterx frontend install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
 
+If your existing Angular app already owns the same paths that FilterX would generate, use a prefix:
+
+```yaml
+frontend:
+  route_prefix: filterx
+```
+
+Then rerun:
+
+```bash
+filterx frontend install --project-root . --config filterx.yaml --no-dry-run --yes --json
+```
+
+This avoids route collisions by generating paths such as `/filterx/<your-entity-route>`.
+
+Route generation is based on scanned entity/table names. For example, after anchoring and running the command:
+
+- backend endpoints can include `GET /api/filterx/books`, `GET /api/filterx/authors`, and `GET /api/filterx/saved-filters`
+- frontend pages can include `/books`, `/authors`, and `/saved-filters`
+- with `frontend.route_prefix: filterx`, those frontend pages become `/filterx/books`, `/filterx/authors`, and `/filterx/saved-filters`
+
 Generated/copied under your configured Angular workspace:
 
 - `src/app/core/**`
@@ -439,18 +492,18 @@ If your Angular workspace is not named `frontend`, use the directory configured 
 
 The frontend generator updates `package.json` with UI dependencies such as PrimeNG and PrimeIcons.
 
-If your Angular workspace is `frontend`:
+If your Angular workspace is `frontend_user_project`:
 
 ```bash
-cd frontend
+cd frontend_user_project
 npm install
 cd ..
 ```
 
-If your Angular workspace is `client`:
+If your Angular workspace uses another name, use that folder instead:
 
 ```bash
-cd client
+cd <your-frontend-workspace>
 npm install
 cd ..
 ```
@@ -476,18 +529,18 @@ If warnings appear, read them. Some warnings may be acceptable; errors must be f
 
 ## 13. Build the frontend
 
-If your Angular workspace is `frontend`:
+If your Angular workspace is `frontend_user_project`:
 
 ```bash
-cd frontend
+cd frontend_user_project
 npm run build
 cd ..
 ```
 
-If your Angular workspace is `client`:
+If your Angular workspace uses another name, use that folder instead:
 
 ```bash
-cd client
+cd <your-frontend-workspace>
 npm run build
 cd ..
 ```
@@ -500,16 +553,17 @@ Expected:
 
 ## 14. Run backend and frontend together
 
-Terminal 1, from project root:
+Terminal 1, from `backend_user_project`:
 
 ```bash
+cd backend_user_project
 uvicorn app.main:app --reload
 ```
 
 Terminal 2, from your Angular workspace:
 
 ```bash
-cd frontend
+cd frontend_user_project
 npm start
 ```
 
@@ -519,10 +573,22 @@ Open the Angular dev server URL, usually:
 http://localhost:4200
 ```
 
-Then open one of the generated entity routes. The route names are based on your tables/entities, for example:
+Then open one of the generated entity routes. The route names are based on your scanned tables/entities.
+
+Examples without a frontend route prefix:
 
 ```text
-http://localhost:4200/<your-entity-route>
+http://localhost:4200/books
+http://localhost:4200/authors
+http://localhost:4200/saved-filters
+```
+
+Examples with `frontend.route_prefix: filterx`:
+
+```text
+http://localhost:4200/filterx/books
+http://localhost:4200/filterx/authors
+http://localhost:4200/filterx/saved-filters
 ```
 
 You should see the generated list UI with search, filter tree, grouping, sorting, pagination, and relationship fields.
@@ -567,6 +633,8 @@ The CLI also creates `proxy.conf.cjs` so local Angular dev requests can reach yo
 - `ANCHOR_NOT_FOUND`: the configured anchor is missing from the configured file.
 - `SCAN_FILE_MISSING`: run `filterx scan` or `filterx install` with writes enabled.
 - Route conflict on `/api/filterx/...`: change `backend.api_prefix` or remove the conflicting host route.
+- `FRONTEND_ROUTE_PATH_ALREADY_EXISTS`: your Angular routes file already has one or more generated entity paths. Set `frontend.route_prefix: filterx`, remove/rename the existing host routes, or intentionally rerun with `--force` after placing the FilterX anchor before the existing route definitions.
+- `FRONTEND_NO_ENTITIES`: check `.filterx/scan.json`; frontend generation uses the entities discovered during `filterx scan`.
 - Angular icons appear as empty circles: restart `npm start`; `angular.json` must include `node_modules/primeicons/primeicons.css`.
 - Frontend API calls fail: confirm the backend is running and `proxy.conf.cjs` targets the correct backend URL.
 
