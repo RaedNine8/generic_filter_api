@@ -376,6 +376,8 @@ This reads `filterx.yaml`, imports your app/models, and writes `.filterx` artifa
 filterx scan --project-root . --config filterx.yaml --no-dry-run --json
 ```
 
+![FilterX scan demo](docs/gifs/filterx-scan.gif)
+
 Expected:
 
 - your SQLAlchemy entities are discovered
@@ -392,6 +394,8 @@ This creates the generated backend package and mounts it in your FastAPI app.
 ```bash
 filterx backend install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
+
+![FilterX backend install demo](docs/gifs/filterx-backend-install.gif)
 
 Generated under `backend.generated_package`:
 
@@ -447,6 +451,8 @@ This step is mandatory for the standard FilterX integration.
 ```bash
 filterx frontend install --project-root . --config filterx.yaml --no-dry-run --yes --json
 ```
+
+![FilterX frontend install demo](docs/gifs/filterx-frontend-install.gif)
 
 If your existing Angular app already owns the same paths that FilterX would generate, use a prefix:
 
@@ -513,6 +519,8 @@ cd ..
 ```bash
 filterx validate --project-root . --config filterx.yaml --json
 ```
+
+![FilterX validate demo](docs/gifs/filterx-validate.gif)
 
 Expected shape:
 
