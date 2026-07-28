@@ -1,0 +1,112 @@
+.copilot-panel {
+  display: grid;
+  gap: 10px;
+  margin-bottom: var(--space-3);
+}
+
+.copilot-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.copilot-input-wrap {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+}
+
+.spark {
+  flex: 0 0 auto;
+  color: var(--color-primary-strong);
+  font-size: 15px;
+}
+
+.copilot-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.copilot-btn {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.copilot-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.copilot-btn.primary,
+.copilot-btn.confirm {
+  border-color: #2f6d9f;
+  background: #2f6d9f;
+  color: #fff;
+}
+
+.copilot-btn.ghost {
+  background: var(--color-bg-soft);
+}
+
+.copilot-preview,
+.copilot-message {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.copilot-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-copy {
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.copilot-message.error {
+  border-color: #f2b6b6;
+  background: #fff5f5;
+  color: #8b2c2c;
+}
+
+.copilot-message.success {
+  border-color: #b9ddc8;
+  background: #f3fbf6;
+  color: #2d6a43;
+}
+
+@media (max-width: 720px) {
+  .copilot-input-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .copilot-preview {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

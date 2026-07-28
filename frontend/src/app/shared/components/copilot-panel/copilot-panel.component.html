@@ -1,0 +1,53 @@
+<section class="copilot-panel" aria-label="Filter Copilot">
+  <div class="copilot-input-row">
+    <div class="copilot-input-wrap">
+      <span class="spark" aria-hidden="true">AI</span>
+      <input
+        type="text"
+        class="copilot-input"
+        [(ngModel)]="prompt"
+        [disabled]="loadingPreview || executing"
+        placeholder="Describe a filter for these results"
+        (keydown.enter)="requestPreview()"
+      />
+    </div>
+    <button
+      type="button"
+      class="copilot-btn primary"
+      [disabled]="!canPreview"
+      (click)="requestPreview()"
+    >
+      {{ loadingPreview ? "Checking..." : "Preview" }}
+    </button>
+    <button
+      type="button"
+      class="copilot-btn ghost"
+      [disabled]="loadingPreview || executing"
+      (click)="clear()"
+    >
+      Clear
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="copilot-message error">{{ errorMessage }}</div>
+  }
+
+  @if (preview) {
+    <div class="copilot-preview">
+      <div class="preview-copy">{{ preview.explanation }}</div>
+      <button
+        type="button"
+        class="copilot-btn confirm"
+        [disabled]="executing"
+        (click)="confirmPreview()"
+      >
+        {{ executing ? "Running..." : "Apply filter" }}
+      </button>
+    </div>
+  }
+
+  @if (summary) {
+    <div class="copilot-message success">{{ summary }}</div>
+  }
+</section>

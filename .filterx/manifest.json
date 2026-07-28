@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": "2026-04-09T19:26:03.244469+00:00",
-  "updated_at": "2026-04-09T19:26:03.344897+00:00",
+  "updated_at": "2026-07-20T12:12:39.838740+00:00",
   "entries": {
     "app/filterx_generated/__init__.py": {
       "kind": "generated_file",
@@ -59,12 +59,12 @@
     },
     "app/main.py": {
       "kind": "anchor_insert",
-      "sha256": "594e0d933ae0ecc220eaad50f217ed0a2a8a0e170abb578691b7f0561360fc0f",
-      "last_patch_id": "patch-20260409T192603Z",
-      "updated_at": "2026-04-09T19:26:03.267519+00:00",
+      "sha256": "eefe2005ba3c268b3ce58cde3eec47d6b8be23a02868a09fc2d110dc42410779",
+      "last_patch_id": "patch-20260720T121239.812910Z-9e4c85ef",
+      "updated_at": "2026-07-20T12:12:39.838740+00:00",
       "metadata": {
-        "anchor": "# FILTERX:ROUTER_MOUNT",
-        "snippet_hash": "b36dd60cc566a8eb7c20232a562bbcf3bd29e4433d1b8d0921d1f19d4ceb4e75"
+        "anchor": "# FILTERX:COPILOT_MOUNT",
+        "snippet_hash": "b8b883e50307d875ee82dd1fd08b95dcccee330af4c0b48a274ac620d962b796"
       }
     },
     "frontend/src/app/filterx-generated/entities/author.config.ts": {
@@ -138,6 +138,15 @@
       "metadata": {
         "owner": "filterx-generated"
       }
+    },
+    "app/filterx_generated/copilot_router.py": {
+      "kind": "generated_file",
+      "sha256": "66be07d53ce9024069424eea8fc6df6c462e1e8f5e22f520cdf4dfa8e9bf4330",
+      "last_patch_id": "patch-20260720T121239.812910Z-9e4c85ef",
+      "updated_at": "2026-07-20T12:12:39.819096+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
     }
   },
   "patch_history": [
@@ -178,6 +187,16 @@
       "description": "db.install",
       "touched_files": [
         "alembic/versions/filterx_generated_persistence.py"
+      ]
+    },
+    {
+      "patch_id": "patch-20260720T121239.812910Z-9e4c85ef",
+      "created_at": "2026-07-20T12:12:39.838740+00:00",
+      "mode": "apply",
+      "description": "copilot.install",
+      "touched_files": [
+        "app/filterx_generated/copilot_router.py",
+        "app/main.py"
       ]
     }
   ]

@@ -4,7 +4,7 @@ import argparse
 import sys
 from typing import Sequence
 
-from filterx.commands import backend, db, frontend, install, rollback, scan, validate
+from filterx.commands import backend, copilot, db, frontend, install, rollback, scan, validate
 
 
 def _add_global_options(parser: argparse.ArgumentParser) -> None:
@@ -88,6 +88,21 @@ def build_parser() -> argparse.ArgumentParser:
     db_validate = db_sub.add_parser("validate", help="Validate DB integration")
     _add_global_options(db_validate)
     db_validate.set_defaults(handler=db.run_validate)
+
+    copilot_p = sub.add_parser("copilot", help="Filter Copilot integration commands")
+    _add_global_options(copilot_p)
+    copilot_sub = copilot_p.add_subparsers(dest="copilot_command", required=True)
+    copilot_install = copilot_sub.add_parser("install", help="Install copilot integration")
+    _add_global_options(copilot_install)
+    copilot_install.add_argument("--no-mount", action="store_true", help="Generate router without patching mount file")
+    copilot_install.set_defaults(handler=copilot.run_install)
+    copilot_validate = copilot_sub.add_parser("validate", help="Validate copilot integration")
+    _add_global_options(copilot_validate)
+    copilot_validate.set_defaults(handler=copilot.run_validate)
+    copilot_remove = copilot_sub.add_parser("remove", help="Remove copilot integration")
+    _add_global_options(copilot_remove)
+    copilot_remove.add_argument("--patch-id", default=None, help="Explicit copilot patch id to rollback")
+    copilot_remove.set_defaults(handler=copilot.run_remove)
 
     install_p = sub.add_parser("install", help="Orchestrated install")
     _add_global_options(install_p)

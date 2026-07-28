@@ -21,6 +21,10 @@ FilterX is a generator, not a framework replacement.
 
 The goal is to avoid rebuilding the same filtering/list-screen logic for every model.
 
+## Filter Copilot
+
+FilterX now includes an optional agent layer that can turn a plain-English filter request into the same validated `FilterTreeNode` payload used by the existing filtering API. It previews the generated filter first, validates fields and operations against scanned metadata, and only executes after explicit confirmation. See [AGENT_LAYER_GUIDE.md](AGENT_LAYER_GUIDE.md) for the beginner-friendly architecture walkthrough.
+
 ## Before you start
 
 You need a project with:

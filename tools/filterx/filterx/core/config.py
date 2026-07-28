@@ -58,6 +58,39 @@ def default_config() -> Dict[str, Any]:
                 "auditing": False,
             },
         },
+        "agent": {
+            "enabled": False,
+            "providers": [
+                {
+                    "name": "groq",
+                    "api_key_env": "GROQ_API_KEY",
+                    "model": "llama-3.3-70b-versatile",
+                    "roles": ["compile", "retry", "summarize"],
+                },
+                {
+                    "name": "gemini",
+                    "api_key_env": "GEMINI_API_KEY",
+                    "model": "gemini-2.5-flash",
+                    "roles": ["fallback"],
+                },
+            ],
+            "vector_store": {
+                "enabled": False,
+                "backend": "chroma",
+                "path": ".filterx/vector_store",
+                "embedding_model": "all-MiniLM-L6-v2",
+            },
+            "safety": {
+                "require_human_preview": True,
+                "max_validation_retries": 3,
+                "max_provider_retries": 3,
+                "circuit_breaker_failure_threshold": 5,
+                "circuit_breaker_reset_seconds": 60,
+            },
+            "mount_file": "app/main.py",
+            "mount_anchor": "# FILTERX:COPILOT_MOUNT",
+            "generated_file": "app/filterx_generated/copilot_router.py",
+        },
         "scan": {
             "max_relationship_depth": 3,
             "include_views": False,
@@ -127,6 +160,26 @@ def _validate(cfg: Dict[str, Any]) -> None:
     max_depth = cfg["scan"]["max_relationship_depth"]
     if not isinstance(max_depth, int) or max_depth < 1 or max_depth > 8:
         raise ConfigValidationError("scan.max_relationship_depth must be an integer between 1 and 8")
+
+    agent_cfg = cfg.get("agent", {})
+    if agent_cfg.get("enabled", False):
+        providers = agent_cfg.get("providers")
+        if not isinstance(providers, list) or not providers:
+            raise ConfigValidationError("agent.providers must be a non-empty list when agent.enabled is true")
+        providers_by_role: dict[str, int] = {}
+        for idx, provider in enumerate(providers):
+            if not isinstance(provider, dict):
+                raise ConfigValidationError(f"agent.providers[{idx}] must be a mapping/object")
+            for field_name in ("name", "api_key_env", "model", "roles"):
+                if field_name not in provider:
+                    raise ConfigValidationError(f"agent.providers[{idx}] missing required field '{field_name}'")
+            roles = provider.get("roles")
+            if not isinstance(roles, list) or not all(isinstance(role, str) and role for role in roles):
+                raise ConfigValidationError(f"agent.providers[{idx}].roles must be a non-empty list of strings")
+            for role in roles:
+                providers_by_role[role] = providers_by_role.get(role, 0) + 1
+        if providers_by_role.get("compile", 0) < 1:
+            raise ConfigValidationError("agent.providers must include at least one provider with the 'compile' role")
 
 
 

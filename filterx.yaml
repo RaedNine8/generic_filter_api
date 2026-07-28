@@ -46,6 +46,32 @@ database:
     shared_filters: false
     auditing: false
 
+agent:
+  enabled: false
+  providers:
+    - name: groq
+      api_key_env: GROQ_API_KEY
+      model: llama-3.3-70b-versatile
+      roles: [compile, retry, summarize]
+    - name: gemini
+      api_key_env: GEMINI_API_KEY
+      model: gemini-2.5-flash
+      roles: [fallback]
+  vector_store:
+    enabled: false
+    backend: chroma
+    path: .filterx/vector_store
+    embedding_model: all-MiniLM-L6-v2
+  safety:
+    require_human_preview: true
+    max_validation_retries: 3
+    max_provider_retries: 3
+    circuit_breaker_failure_threshold: 5
+    circuit_breaker_reset_seconds: 60
+  mount_file: app/main.py
+  mount_anchor: "# FILTERX:COPILOT_MOUNT"
+  generated_file: app/filterx_generated/copilot_router.py
+
 scan:
   max_relationship_depth: 3
   include_views: false
