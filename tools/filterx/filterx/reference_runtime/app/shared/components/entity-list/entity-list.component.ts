@@ -27,12 +27,18 @@ import { EntityQueryService } from "../../../core/services/entity-query.service"
 import { SavedFilterService } from "../../../core/services/saved-filter.service";
 
 import { AdvancedSearchPanelComponent } from "../advanced-search-panel/advanced-search-panel.component";
+import { CopilotPanelComponent } from "../copilot-panel/copilot-panel.component";
 import { DataTableComponent } from "../data-table/data-table.component";
 
 @Component({
   selector: "app-entity-list",
   standalone: true,
-  imports: [CommonModule, AdvancedSearchPanelComponent, DataTableComponent],
+  imports: [
+    CommonModule,
+    AdvancedSearchPanelComponent,
+    CopilotPanelComponent,
+    DataTableComponent,
+  ],
   providers: [EntityQueryService],
   template: `
     <div class="entity-list-container">
@@ -42,6 +48,11 @@ import { DataTableComponent } from "../data-table/data-table.component";
       </header>
 
       <section class="search-section">
+        <app-copilot-panel
+          [entity]="config.name"
+          (applyFilter)="onTreeChange($event)"
+        ></app-copilot-panel>
+
         <app-advanced-search-panel
           [modelName]="config.name"
           [apiEndpoint]="config.apiEndpoint"

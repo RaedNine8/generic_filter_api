@@ -32,8 +32,6 @@ app.include_router(books_router)
 from app.filterx_generated.router import router as filterx_generated_router
 app.include_router(filterx_generated_router)
 # FILTERX:COPILOT_MOUNT
-from app.filterx_generated.copilot_router import router as filterx_copilot_router
-app.include_router(filterx_copilot_router)
 
 
 @app.get("/health")

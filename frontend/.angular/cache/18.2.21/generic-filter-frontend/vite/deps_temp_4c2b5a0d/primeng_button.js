@@ -1,10 +1,10 @@
 import {
-  DomHandler
-} from "./chunk-5G7WYC4N.js";
-import {
   Ripple,
   SpinnerIcon
 } from "./chunk-YQRE7Q4U.js";
+import {
+  DomHandler
+} from "./chunk-5G7WYC4N.js";
 import {
   BaseComponent
 } from "./chunk-ITS6ZSZJ.js";
@@ -91,8 +91,8 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate
 } from "./chunk-MEHXH6ZQ.js";
-import "./chunk-PEBH6BBU.js";
 import "./chunk-WPM5VTLQ.js";
+import "./chunk-PEBH6BBU.js";
 import "./chunk-4S3KYZTJ.js";
 import "./chunk-WDMUDEB6.js";
 
