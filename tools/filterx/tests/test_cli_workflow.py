@@ -382,3 +382,35 @@ def test_scan_uses_backend_root_for_import_resolution(tmp_path: Path) -> None:
     scan_payload = json.loads((project_root / ".filterx/scan.json").read_text(encoding="utf-8"))
     assert scan_payload["graph_stats"]["entity_count"] == 1
     assert scan_payload["entities"][0]["model"] == "Employee"
+
+
+def test_scan_records_resolved_entity_scope(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path)
+    config_path = project_root / "filterx.yaml"
+
+    assert scan.run(_args(project_root, config_path, entities="Book")) == 0
+
+    scan_payload = json.loads((project_root / ".filterx/scan.json").read_text(encoding="utf-8"))
+    assert scan_payload["entity_scope"] == {
+        "available": ["Author", "Book"],
+        "requested": ["Book"],
+        "excluded": [],
+        "selected": ["Book"],
+        "unknown_requested": [],
+        "unknown_excluded": [],
+        "requested_and_excluded": [],
+    }
+    assert [entity["model"] for entity in scan_payload["entities"]] == ["Book"]
+
+
+def test_scan_rejects_unknown_requested_entity(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path)
+    config_path = project_root / "filterx.yaml"
+
+    assert scan.run(_args(project_root, config_path, entities="Missing")) == 2
+
+    diagnostics = json.loads(
+        (project_root / ".filterx/diagnostics.json").read_text(encoding="utf-8")
+    )
+    assert diagnostics["errors"][0]["code"] == "ENTITY_SCOPE_UNKNOWN_REQUESTED"
+    assert diagnostics["errors"][0]["context"]["unknown"] == ["Missing"]

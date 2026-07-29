@@ -189,8 +189,17 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
     angular_json = json.loads((tmp_path / "frontend/angular.json").read_text(encoding="utf-8"))
     styles = angular_json["projects"]["frontend"]["architect"]["build"]["options"]["styles"]
     test_styles = angular_json["projects"]["frontend"]["architect"]["test"]["options"]["styles"]
-    assert styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
-    assert test_styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
+    assert styles == [
+        "node_modules/primeicons/primeicons.css",
+        "src/filterx.scss",
+        "src/styles.css",
+    ]
+    assert test_styles == [
+        "node_modules/primeicons/primeicons.css",
+        "src/filterx.scss",
+        "src/styles.css",
+    ]
+    assert (tmp_path / "frontend/src/filterx.scss").exists()
 
 
 def test_frontend_install_supports_app_routing_module_without_anchor(tmp_path: Path) -> None:

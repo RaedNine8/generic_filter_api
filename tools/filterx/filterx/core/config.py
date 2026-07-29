@@ -36,7 +36,10 @@ def default_config() -> Dict[str, Any]:
             "mount_anchor": "# FILTERX:ROUTER_MOUNT",
             "entities": [],
             "exclude_entities": [],
+            "auth_dependency_import": None,
+            "permission_hook_import": None,
             "global_predicate_hooks": [],
+            "entity_predicate_hooks": {},
         },
         "frontend": {
             "enabled": True,
@@ -98,6 +101,14 @@ def _require_import_path(value: str, field_name: str) -> None:
         )
 
 
+def _require_optional_import_path(value: Any, field_name: str) -> None:
+    if value is None or value == "":
+        return
+    if not isinstance(value, str):
+        raise ConfigValidationError(f"'{field_name}' must be null or a module:object string")
+    _require_import_path(value, field_name)
+
+
 def _validate(cfg: Dict[str, Any]) -> None:
     required_top = [
         "version",
@@ -123,6 +134,46 @@ def _validate(cfg: Dict[str, Any]) -> None:
         cfg["python"]["session_dependency_import"],
         "python.session_dependency_import",
     )
+
+    backend_cfg = cfg["backend"]
+    _require_optional_import_path(
+        backend_cfg.get("auth_dependency_import"),
+        "backend.auth_dependency_import",
+    )
+    _require_optional_import_path(
+        backend_cfg.get("permission_hook_import"),
+        "backend.permission_hook_import",
+    )
+
+    global_hooks = backend_cfg.get("global_predicate_hooks")
+    if not isinstance(global_hooks, list):
+        raise ConfigValidationError("backend.global_predicate_hooks must be a list")
+    for index, hook in enumerate(global_hooks):
+        if not isinstance(hook, str):
+            raise ConfigValidationError(
+                f"backend.global_predicate_hooks[{index}] must be a module:object string"
+            )
+        _require_import_path(hook, f"backend.global_predicate_hooks[{index}]")
+
+    entity_hooks = backend_cfg.get("entity_predicate_hooks")
+    if not isinstance(entity_hooks, dict):
+        raise ConfigValidationError("backend.entity_predicate_hooks must be a mapping")
+    for entity_name, hooks in entity_hooks.items():
+        if not isinstance(entity_name, str) or not entity_name.strip():
+            raise ConfigValidationError("backend.entity_predicate_hooks keys must be entity names")
+        if not isinstance(hooks, list):
+            raise ConfigValidationError(
+                f"backend.entity_predicate_hooks.{entity_name} must be a list"
+            )
+        for index, hook in enumerate(hooks):
+            if not isinstance(hook, str):
+                raise ConfigValidationError(
+                    f"backend.entity_predicate_hooks.{entity_name}[{index}] must be a module:object string"
+                )
+            _require_import_path(
+                hook,
+                f"backend.entity_predicate_hooks.{entity_name}[{index}]",
+            )
 
     max_depth = cfg["scan"]["max_relationship_depth"]
     if not isinstance(max_depth, int) or max_depth < 1 or max_depth > 8:

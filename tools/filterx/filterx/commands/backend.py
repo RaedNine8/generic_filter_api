@@ -6,6 +6,7 @@ from typing import Any
 
 from filterx.core.config import load_effective_config
 from filterx.core.conflicts import check_route_path_conflicts
+from filterx.core.entity_scope import EntityScope, select_entity_metadata
 from filterx.core.io import load_json
 from filterx.core.patcher import PatchOp, apply_patch_operations
 
@@ -25,19 +26,18 @@ def _csv_list(raw: str | None) -> list[str]:
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
-def _filter_entities(scan_entities: list[dict[str, Any]], cfg: dict[str, Any], args: Any) -> list[dict[str, Any]]:
-    allow = set(_csv_list(getattr(args, "entities", None)) or (cfg["backend"].get("entities") or []))
-    deny = set(cfg["backend"].get("exclude_entities") or [])
-
-    selected: list[dict[str, Any]] = []
-    for entity in scan_entities:
-        model = entity.get("model")
-        if allow and model not in allow:
-            continue
-        if model in deny:
-            continue
-        selected.append(entity)
-    return selected
+def _filter_entities(
+    scan_entities: list[dict[str, Any]],
+    cfg: dict[str, Any],
+    args: Any,
+) -> tuple[list[dict[str, Any]], EntityScope]:
+    requested = _csv_list(getattr(args, "entities", None)) or cfg["backend"].get("entities")
+    excluded = _csv_list(getattr(args, "exclude_entities", None)) or cfg["backend"].get("exclude_entities")
+    return select_entity_metadata(
+        scan_entities,
+        requested_names=requested,
+        excluded_names=excluded,
+    )
 
 
 def _py_module_path(path_like: str) -> str:
@@ -73,6 +73,7 @@ def _render_entities_py(entities: list[dict[str, Any]]) -> str:
                         "is_fk": field.get("is_fk", False),
                         "fk_targets": field.get("fk_targets", []),
                         "ops": field.get("ops", []),
+                        "enum_values": field.get("enum_values", []),
                     }
                     for field in entity.get("fields", [])
                 ],
@@ -120,9 +121,10 @@ import importlib
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Iterable, Optional
+from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request
-from sqlalchemy import String, asc, cast, desc, func, inspect as sa_inspect, or_
+from sqlalchemy import Boolean, Date, DateTime, Enum, Float, Integer, Numeric, String, asc, cast, desc, func, inspect as sa_inspect, or_
 from sqlalchemy.orm import aliased
 
 from .metadata import build_metadata
@@ -144,6 +146,53 @@ def _import_object(import_path: str) -> Any:
     module_name, obj_name = import_path.split(":", 1)
     module = importlib.import_module(module_name)
     return getattr(module, obj_name)
+
+
+def _anonymous_principal() -> None:
+    return None
+
+
+def _authorize(
+    permission_hook: Any,
+    *,
+    principal: Any,
+    request: Request,
+    entity: Optional[dict[str, Any]],
+    action: str,
+) -> None:
+    if permission_hook is None:
+        return
+    allowed = permission_hook(
+        principal=principal,
+        request=request,
+        entity=entity,
+        action=action,
+    )
+    if allowed is False:
+        raise HTTPException(status_code=403, detail="FilterX action is not permitted.")
+
+
+def _apply_predicates(
+    query: Any,
+    *,
+    predicate_hooks: Iterable[Any],
+    principal: Any,
+    request: Request,
+    entity: dict[str, Any],
+    model: type[Any],
+    action: str,
+) -> Any:
+    for hook in predicate_hooks:
+        expression = hook(
+            principal=principal,
+            request=request,
+            entity=entity,
+            model=model,
+            action=action,
+        )
+        if expression is not None:
+            query = query.filter(expression)
+    return query
 
 
 def _normalize_prefix(api_prefix: str) -> str:
@@ -280,16 +329,25 @@ def _field_type(entity: dict[str, Any], field_name: str) -> str:
     return "string"
 
 
-def _resolve_field(query: Any, root_model: type[Any], field_path: str, operation: Optional[str] = None) -> tuple[Any, Any, bool]:
+def _resolve_field(
+    query: Any,
+    root_model: type[Any],
+    field_path: str,
+    operation: Optional[str] = None,
+    joins: Optional[dict[str, Any]] = None,
+) -> tuple[Any, Any, bool]:
     parts = field_path.split(".")
     if not parts or any(not part for part in parts):
         raise HTTPException(status_code=400, detail=f"Invalid field path: {field_path}")
 
     current = root_model
     joined = False
-    use_outer = operation in {"is_null", "is_not_null"}
+    join_registry = joins if joins is not None else {}
+    path_parts: list[str] = []
 
     for rel_name in parts[:-1]:
+        path_parts.append(rel_name)
+        relationship_path = ".".join(path_parts)
         if not hasattr(current, rel_name):
             current_name = getattr(current, "__name__", str(current))
             raise HTTPException(status_code=400, detail=f"Model '{current_name}' has no relationship '{rel_name}'.")
@@ -297,10 +355,13 @@ def _resolve_field(query: Any, root_model: type[Any], field_path: str, operation
         if not hasattr(rel_attr, "property") or not hasattr(rel_attr.property, "mapper"):
             current_name = getattr(current, "__name__", str(current))
             raise HTTPException(status_code=400, detail=f"Attribute '{rel_name}' on '{current_name}' is not a relationship.")
-        related_alias = aliased(rel_attr.property.mapper.class_)
-        query = query.outerjoin(related_alias, rel_attr) if use_outer else query.join(related_alias, rel_attr)
+        related_alias = join_registry.get(relationship_path)
+        if related_alias is None:
+            related_alias = aliased(rel_attr.property.mapper.class_)
+            query = query.outerjoin(related_alias, rel_attr)
+            join_registry[relationship_path] = related_alias
+            joined = True
         current = related_alias
-        joined = True
 
     col_name = parts[-1]
     if not hasattr(current, col_name):
@@ -309,27 +370,125 @@ def _resolve_field(query: Any, root_model: type[Any], field_path: str, operation
     return getattr(current, col_name), query, joined
 
 
+def _column_type(column: Any) -> Any:
+    try:
+        return column.property.columns[0].type
+    except (AttributeError, IndexError):
+        return None
+
+
+def _invalid_value(field: str, value: Any, expected: str) -> HTTPException:
+    return HTTPException(
+        status_code=400,
+        detail=f"Invalid value {value!r} for field '{field}'; expected {expected}.",
+    )
+
+
+def _coerce_scalar(column: Any, field: str, value: Any) -> Any:
+    if value is None:
+        return None
+    type_obj = _column_type(column)
+    try:
+        if isinstance(type_obj, Boolean):
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, int) and value in {0, 1}:
+                return bool(value)
+            if isinstance(value, str):
+                lowered = value.strip().lower()
+                if lowered in {"true", "1", "yes", "on"}:
+                    return True
+                if lowered in {"false", "0", "no", "off"}:
+                    return False
+            raise _invalid_value(field, value, "a boolean")
+        if isinstance(type_obj, Integer) and not isinstance(type_obj, Boolean):
+            if isinstance(value, bool):
+                raise _invalid_value(field, value, "an integer")
+            return int(value)
+        if isinstance(type_obj, (Float, Numeric)):
+            if isinstance(value, bool):
+                raise _invalid_value(field, value, "a number")
+            return Decimal(str(value)) if isinstance(type_obj, Numeric) else float(value)
+        if isinstance(type_obj, DateTime):
+            if isinstance(value, datetime):
+                return value
+            if isinstance(value, str):
+                return datetime.fromisoformat(value.replace("Z", "+00:00"))
+            raise _invalid_value(field, value, "an ISO-8601 datetime")
+        if isinstance(type_obj, Date):
+            if isinstance(value, datetime):
+                return value.date()
+            if isinstance(value, date):
+                return value
+            if isinstance(value, str):
+                return date.fromisoformat(value)
+            raise _invalid_value(field, value, "an ISO-8601 date")
+        if isinstance(type_obj, Enum):
+            enum_class = getattr(type_obj, "enum_class", None)
+            if enum_class is not None:
+                if isinstance(value, enum_class):
+                    return value
+                for member in enum_class:
+                    if value == member.name or value == member.value:
+                        return member
+            allowed = list(getattr(type_obj, "enums", []) or [])
+            if value in allowed:
+                return value
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid enum value {value!r} for field '{field}'. Allowed values: {allowed}.",
+            )
+        python_type = getattr(type_obj, "python_type", None)
+        if python_type is UUID:
+            return value if isinstance(value, UUID) else UUID(str(value))
+        return value
+    except HTTPException:
+        raise
+    except (TypeError, ValueError, ArithmeticError):
+        raise _invalid_value(field, value, type(type_obj).__name__ or "the column type")
+
+
+def _coerce_filter_value(column: Any, field: str, operation: str, value: Any) -> Any:
+    if operation in {"is_null", "is_not_null"}:
+        return None
+    if isinstance(_column_type(column), Enum) and operation in {
+        "like", "ilike", "starts_with", "ends_with"
+    }:
+        return str(value)
+    if operation in {"in", "not_in", "between"}:
+        if not isinstance(value, list):
+            expected = "a list" if operation != "between" else "a two-value list"
+            raise _invalid_value(field, value, expected)
+        return [_coerce_scalar(column, field, item) for item in value]
+    return _coerce_scalar(column, field, value)
+
+
 def _filter_expression(column: Any, operation: str, value: Any) -> Any:
+    comparison_column = column
+    if isinstance(_column_type(column), Enum) and operation in {
+        "like", "ilike", "starts_with", "ends_with"
+    }:
+        comparison_column = cast(column, String)
     if operation == "eq":
-        return column == value
+        return comparison_column == value
     if operation == "ne":
-        return column != value
+        return comparison_column != value
     if operation == "gt":
-        return column > value
+        return comparison_column > value
     if operation == "gte":
-        return column >= value
+        return comparison_column >= value
     if operation == "lt":
-        return column < value
+        return comparison_column < value
     if operation == "lte":
-        return column <= value
+        return comparison_column <= value
     if operation == "like":
-        return column.like(f"%{value}%")
+        return comparison_column.like(f"%{value}%")
     if operation == "ilike":
-        return column.ilike(f"%{value}%")
+        return comparison_column.ilike(f"%{value}%")
     if operation == "starts_with":
-        return column.like(f"{value}%")
+        return comparison_column.like(f"{value}%")
     if operation == "ends_with":
-        return column.like(f"%{value}")
+        return comparison_column.like(f"%{value}")
     if operation == "in":
         if not isinstance(value, list) or not value:
             raise HTTPException(status_code=400, detail="Operation 'in' requires a non-empty list value.")
@@ -349,7 +508,12 @@ def _filter_expression(column: Any, operation: str, value: Any) -> Any:
     raise HTTPException(status_code=400, detail=f"Unsupported filter operation: {operation}")
 
 
-def _apply_filter(query: Any, model: type[Any], filter_rule: dict[str, Any]) -> tuple[Any, bool]:
+def _apply_filter(
+    query: Any,
+    model: type[Any],
+    filter_rule: dict[str, Any],
+    joins: Optional[dict[str, Any]] = None,
+) -> tuple[Any, bool]:
     field = filter_rule.get("field")
     operation = filter_rule.get("operation", "eq")
     value = filter_rule.get("value")
@@ -357,11 +521,24 @@ def _apply_filter(query: Any, model: type[Any], filter_rule: dict[str, Any]) -> 
         raise HTTPException(status_code=400, detail=f"Invalid filter rule: {filter_rule}")
     if operation not in {"is_null", "is_not_null"} and value in (None, "", []):
         return query, False
-    column, query, joined = _resolve_field(query, model, str(field), str(operation))
-    return query.filter(_filter_expression(column, str(operation), value)), joined
+    column, query, joined = _resolve_field(
+        query,
+        model,
+        str(field),
+        str(operation),
+        joins,
+    )
+    coerced = _coerce_filter_value(column, str(field), str(operation), value)
+    return query.filter(_filter_expression(column, str(operation), coerced)), joined
 
 
-def _evaluate_tree(query: Any, model: type[Any], node: dict[str, Any], depth: int = 0) -> tuple[Any, Any, bool]:
+def _evaluate_tree(
+    query: Any,
+    model: type[Any],
+    node: dict[str, Any],
+    depth: int = 0,
+    joins: Optional[dict[str, Any]] = None,
+) -> tuple[Any, Any, bool]:
     if depth > MAX_FILTER_TREE_DEPTH:
         raise HTTPException(status_code=400, detail=f"Filter tree exceeds maximum depth of {MAX_FILTER_TREE_DEPTH}.")
     node_type = node.get("node_type")
@@ -373,8 +550,15 @@ def _evaluate_tree(query: Any, model: type[Any], node: dict[str, Any], depth: in
             raise HTTPException(status_code=400, detail="Condition nodes require 'field' and 'operation'.")
         if operation not in {"is_null", "is_not_null"} and value in (None, "", []):
             return query, None, False
-        column, query, joined = _resolve_field(query, model, str(field), str(operation))
-        return query, _filter_expression(column, str(operation), value), joined
+        column, query, joined = _resolve_field(
+            query,
+            model,
+            str(field),
+            str(operation),
+            joins,
+        )
+        coerced = _coerce_filter_value(column, str(field), str(operation), value)
+        return query, _filter_expression(column, str(operation), coerced), joined
 
     if node_type != "operator":
         raise HTTPException(status_code=400, detail="Filter node_type must be 'operator' or 'condition'.")
@@ -389,7 +573,13 @@ def _evaluate_tree(query: Any, model: type[Any], node: dict[str, Any], depth: in
     for child in children:
         if not isinstance(child, dict):
             continue
-        query, clause, joined = _evaluate_tree(query, model, child, depth + 1)
+        query, clause, joined = _evaluate_tree(
+            query,
+            model,
+            child,
+            depth + 1,
+            joins,
+        )
         any_joined = any_joined or joined
         if clause is not None:
             clauses.append(clause)
@@ -402,10 +592,15 @@ def _evaluate_tree(query: Any, model: type[Any], node: dict[str, Any], depth: in
     return query, (and_(*clauses) if operator == "AND" else or_(*clauses)), any_joined
 
 
-def _apply_tree(query: Any, model: type[Any], tree: Optional[dict[str, Any]]) -> tuple[Any, bool]:
+def _apply_tree(
+    query: Any,
+    model: type[Any],
+    tree: Optional[dict[str, Any]],
+    joins: Optional[dict[str, Any]] = None,
+) -> tuple[Any, bool]:
     if not tree:
         return query, False
-    query, clause, joined = _evaluate_tree(query, model, tree)
+    query, clause, joined = _evaluate_tree(query, model, tree, joins=joins)
     if clause is not None:
         query = query.filter(clause)
     return query, joined
@@ -419,12 +614,18 @@ def _searchable_fields(entity: dict[str, Any]) -> list[str]:
     ]
 
 
-def _apply_search(query: Any, model: type[Any], entity: dict[str, Any], search: Optional[str]) -> Any:
+def _apply_search(
+    query: Any,
+    model: type[Any],
+    entity: dict[str, Any],
+    search: Optional[str],
+    joins: Optional[dict[str, Any]] = None,
+) -> Any:
     if not search:
         return query
     clauses = []
     for field in _searchable_fields(entity):
-        column, query, _ = _resolve_field(query, model, field)
+        column, query, _ = _resolve_field(query, model, field, joins=joins)
         clauses.append(cast(column, String).ilike(f"%{search}%"))
     if clauses:
         query = query.filter(or_(*clauses))
@@ -439,9 +640,16 @@ def _default_sort_field(entity: dict[str, Any]) -> str:
     return str(fields[0].get("name") if fields else "id")
 
 
-def _apply_sort(query: Any, model: type[Any], entity: dict[str, Any], sort_by: Optional[str], order: str) -> Any:
+def _apply_sort(
+    query: Any,
+    model: type[Any],
+    entity: dict[str, Any],
+    sort_by: Optional[str],
+    order: str,
+    joins: Optional[dict[str, Any]] = None,
+) -> Any:
     sort_field = sort_by or _default_sort_field(entity)
-    column, query, _ = _resolve_field(query, model, sort_field)
+    column, query, _ = _resolve_field(query, model, sort_field, joins=joins)
     direction = desc if str(order).lower() == "desc" else asc
     return query.order_by(direction(column))
 
@@ -503,14 +711,28 @@ def _run_query(
     search: Optional[str],
     filters: list[dict[str, Any]],
     filter_tree: Optional[dict[str, Any]],
+    predicate_hooks: Iterable[Any],
+    principal: Any,
+    request: Request,
+    action: str,
 ) -> dict[str, Any]:
     query = db.query(model)
+    joins: dict[str, Any] = {}
+    query = _apply_predicates(
+        query,
+        predicate_hooks=predicate_hooks,
+        principal=principal,
+        request=request,
+        entity=entity,
+        model=model,
+        action=action,
+    )
     for filter_rule in filters:
-        query, _ = _apply_filter(query, model, filter_rule)
-    query, _ = _apply_tree(query, model, filter_tree)
-    query = _apply_search(query, model, entity, search)
+        query, _ = _apply_filter(query, model, filter_rule, joins)
+    query, _ = _apply_tree(query, model, filter_tree, joins)
+    query = _apply_search(query, model, entity, search, joins)
     total = _count_query(query, model)
-    query = _apply_sort(query, model, entity, sort_by, order)
+    query = _apply_sort(query, model, entity, sort_by, order, joins)
     rows = query.offset((page - 1) * size).limit(size).all()
     return {
         "data": [_serialize_row(row, entity) for row in rows],
@@ -527,13 +749,27 @@ def _run_group_by(
     search: Optional[str],
     filters: list[dict[str, Any]],
     filter_tree: Optional[dict[str, Any]],
+    predicate_hooks: Iterable[Any],
+    principal: Any,
+    request: Request,
+    action: str,
 ) -> list[dict[str, Any]]:
     query = db.query(model)
+    joins: dict[str, Any] = {}
+    query = _apply_predicates(
+        query,
+        predicate_hooks=predicate_hooks,
+        principal=principal,
+        request=request,
+        entity=entity,
+        model=model,
+        action=action,
+    )
     for filter_rule in filters:
-        query, _ = _apply_filter(query, model, filter_rule)
-    query, _ = _apply_tree(query, model, filter_tree)
-    query = _apply_search(query, model, entity, search)
-    column, query, _ = _resolve_field(query, model, field)
+        query, _ = _apply_filter(query, model, filter_rule, joins)
+    query, _ = _apply_tree(query, model, filter_tree, joins)
+    query = _apply_search(query, model, entity, search, joins)
+    column, query, _ = _resolve_field(query, model, field, joins=joins)
     rows = query.with_entities(column, func.count().label("count")).group_by(column).order_by(func.count().desc()).all()
     return [{"key": _json_value(row[0]), "count": row[1]} for row in rows]
 
@@ -542,21 +778,60 @@ def create_router(
     api_prefix: str = "/api",
     entities: Optional[list[dict[str, Any]]] = None,
     session_dependency_import: str = "app.database:get_db",
+    auth_dependency_import: Optional[str] = None,
+    permission_hook_import: Optional[str] = None,
+    global_predicate_hook_imports: Optional[list[str]] = None,
+    entity_predicate_hook_imports: Optional[dict[str, list[str]]] = None,
 ) -> APIRouter:
     prefix = _normalize_prefix(api_prefix)
     entity_list = entities or []
     registry = _build_registry(entity_list)
     get_db = _import_object(session_dependency_import)
+    auth_dependency = _import_object(auth_dependency_import) if auth_dependency_import else _anonymous_principal
+    permission_hook = _import_object(permission_hook_import) if permission_hook_import else None
+    global_predicate_hooks = [
+        _import_object(path) for path in (global_predicate_hook_imports or [])
+    ]
+    entity_predicate_hooks = {
+        entity_name: [_import_object(path) for path in paths]
+        for entity_name, paths in (entity_predicate_hook_imports or {}).items()
+    }
+
+    def predicates_for(entity_meta: dict[str, Any]) -> list[Any]:
+        model_name = str(entity_meta.get("model") or "")
+        return [*global_predicate_hooks, *entity_predicate_hooks.get(model_name, [])]
 
     router = APIRouter(prefix=f"{prefix}/filterx", tags=["filterx"])
 
     @router.get("/metadata")
-    def get_metadata() -> dict[str, object]:
+    def get_metadata(
+        request: Request,
+        principal: Any = Depends(auth_dependency),
+    ) -> dict[str, object]:
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=None,
+            action="metadata.list",
+        )
         return build_metadata()
 
     @router.get("/{entity}/metadata")
-    def get_entity_metadata(entity: str) -> dict[str, Any]:
-        return _get_entity(registry, entity)
+    def get_entity_metadata(
+        entity: str,
+        request: Request,
+        principal: Any = Depends(auth_dependency),
+    ) -> dict[str, Any]:
+        entity_meta = _get_entity(registry, entity)
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=entity_meta,
+            action="metadata.read",
+        )
+        return entity_meta
 
     @router.get("/{entity}")
     @router.get("/{entity}/query")
@@ -569,8 +844,16 @@ def create_router(
         order: str = Query("asc", pattern="^(asc|desc)$"),
         search: Optional[str] = Query(None),
         db: Any = Depends(get_db),
+        principal: Any = Depends(auth_dependency),
     ) -> dict[str, Any]:
         entity_meta = _get_entity(registry, entity)
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=entity_meta,
+            action="query",
+        )
         model = _model_for_entity(entity_meta)
         filters = _parse_url_filters(request)
         return _run_query(
@@ -584,11 +867,16 @@ def create_router(
             search=search,
             filters=filters,
             filter_tree=None,
+            predicate_hooks=predicates_for(entity_meta),
+            principal=principal,
+            request=request,
+            action="query",
         )
 
     @router.post("/{entity}/filter")
     def filter_entity(
         entity: str,
+        request: Request,
         body: Any = Body(default=None),
         page: int = Query(1, ge=1),
         size: int = Query(20, ge=1, le=100),
@@ -596,8 +884,16 @@ def create_router(
         order: str = Query("asc", pattern="^(asc|desc)$"),
         search: Optional[str] = Query(None),
         db: Any = Depends(get_db),
+        principal: Any = Depends(auth_dependency),
     ) -> dict[str, Any]:
         entity_meta = _get_entity(registry, entity)
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=entity_meta,
+            action="filter",
+        )
         model = _model_for_entity(entity_meta)
         tree, filters = _coerce_body_filters(body)
         return _run_query(
@@ -611,6 +907,10 @@ def create_router(
             search=search,
             filters=filters,
             filter_tree=tree,
+            predicate_hooks=predicates_for(entity_meta),
+            principal=principal,
+            request=request,
+            action="filter",
         )
 
     @router.get("/{entity}/group-by/{field:path}")
@@ -620,42 +920,106 @@ def create_router(
         request: Request,
         search: Optional[str] = Query(None),
         db: Any = Depends(get_db),
+        principal: Any = Depends(auth_dependency),
     ) -> list[dict[str, Any]]:
         entity_meta = _get_entity(registry, entity)
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=entity_meta,
+            action="group",
+        )
         model = _model_for_entity(entity_meta)
         filters = _parse_url_filters(request)
-        return _run_group_by(db, entity_meta, model, field=field, search=search, filters=filters, filter_tree=None)
+        return _run_group_by(
+            db,
+            entity_meta,
+            model,
+            field=field,
+            search=search,
+            filters=filters,
+            filter_tree=None,
+            predicate_hooks=predicates_for(entity_meta),
+            principal=principal,
+            request=request,
+            action="group",
+        )
 
     @router.post("/{entity}/group-by/{field:path}/filter")
     def group_entity_with_filter(
         entity: str,
         field: str,
+        request: Request,
         body: Any = Body(default=None),
         search: Optional[str] = Query(None),
         db: Any = Depends(get_db),
+        principal: Any = Depends(auth_dependency),
     ) -> list[dict[str, Any]]:
         entity_meta = _get_entity(registry, entity)
+        _authorize(
+            permission_hook,
+            principal=principal,
+            request=request,
+            entity=entity_meta,
+            action="group.filter",
+        )
         model = _model_for_entity(entity_meta)
         tree, filters = _coerce_body_filters(body)
-        return _run_group_by(db, entity_meta, model, field=field, search=search, filters=filters, filter_tree=tree)
+        return _run_group_by(
+            db,
+            entity_meta,
+            model,
+            field=field,
+            search=search,
+            filters=filters,
+            filter_tree=tree,
+            predicate_hooks=predicates_for(entity_meta),
+            principal=principal,
+            request=request,
+            action="group.filter",
+        )
 
     return router
 '''
 
 
-def _render_router_py(api_prefix: str, session_dependency_import: str) -> str:
+def _render_router_py(
+    api_prefix: str,
+    session_dependency_import: str,
+    auth_dependency_import: str | None,
+    permission_hook_import: str | None,
+    global_predicate_hooks: list[str],
+    entity_predicate_hooks: dict[str, list[str]],
+) -> str:
     escaped = api_prefix.replace("\\", "\\\\").replace('"', '\\"')
     escaped_session = session_dependency_import.replace("\\", "\\\\").replace('"', '\\"')
+    hook_config = json.dumps(
+        {
+            "auth_dependency_import": auth_dependency_import,
+            "permission_hook_import": permission_hook_import,
+            "global_predicate_hooks": global_predicate_hooks,
+            "entity_predicate_hooks": entity_predicate_hooks,
+        },
+        indent=2,
+    )
     return (
         "from __future__ import annotations\n\n"
+        "import json\n\n"
         "from .entities import ENTITIES\n"
         "from .router_factory import create_router\n\n"
         f"API_PREFIX = \"{escaped}\"\n"
         f"SESSION_DEPENDENCY_IMPORT = \"{escaped_session}\"\n"
+        f"_HOOK_CONFIG_JSON = '''{hook_config}'''\n"
+        "HOOK_CONFIG = json.loads(_HOOK_CONFIG_JSON)\n"
         "router = create_router(\n"
         "    api_prefix=API_PREFIX,\n"
         "    entities=ENTITIES,\n"
         "    session_dependency_import=SESSION_DEPENDENCY_IMPORT,\n"
+        "    auth_dependency_import=HOOK_CONFIG['auth_dependency_import'],\n"
+        "    permission_hook_import=HOOK_CONFIG['permission_hook_import'],\n"
+        "    global_predicate_hook_imports=HOOK_CONFIG['global_predicate_hooks'],\n"
+        "    entity_predicate_hook_imports=HOOK_CONFIG['entity_predicate_hooks'],\n"
         ")\n"
     )
 
@@ -685,6 +1049,10 @@ def _build_patch_ops(
     entities: list[dict[str, Any]],
     api_prefix: str,
     session_dependency_import: str,
+    auth_dependency_import: str | None,
+    permission_hook_import: str | None,
+    global_predicate_hooks: list[str],
+    entity_predicate_hooks: dict[str, list[str]],
     mount_file: str,
     mount_anchor: str,
     generated_module: str,
@@ -720,7 +1088,14 @@ def _build_patch_ops(
         PatchOp(
             kind="generated_file",
             path=f"{root}/router.py",
-            content=_render_router_py(api_prefix, session_dependency_import),
+            content=_render_router_py(
+                api_prefix,
+                session_dependency_import,
+                auth_dependency_import,
+                permission_hook_import,
+                global_predicate_hooks,
+                entity_predicate_hooks,
+            ),
             description="FilterX mountable router",
         ),
         PatchOp(
@@ -865,7 +1240,22 @@ def run_install(args: Any) -> int:
 
     scan_payload = load_json(scan_path)
     scan_entities = list(scan_payload.get("entities", []))
-    selected_entities = _filter_entities(scan_entities, cfg, args)
+    selected_entities, entity_scope = _filter_entities(scan_entities, cfg, args)
+    if entity_scope.has_errors:
+        payload = {
+            "errors": [
+                {
+                    "code": "ENTITY_SCOPE_RESCAN_REQUIRED",
+                    "message": "Requested backend entity scope does not match the scan artifact. Run 'filterx scan' with the same entity options.",
+                    "context": entity_scope.as_dict(),
+                }
+            ]
+        }
+        if args.json:
+            print(json.dumps(payload, indent=2))
+        else:
+            print("FilterX backend install failed: entity scope does not match the scan artifact.")
+        return 2
 
     api_prefix = str(getattr(args, "api_prefix", None) or cfg["backend"].get("api_prefix", "/api"))
     mount_file = str(getattr(args, "mount_file", None) or cfg["backend"]["mount_file"])
@@ -880,6 +1270,10 @@ def run_install(args: Any) -> int:
         entities=selected_entities,
         api_prefix=api_prefix,
         session_dependency_import=str(cfg["python"]["session_dependency_import"]),
+        auth_dependency_import=cfg["backend"].get("auth_dependency_import"),
+        permission_hook_import=cfg["backend"].get("permission_hook_import"),
+        global_predicate_hooks=list(cfg["backend"].get("global_predicate_hooks") or []),
+        entity_predicate_hooks=dict(cfg["backend"].get("entity_predicate_hooks") or {}),
         mount_file=mount_file,
         mount_anchor=mount_anchor,
         generated_module=generated_module,

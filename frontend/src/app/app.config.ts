@@ -9,10 +9,12 @@ import { providePrimeNG } from "primeng/config";
 import Aura from "@primeng/themes/aura";
 
 import { routes } from "./app.routes";
+import { provideFilterx } from "./core/config/filterx-config";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     // FILTERX:PROVIDERS
+    provideFilterx(),
     provideZoneChangeDetection({ eventCoalescing: false }),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),

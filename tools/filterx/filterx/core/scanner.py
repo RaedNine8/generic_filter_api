@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Set, Tuple
 
+from .entity_scope import resolve_entity_scope
 from .io import utc_now_iso
 
 
@@ -153,18 +154,19 @@ def _build_entity(cls: Any) -> Dict[str, Any]:
         if col.primary_key:
             primary_keys.append(col.name)
 
-        columns.append(
-            {
-                "name": col.name,
-                "type": normalized_type,
-                "nullable": bool(col.nullable),
-                "primary_key": bool(col.primary_key),
-                "unique": bool(col.unique),
-                "is_fk": bool(col.foreign_keys),
-                "fk_targets": fk_targets,
-                "ops": _ops_for_type(normalized_type),
-            }
-        )
+        field_metadata = {
+            "name": col.name,
+            "type": normalized_type,
+            "nullable": bool(col.nullable),
+            "primary_key": bool(col.primary_key),
+            "unique": bool(col.unique),
+            "is_fk": bool(col.foreign_keys),
+            "fk_targets": fk_targets,
+            "ops": _ops_for_type(normalized_type),
+        }
+        if normalized_type == "enum":
+            field_metadata["enum_values"] = list(getattr(col.type, "enums", []) or [])
+        columns.append(field_metadata)
 
     relationships: List[Dict[str, Any]] = []
     for rel in mapper.relationships:
@@ -177,6 +179,11 @@ def _build_entity(cls: Any) -> Dict[str, Any]:
                     "name": rcol.name,
                     "type": ntype,
                     "ops": _ops_for_type(ntype),
+                    **(
+                        {"enum_values": list(getattr(rcol.type, "enums", []) or [])}
+                        if ntype == "enum"
+                        else {}
+                    ),
                 }
             )
 
@@ -311,6 +318,15 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
             )
 
         entities: List[Dict[str, Any]] = []
+        entity_scope: Dict[str, List[str]] = {
+            "available": [],
+            "requested": [],
+            "excluded": [],
+            "selected": [],
+            "unknown_requested": [],
+            "unknown_excluded": [],
+            "requested_and_excluded": [],
+        }
         route_scan: List[Dict[str, Any]] = []
 
         try:
@@ -320,16 +336,50 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
                 key=lambda c: c.__name__,
             )
 
-            allow_entities = set(backend_cfg.get("entities") or [])
-            deny_entities = set(backend_cfg.get("exclude_entities") or [])
+            scope = resolve_entity_scope(
+                (cls.__name__ for cls in mapper_classes),
+                backend_cfg.get("entities"),
+                backend_cfg.get("exclude_entities"),
+            )
+            entity_scope = scope.as_dict()
 
-            for cls in mapper_classes:
-                model_name = cls.__name__
-                if allow_entities and model_name not in allow_entities:
-                    continue
-                if model_name in deny_entities:
-                    continue
-                entities.append(_build_entity(cls))
+            if scope.unknown_requested:
+                diagnostics["errors"].append(
+                    {
+                        "code": "ENTITY_SCOPE_UNKNOWN_REQUESTED",
+                        "message": "Configured backend.entities contains models that were not discovered.",
+                        "context": {
+                            "unknown": list(scope.unknown_requested),
+                            "available": list(scope.available),
+                        },
+                    }
+                )
+            if scope.unknown_excluded:
+                diagnostics["errors"].append(
+                    {
+                        "code": "ENTITY_SCOPE_UNKNOWN_EXCLUDED",
+                        "message": "Configured backend.exclude_entities contains models that were not discovered.",
+                        "context": {
+                            "unknown": list(scope.unknown_excluded),
+                            "available": list(scope.available),
+                        },
+                    }
+                )
+            if scope.requested_and_excluded:
+                diagnostics["errors"].append(
+                    {
+                        "code": "ENTITY_SCOPE_CONFLICT",
+                        "message": "The same models cannot be both selected and excluded.",
+                        "context": {"entities": list(scope.requested_and_excluded)},
+                    }
+                )
+
+            selected_names = set(scope.selected)
+            entities = [
+                _build_entity(cls)
+                for cls in mapper_classes
+                if cls.__name__ in selected_names
+            ]
 
             if not entities:
                 diagnostics["warnings"].append(
@@ -444,6 +494,7 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
             "database_enabled": config["database"]["enabled"],
             "api_prefix": backend_cfg["api_prefix"],
         },
+        "entity_scope": entity_scope,
         "entities": entities,
         "relationship_graph": {k: sorted(list(v)) for k, v in graph.items()},
         "graph_stats": {
@@ -469,6 +520,7 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
             "Generate database migrations" if config["database"]["enabled"] else "Skip database migrations",
         ],
         "entity_targets": [ent["model"] for ent in entities],
+        "entity_scope": entity_scope,
     }
 
     return ScanResult(scan=scan_payload, diagnostics=diagnostics, plan=plan_payload)
