@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Set, Tuple
 
 from .entity_scope import resolve_entity_scope
+from .ir import FieldType, FilterxIR, RelationshipKind, from_legacy_scan
 from .io import utc_now_iso
 
 
@@ -17,6 +18,7 @@ class ScanResult:
     scan: Dict[str, Any]
     diagnostics: Dict[str, Any]
     plan: Dict[str, Any]
+    ir: FilterxIR | None = None
 
 
 def _import_object(import_path: str) -> Any:
@@ -318,6 +320,7 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
             )
 
         entities: List[Dict[str, Any]] = []
+        column_details: Dict[Tuple[str, str], Dict[str, Any]] = {}
         entity_scope: Dict[str, List[str]] = {
             "available": [],
             "requested": [],
@@ -380,6 +383,14 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
                 for cls in mapper_classes
                 if cls.__name__ in selected_names
             ]
+            column_details = {
+                (cls.__name__, col.name): {
+                    "has_default": col.default is not None or col.server_default is not None,
+                }
+                for cls in mapper_classes
+                if cls.__name__ in selected_names
+                for col in cls.__table__.columns
+            }
 
             if not entities:
                 diagnostics["warnings"].append(
@@ -523,4 +534,165 @@ def run_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
         "entity_scope": entity_scope,
     }
 
-    return ScanResult(scan=scan_payload, diagnostics=diagnostics, plan=plan_payload)
+    ir = from_legacy_scan(scan_payload, config, column_details=column_details)
+    return ScanResult(scan=scan_payload, diagnostics=diagnostics, plan=plan_payload, ir=ir)
+
+
+def _legacy_type(field_type: FieldType) -> str:
+    if field_type == FieldType.DECIMAL:
+        return "float"
+    if field_type == FieldType.JSON_BLOB:
+        return "json"
+    if field_type == FieldType.BINARY:
+        return "binary"
+    return field_type.value
+
+
+def _legacy_cardinality(kind: RelationshipKind) -> str:
+    return {
+        RelationshipKind.ONE_TO_ONE: "o2o",
+        RelationshipKind.ONE_TO_MANY: "o2m",
+        RelationshipKind.MANY_TO_ONE: "m2o",
+        RelationshipKind.MANY_TO_MANY: "m2m",
+    }[kind]
+
+
+def scan_result_from_ir(ir: FilterxIR, config: Dict[str, Any], project_root: Path) -> ScanResult:
+    entity_by_name = {entity.name: entity for entity in ir.entities}
+    entities: List[Dict[str, Any]] = []
+    graph: Dict[str, List[str]] = {}
+    cycles: List[List[str]] = []
+    for entity in ir.entities:
+        for cycle in entity.cycle_memberships:
+            rendered_cycle = list(cycle)
+            if rendered_cycle not in cycles:
+                cycles.append(rendered_cycle)
+        graph[entity.name] = sorted(relationship.target_entity for relationship in entity.relationships)
+        relationships: List[Dict[str, Any]] = []
+        for relationship in entity.relationships:
+            target = entity_by_name.get(relationship.target_entity)
+            related_fields = []
+            if target is not None:
+                related_fields = [
+                    {
+                        "name": field.name,
+                        "type": _legacy_type(field.type),
+                        "ops": list(field.operations),
+                        **({"enum_values": list(field.enum_values)} if field.enum_values else {}),
+                    }
+                    for field in target.fields
+                ]
+            display_field = "name" if any(item["name"] == "name" for item in related_fields) else (
+                related_fields[0]["name"] if related_fields else "id"
+            )
+            relationships.append(
+                {
+                    "name": relationship.name,
+                    "related_model": relationship.target_entity,
+                    "related_table": relationship.target_table,
+                    "cardinality": _legacy_cardinality(relationship.kind),
+                    "uselist": relationship.collection,
+                    "display_field": display_field,
+                    "related_fields": related_fields,
+                    "back_populates": relationship.back_populates,
+                }
+            )
+        entities.append(
+            {
+                "model": entity.name,
+                "module": entity.identity.module,
+                "table": entity.identity.table,
+                "primary_keys": list(entity.identity.primary_keys),
+                "fields": [
+                    {
+                        "name": field.name,
+                        "type": _legacy_type(field.type),
+                        "nullable": field.nullable,
+                        "primary_key": field.primary_key,
+                        "unique": field.unique,
+                        "is_fk": bool(field.foreign_keys),
+                        "fk_targets": list(field.foreign_keys),
+                        "ops": list(field.operations),
+                        **({"enum_values": list(field.enum_values)} if field.enum_values else {}),
+                    }
+                    for field in entity.fields
+                ],
+                "relationships": relationships,
+            }
+        )
+
+    backend_cfg = config["backend"]
+    frontend_cfg = config["frontend"]
+    selected = [entity.name for entity in ir.entities]
+    entity_scope = {
+        "available": selected,
+        "requested": selected,
+        "excluded": [],
+        "selected": selected,
+        "unknown_requested": [],
+        "unknown_excluded": [],
+        "requested_and_excluded": [],
+    }
+    diagnostics: Dict[str, List[Dict[str, Any]]] = {"errors": [], "warnings": [], "info": []}
+    if cycles:
+        diagnostics["warnings"].append(
+            {
+                "code": "RELATIONSHIP_CYCLES_DETECTED",
+                "message": "Relationship cycles were detected in model graph.",
+                "context": {"cycles": cycles},
+            }
+        )
+    scan_payload: Dict[str, Any] = {
+        "generated_at": utc_now_iso(),
+        "project": {"name": config["project"]["name"], "root": str(project_root.resolve())},
+        "config_summary": {
+            "backend_enabled": backend_cfg["enabled"],
+            "frontend_enabled": frontend_cfg["enabled"],
+            "database_enabled": config["database"]["enabled"],
+            "api_prefix": backend_cfg["api_prefix"],
+        },
+        "entity_scope": entity_scope,
+        "entities": entities,
+        "relationship_graph": graph,
+        "graph_stats": {
+            "entity_count": len(entities),
+            "relationship_cycle_count": len(cycles),
+            "max_depth": ir.max_relationship_depth,
+        },
+        "routes": [
+            {"path": route.path, "name": route.name, "methods": list(route.methods), "type": route.source_type}
+            for route in ir.routes
+        ],
+    }
+    plan_payload: Dict[str, Any] = {
+        "generated_at": utc_now_iso(),
+        "phases": [
+            {"name": "scan", "enabled": True},
+            {"name": "backend.install", "enabled": bool(backend_cfg["enabled"])},
+            {"name": "frontend.install", "enabled": bool(frontend_cfg["enabled"])},
+            {"name": "db.install", "enabled": bool(config["database"]["enabled"])},
+            {"name": "validate", "enabled": True},
+        ],
+        "actions": [
+            "Generate backend integration modules" if backend_cfg["enabled"] else "Skip backend integration",
+            "Generate frontend integration modules" if frontend_cfg["enabled"] else "Skip frontend integration",
+            "Generate database migrations" if config["database"]["enabled"] else "Skip database migrations",
+        ],
+        "entity_targets": selected,
+        "entity_scope": entity_scope,
+    }
+    return ScanResult(scan=scan_payload, diagnostics=diagnostics, plan=plan_payload, ir=ir)
+
+
+def run_registered_scan(config: Dict[str, Any], project_root: Path) -> ScanResult:
+    from filterx.scanners import ScannerContext, scan_to_ir
+
+    scanner_name = str(config.get("scan", {}).get("framework", "sqlalchemy"))
+    if scanner_name == "sqlalchemy":
+        return run_scan(config, project_root)
+    timeout = float(config.get("scan", {}).get("timeout_seconds", 30.0))
+    ir = scan_to_ir(
+        ScannerContext(project_root=project_root, config=config, timeout_seconds=timeout),
+        scanner_name,
+    )
+    return scan_result_from_ir(ir, config, project_root)

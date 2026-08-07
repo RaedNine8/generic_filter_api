@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from filterx.core.config import load_effective_config
+from filterx.core.manifest import load_manifest, validate_manifest
 
 
 def _frontend_rel(frontend_root: str, suffix: str) -> str:
@@ -50,6 +51,7 @@ def run(args: Any) -> int:
     scan_file = project_root / cfg["output"]["scan_file"]
     diagnostics_file = project_root / cfg["output"]["diagnostics_file"]
     plan_file = project_root / cfg["output"]["plan_file"]
+    manifest_file = project_root / cfg["safety"]["idempotency_manifest"]
 
     for p, code in [
         (scan_file, "SCAN_FILE_MISSING"),
@@ -58,6 +60,9 @@ def run(args: Any) -> int:
     ]:
         if not p.exists():
             errors.append({"code": code, "path": str(p)})
+
+    if manifest_file.exists():
+        errors.extend(validate_manifest(load_manifest(manifest_file)))
 
     if cfg["backend"]["enabled"]:
         mount_file = project_root / cfg["backend"]["mount_file"]

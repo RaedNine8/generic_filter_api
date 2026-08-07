@@ -114,16 +114,23 @@ def _render_metadata_py() -> str:
     )
 
 
-def _render_router_factory_py() -> str:
+def _render_router_factory_py_legacy() -> str:
     return r'''from __future__ import annotations
 
+import csv
 import importlib
+import io
+import json
+import tempfile
+import zipfile
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Iterable, Optional
+from html import escape as xml_escape
+from typing import Any, Iterable, Iterator, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy import Boolean, Date, DateTime, Enum, Float, Integer, Numeric, String, asc, cast, desc, func, inspect as sa_inspect, or_
 from sqlalchemy.orm import aliased
 
@@ -740,6 +747,63 @@ def _run_query(
     }
 
 
+def _csv_chunks(rows: Iterable[dict[str, Any]]) -> Iterator[bytes]:
+    iterator = iter(rows)
+    try:
+        first = next(iterator)
+    except StopIteration:
+        yield b"\xef\xbb\xbf"
+        return
+    fields = list(first)
+    buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=fields, extrasaction="ignore", lineterminator="\r\n")
+    writer.writeheader()
+    writer.writerow(first)
+    yield b"\xef\xbb\xbf" + buffer.getvalue().encode("utf-8")
+    for row in iterator:
+        buffer.seek(0)
+        buffer.truncate(0)
+        writer.writerow(row)
+        yield buffer.getvalue().encode("utf-8")
+
+
+def _json_chunks(rows: Iterable[dict[str, Any]]) -> Iterator[bytes]:
+    yield b"["
+    first = True
+    for row in rows:
+        if not first:
+            yield b","
+        first = False
+        yield json.dumps(row, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    yield b"]"
+
+
+def _xlsx_chunks(rows: Iterable[dict[str, Any]]) -> Iterator[bytes]:
+    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024, mode="w+b") as output:
+        with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=True) as workbook:
+            workbook.writestr("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>')
+            workbook.writestr("_rels/.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')
+            workbook.writestr("xl/workbook.xml", '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Export" sheetId="1" r:id="rId1"/></sheets></workbook>')
+            workbook.writestr("xl/_rels/workbook.xml.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>')
+            with workbook.open("xl/worksheets/sheet1.xml", "w", force_zip64=True) as sheet:
+                sheet.write(b'<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>')
+                fields: list[str] = []
+                row_number = 0
+                for row in rows:
+                    if not fields:
+                        fields = list(row)
+                        row_number += 1
+                        cells = "".join(f'<c t="inlineStr"><is><t>{xml_escape(field)}</t></is></c>' for field in fields)
+                        sheet.write(f'<row r="{row_number}">{cells}</row>'.encode("utf-8"))
+                    row_number += 1
+                    cells = "".join(f'<c t="inlineStr"><is><t>{xml_escape(json.dumps(row.get(field), ensure_ascii=False) if isinstance(row.get(field), (dict, list)) else str(row.get(field) if row.get(field) is not None else ""))}</t></is></c>' for field in fields)
+                    sheet.write(f'<row r="{row_number}">{cells}</row>'.encode("utf-8"))
+                sheet.write(b"</sheetData></worksheet>")
+        output.seek(0)
+        while chunk := output.read(64 * 1024):
+            yield chunk
+
+
 def _run_group_by(
     db: Any,
     entity: dict[str, Any],
@@ -913,6 +977,55 @@ def create_router(
             action="filter",
         )
 
+    @router.post("/{entity}/export")
+    def export_entity(
+        entity: str,
+        request: Request,
+        body: Any = Body(default=None),
+        format: str = Query("csv", pattern="^(csv|xlsx|json)$"),
+        sort_by: Optional[str] = Query(None),
+        order: str = Query("asc", pattern="^(asc|desc)$"),
+        search: Optional[str] = Query(None),
+        db: Any = Depends(get_db),
+        principal: Any = Depends(auth_dependency),
+    ) -> StreamingResponse:
+        entity_meta = _get_entity(registry, entity)
+        _authorize(permission_hook, principal=principal, request=request, entity=entity_meta, action="export")
+        model = _model_for_entity(entity_meta)
+        tree, filters = _coerce_body_filters(body)
+
+        def rows() -> Iterator[dict[str, Any]]:
+            page = 1
+            while True:
+                result = _run_query(
+                    db,
+                    entity_meta,
+                    model,
+                    page=page,
+                    size=100,
+                    sort_by=sort_by,
+                    order=order,
+                    search=search,
+                    filters=filters,
+                    filter_tree=tree,
+                    predicate_hooks=predicates_for(entity_meta),
+                    principal=principal,
+                    request=request,
+                    action="export",
+                )
+                yield from result["data"]
+                if page >= result["meta"]["total_pages"]:
+                    break
+                page += 1
+
+        filename = f"{entity}.{format}"
+        headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
+        if format == "csv":
+            return StreamingResponse(_csv_chunks(rows()), media_type="text/csv; charset=utf-8", headers=headers)
+        if format == "xlsx":
+            return StreamingResponse(_xlsx_chunks(rows()), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers=headers)
+        return StreamingResponse(_json_chunks(rows()), media_type="application/json; charset=utf-8", headers=headers)
+
     @router.get("/{entity}/group-by/{field:path}")
     def group_entity(
         entity: str,
@@ -984,25 +1097,327 @@ def create_router(
 '''
 
 
+def _replace_runtime_contract(source: str, old: str, new: str) -> str:
+    if old not in source:
+        raise RuntimeError("FilterX backend runtime contract fragment was not found during rendering.")
+    return source.replace(old, new, 1)
+
+
+def _render_router_factory_py(field_visibility_enabled: bool = False) -> str:
+    source = _render_router_factory_py_legacy()
+    if not field_visibility_enabled:
+        return source
+
+    source = _replace_runtime_contract(
+        source,
+        '''def _serialize_shallow(obj: Any) -> dict[str, Any]:
+    mapper = sa_inspect(obj.__class__)
+    return {column.key: _json_value(getattr(obj, column.key)) for column in mapper.columns}
+
+
+def _serialize_row(obj: Any, entity: dict[str, Any]) -> dict[str, Any]:
+    out = _serialize_shallow(obj)
+    for rel in entity.get("relationships", []):
+        if rel.get("uselist") or rel.get("cardinality") in {"o2m", "m2m"}:
+            continue
+        name = rel.get("name")
+        if not name:
+            continue
+        try:
+            related = getattr(obj, str(name))
+        except Exception:
+            continue
+        out[str(name)] = None if related is None else _serialize_shallow(related)
+    return out
+''',
+        '''def _field_is_visible(
+    hook: Any,
+    *,
+    principal: Any,
+    request: Request,
+    entity: dict[str, Any],
+    field: str,
+    action: str,
+) -> bool:
+    if hook is None:
+        return True
+    return bool(
+        hook(
+            principal=principal,
+            request=request,
+            entity=entity,
+            field=field,
+            action=action,
+        )
+    )
+
+
+def _visible_entity_metadata(
+    entity: dict[str, Any],
+    hook: Any,
+    principal: Any,
+    request: Request,
+    action: str,
+) -> dict[str, Any]:
+    visible = dict(entity)
+    visible["fields"] = [
+        field
+        for field in entity.get("fields", [])
+        if _field_is_visible(
+            hook,
+            principal=principal,
+            request=request,
+            entity=entity,
+            field=str(field.get("name", "")),
+            action=action,
+        )
+    ]
+    relationships = []
+    for relationship in entity.get("relationships", []):
+        relation = dict(relationship)
+        relation_name = str(relation.get("name", ""))
+        relation["related_fields"] = [
+            field
+            for field in relation.get("related_fields", [])
+            if _field_is_visible(
+                hook,
+                principal=principal,
+                request=request,
+                entity=entity,
+                field=f"{relation_name}.{field.get('name', '')}",
+                action=action,
+            )
+        ]
+        relationships.append(relation)
+    visible["relationships"] = relationships
+    return visible
+
+
+def _serialize_shallow(
+    obj: Any,
+    *,
+    entity: dict[str, Any],
+    field_prefix: str,
+    field_visibility_hook: Any,
+    principal: Any,
+    request: Request,
+    action: str,
+) -> dict[str, Any]:
+    mapper = sa_inspect(obj.__class__)
+    return {
+        column.key: _json_value(getattr(obj, column.key))
+        for column in mapper.columns
+        if _field_is_visible(
+            field_visibility_hook,
+            principal=principal,
+            request=request,
+            entity=entity,
+            field=f"{field_prefix}{column.key}",
+            action=action,
+        )
+    }
+
+
+def _serialize_row(
+    obj: Any,
+    entity: dict[str, Any],
+    field_visibility_hook: Any,
+    principal: Any,
+    request: Request,
+    action: str,
+) -> dict[str, Any]:
+    out = _serialize_shallow(
+        obj,
+        entity=entity,
+        field_prefix="",
+        field_visibility_hook=field_visibility_hook,
+        principal=principal,
+        request=request,
+        action=action,
+    )
+    for rel in entity.get("relationships", []):
+        if rel.get("uselist") or rel.get("cardinality") in {"o2m", "m2m"}:
+            continue
+        name = rel.get("name")
+        if not name:
+            continue
+        configured_fields = rel.get("related_fields", [])
+        visible_fields = [
+            field
+            for field in configured_fields
+            if _field_is_visible(
+                field_visibility_hook,
+                principal=principal,
+                request=request,
+                entity=entity,
+                field=f"{name}.{field.get('name', '')}",
+                action=action,
+            )
+        ]
+        if configured_fields and not visible_fields:
+            continue
+        try:
+            related = getattr(obj, str(name))
+        except Exception:
+            continue
+        out[str(name)] = None if related is None else _serialize_shallow(
+            related,
+            entity=entity,
+            field_prefix=f"{name}.",
+            field_visibility_hook=field_visibility_hook,
+            principal=principal,
+            request=request,
+            action=action,
+        )
+    return out
+''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''    predicate_hooks: Iterable[Any],
+    principal: Any,
+    request: Request,
+    action: str,
+) -> dict[str, Any]:''',
+        '''    predicate_hooks: Iterable[Any],
+    field_visibility_hook: Any,
+    principal: Any,
+    request: Request,
+    action: str,
+) -> dict[str, Any]:''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''    predicate_hooks: Iterable[Any],
+    principal: Any,
+    request: Request,
+    action: str,
+) -> list[dict[str, Any]]:
+    query = db.query(model)''',
+        '''    predicate_hooks: Iterable[Any],
+    field_visibility_hook: Any,
+    principal: Any,
+    request: Request,
+    action: str,
+) -> list[dict[str, Any]]:
+    if not _field_is_visible(
+        field_visibility_hook,
+        principal=principal,
+        request=request,
+        entity=entity,
+        field=field,
+        action=action,
+    ):
+        raise HTTPException(status_code=403, detail="FilterX field is not visible.")
+    query = db.query(model)''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''        "data": [_serialize_row(row, entity) for row in rows],''',
+        '''        "data": [
+            _serialize_row(
+                row,
+                entity,
+                field_visibility_hook,
+                principal,
+                request,
+                action,
+            )
+            for row in rows
+        ],''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''    permission_hook_import: Optional[str] = None,
+    global_predicate_hook_imports: Optional[list[str]] = None,''',
+        '''    permission_hook_import: Optional[str] = None,
+    field_visibility_hook_import: Optional[str] = None,
+    global_predicate_hook_imports: Optional[list[str]] = None,''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''    permission_hook = _import_object(permission_hook_import) if permission_hook_import else None
+    global_predicate_hooks = [''',
+        '''    permission_hook = _import_object(permission_hook_import) if permission_hook_import else None
+    field_visibility_hook = _import_object(field_visibility_hook_import) if field_visibility_hook_import else None
+    global_predicate_hooks = [''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''        return build_metadata()
+
+    @router.get("/{entity}/metadata")''',
+        '''        metadata = build_metadata()
+        visible_entities = [
+            _visible_entity_metadata(entity, field_visibility_hook, principal, request, "metadata.list")
+            for entity in metadata.get("entities", [])
+        ]
+        return {"entities": visible_entities, "entity_count": len(visible_entities)}
+
+    @router.get("/{entity}/metadata")''',
+    )
+    source = _replace_runtime_contract(
+        source,
+        '''        return entity_meta
+
+    @router.get("/{entity}")''',
+        '''        return _visible_entity_metadata(
+            entity_meta,
+            field_visibility_hook,
+            principal,
+            request,
+            "metadata.read",
+        )
+
+    @router.get("/{entity}")''',
+    )
+    source = source.replace(
+        '''            predicate_hooks=predicates_for(entity_meta),
+            principal=principal,''',
+        '''            predicate_hooks=predicates_for(entity_meta),
+            field_visibility_hook=field_visibility_hook,
+            principal=principal,''',
+        5,
+    )
+    source = source.replace(
+        '''                    predicate_hooks=predicates_for(entity_meta),
+                    principal=principal,
+                    request=request,
+                    action="export",''',
+        '''                    predicate_hooks=predicates_for(entity_meta),
+                    field_visibility_hook=field_visibility_hook,
+                    principal=principal,
+                    request=request,
+                    action="export",''',
+        1,
+    )
+    return source
+
+
 def _render_router_py(
     api_prefix: str,
     session_dependency_import: str,
     auth_dependency_import: str | None,
     permission_hook_import: str | None,
+    field_visibility_hook_import: str | None,
     global_predicate_hooks: list[str],
     entity_predicate_hooks: dict[str, list[str]],
 ) -> str:
     escaped = api_prefix.replace("\\", "\\\\").replace('"', '\\"')
     escaped_session = session_dependency_import.replace("\\", "\\\\").replace('"', '\\"')
-    hook_config = json.dumps(
-        {
-            "auth_dependency_import": auth_dependency_import,
-            "permission_hook_import": permission_hook_import,
-            "global_predicate_hooks": global_predicate_hooks,
-            "entity_predicate_hooks": entity_predicate_hooks,
-        },
-        indent=2,
-    )
+    hook_values: dict[str, Any] = {
+        "auth_dependency_import": auth_dependency_import,
+        "permission_hook_import": permission_hook_import,
+        "global_predicate_hooks": global_predicate_hooks,
+        "entity_predicate_hooks": entity_predicate_hooks,
+    }
+    visibility_argument = ""
+    if field_visibility_hook_import:
+        hook_values["field_visibility_hook_import"] = field_visibility_hook_import
+        visibility_argument = (
+            "    field_visibility_hook_import=HOOK_CONFIG['field_visibility_hook_import'],\n"
+        )
+    hook_config = json.dumps(hook_values, indent=2)
     return (
         "from __future__ import annotations\n\n"
         "import json\n\n"
@@ -1018,6 +1433,7 @@ def _render_router_py(
         "    session_dependency_import=SESSION_DEPENDENCY_IMPORT,\n"
         "    auth_dependency_import=HOOK_CONFIG['auth_dependency_import'],\n"
         "    permission_hook_import=HOOK_CONFIG['permission_hook_import'],\n"
+        f"{visibility_argument}"
         "    global_predicate_hook_imports=HOOK_CONFIG['global_predicate_hooks'],\n"
         "    entity_predicate_hook_imports=HOOK_CONFIG['entity_predicate_hooks'],\n"
         ")\n"
@@ -1051,6 +1467,7 @@ def _build_patch_ops(
     session_dependency_import: str,
     auth_dependency_import: str | None,
     permission_hook_import: str | None,
+    field_visibility_hook_import: str | None,
     global_predicate_hooks: list[str],
     entity_predicate_hooks: dict[str, list[str]],
     mount_file: str,
@@ -1082,7 +1499,7 @@ def _build_patch_ops(
         PatchOp(
             kind="generated_file",
             path=f"{root}/router_factory.py",
-            content=_render_router_factory_py(),
+            content=_render_router_factory_py(bool(field_visibility_hook_import)),
             description="FilterX router factory",
         ),
         PatchOp(
@@ -1093,6 +1510,7 @@ def _build_patch_ops(
                 session_dependency_import,
                 auth_dependency_import,
                 permission_hook_import,
+                field_visibility_hook_import,
                 global_predicate_hooks,
                 entity_predicate_hooks,
             ),
@@ -1203,7 +1621,7 @@ def _backend_validate_payload(
     }
 
 
-def run_install(args: Any) -> int:
+def _run_fastapi_sqlalchemy_install(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -1272,6 +1690,7 @@ def run_install(args: Any) -> int:
         session_dependency_import=str(cfg["python"]["session_dependency_import"]),
         auth_dependency_import=cfg["backend"].get("auth_dependency_import"),
         permission_hook_import=cfg["backend"].get("permission_hook_import"),
+        field_visibility_hook_import=cfg["backend"].get("field_visibility_hook_import"),
         global_predicate_hooks=list(cfg["backend"].get("global_predicate_hooks") or []),
         entity_predicate_hooks=dict(cfg["backend"].get("entity_predicate_hooks") or {}),
         mount_file=mount_file,
@@ -1392,7 +1811,7 @@ def run_install(args: Any) -> int:
     return 0
 
 
-def run_validate(args: Any) -> int:
+def _run_fastapi_sqlalchemy_validate(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -1415,5 +1834,42 @@ def run_validate(args: Any) -> int:
     return 0
 
 
-def run_remove(args: Any) -> int:
+def _run_fastapi_sqlalchemy_remove(args: Any) -> int:
     return run_stub(args, "backend remove")
+
+
+def _backend_renderer(args: Any) -> Any:
+    from filterx.renderers import RendererTarget, renderer_registry
+
+    project_root = Path(args.project_root).resolve()
+    config_path = Path(args.config).resolve() if args.config else None
+    cfg = load_effective_config(project_root, config_path).raw
+    return renderer_registry.resolve(
+        RendererTarget.BACKEND,
+        str(cfg["backend"].get("framework", "fastapi-sqlalchemy")),
+    )
+
+
+def _run_with_renderer(args: Any, action: str) -> int:
+    try:
+        renderer = _backend_renderer(args)
+    except ValueError as exc:
+        payload = {"errors": [{"code": "BACKEND_RENDERER_NOT_REGISTERED", "message": str(exc)}]}
+        if getattr(args, "json", False):
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"FilterX backend {action} failed: {exc}")
+        return 2
+    return int(getattr(renderer, action)(args))
+
+
+def run_install(args: Any) -> int:
+    return _run_with_renderer(args, "install")
+
+
+def run_validate(args: Any) -> int:
+    return _run_with_renderer(args, "validate")
+
+
+def run_remove(args: Any) -> int:
+    return _run_with_renderer(args, "remove")

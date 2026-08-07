@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://filterx.dev/schemas/filterx-ir-v1.schema.json",
+  "title": "FilterX Intermediate Representation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "source_framework",
+    "entities",
+    "routes",
+    "security",
+    "max_relationship_depth"
+  ],
+  "properties": {
+    "version": { "const": "filterx-ir/v1" },
+    "source_framework": { "type": "string", "minLength": 1 },
+    "entities": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entity" }
+    },
+    "routes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "security": { "$ref": "#/$defs/security" },
+    "max_relationship_depth": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "source_type",
+        "nullable",
+        "primary_key",
+        "unique",
+        "has_default",
+        "foreign_keys",
+        "operations",
+        "enum_values",
+        "visibility",
+        "permission"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": [
+            "string",
+            "integer",
+            "decimal",
+            "boolean",
+            "date",
+            "datetime",
+            "enum",
+            "uuid",
+            "json/blob",
+            "binary"
+          ]
+        },
+        "source_type": { "type": "string", "minLength": 1 },
+        "nullable": { "type": "boolean" },
+        "primary_key": { "type": "boolean" },
+        "unique": { "type": "boolean" },
+        "has_default": { "type": "boolean" },
+        "foreign_keys": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "operations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "enum_values": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "visibility": { "enum": ["public", "hook"] },
+        "permission": { "type": ["string", "null"] }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "target_entity",
+        "target_table",
+        "join_path",
+        "depth",
+        "collection",
+        "back_populates",
+        "cycle"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": ["one-to-one", "one-to-many", "many-to-one", "many-to-many"]
+        },
+        "target_entity": { "type": "string", "minLength": 1 },
+        "target_table": { "type": "string" },
+        "join_path": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "depth": { "type": "integer", "minimum": 1 },
+        "collection": { "type": "boolean" },
+        "back_populates": { "type": ["string", "null"] },
+        "cycle": { "type": "boolean" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "table", "primary_keys"],
+      "properties": {
+        "module": { "type": "string" },
+        "table": { "type": "string", "minLength": 1 },
+        "primary_keys": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "soft_delete": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["respected", "field"],
+      "properties": {
+        "respected": { "type": "boolean" },
+        "field": { "type": ["string", "null"] }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "identity",
+        "fields",
+        "relationships",
+        "cycle_memberships",
+        "soft_delete"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "identity": { "$ref": "#/$defs/identity" },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relationship" }
+        },
+        "cycle_memberships": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "soft_delete": { "$ref": "#/$defs/soft_delete" }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "name", "methods", "source_type"],
+      "properties": {
+        "path": { "type": "string" },
+        "name": { "type": "string" },
+        "methods": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "source_type": { "type": "string" }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "row_predicates",
+        "entity_row_predicates",
+        "field_visibility"
+      ],
+      "properties": {
+        "identity": { "type": ["string", "null"] },
+        "row_predicates": { "type": "array", "items": { "type": "string" } },
+        "entity_row_predicates": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "field_visibility": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

@@ -1,11 +1,11 @@
 # FilterX
 
-FilterX injects a generic filtering system into **your existing FastAPI + SQLAlchemy + Angular project**.
+FilterX injects a generic filtering system into an existing application. The default remains **FastAPI + SQLAlchemy + Angular**, with opt-in Express + Prisma, Spring Boot + JPA, React + Vite + TypeScript, Next.js, and Vue + Vite + TypeScript targets.
 
 It generates both sides of the feature:
 
-- a backend API for metadata, search, filtering, grouping, sorting, and pagination
-- an Angular UI with list pages, advanced search, filter trees, grouping, tables, and pagination
+- a backend API for metadata, search, filtering, grouping, sorting, pagination, and secure streaming CSV/XLSX/JSON exports
+- an Angular, React/Vite, Next.js, or Vue UI with list pages, advanced search, filter trees, grouping, tables, pagination, and export controls
 
 Frontend integration is part of the standard flow and is included in the steps below.
 

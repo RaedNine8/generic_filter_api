@@ -99,9 +99,14 @@ def _write_scan(project_root: Path) -> None:
                 "primary_keys": ["id"],
                 "fields": [
                     {"name": "id", "type": "integer", "primary_key": True, "ops": ["eq", "gt", "lt"]},
-                    {"name": "title", "type": "string", "ops": ["eq", "like", "ilike"]},
+                    {
+                        "name": "title",
+                        "type": "string",
+                        "ops": ["eq", "ne", "like", "ilike", "starts_with", "ends_with", "in", "not_in"],
+                    },
                     {"name": "genre", "type": "string", "ops": ["eq", "like", "ilike"]},
-                    {"name": "price", "type": "float", "ops": ["eq", "gt", "gte", "lt", "lte"]},
+                    {"name": "price", "type": "float", "ops": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not_in", "between"]},
+                    {"name": "note", "type": "string", "nullable": True, "ops": ["eq", "ne", "like", "ilike", "starts_with", "ends_with", "in", "not_in", "is_null", "is_not_null"]},
                     {"name": "is_active", "type": "boolean", "ops": ["eq", "ne"]},
                     {"name": "published_on", "type": "date", "ops": ["eq", "gt", "gte", "lt", "lte"]},
                     {
@@ -239,6 +244,7 @@ def _write_runtime_project(project_root: Path) -> Path:
         "    title = Column(String, nullable=False)\n"
         "    genre = Column(String, nullable=False)\n"
         "    price = Column(Float, nullable=False)\n"
+        "    note = Column(String, nullable=True)\n"
         "    is_active = Column(Boolean, nullable=False, default=True)\n"
         "    published_on = Column(Date, nullable=True)\n"
         "    status = Column(Enum('draft', 'published', name='book_status'), nullable=False, default='draft')\n"
@@ -365,6 +371,7 @@ def test_generated_backend_router_applies_security_and_row_predicates(tmp_path: 
         {
             "auth_dependency_import": "app.security:get_principal",
             "permission_hook_import": "app.security:check_permission",
+            "field_visibility_hook_import": "app.security:field_visible",
             "global_predicate_hooks": ["app.security:tenant_predicate"],
             "entity_predicate_hooks": {},
         }
@@ -380,7 +387,9 @@ def test_generated_backend_router_applies_security_and_row_predicates(tmp_path: 
         "def tenant_predicate(*, principal, request, entity, model, action):\n"
         "    if entity.get('model') == 'Book':\n"
         "        return model.genre == principal\n"
-        "    return None\n",
+        "    return None\n\n"
+        "def field_visible(*, principal, request, entity, field, action):\n"
+        "    return field not in {'price', 'author.name'}\n",
     )
 
     assert backend.run_install(_args(project_root, config_path)) == 0
@@ -425,6 +434,15 @@ def test_generated_backend_router_applies_security_and_row_predicates(tmp_path: 
             )
             assert query_response.status_code == 200
             assert query_response.json()["meta"]["total_items"] == 2
+            assert "price" not in query_response.json()["data"][0]
+            assert "name" not in query_response.json()["data"][0]["author"]
+
+            metadata_response = client.get(
+                "/api/filterx/books/metadata",
+                headers={"x-tenant": "Tech"},
+            )
+            assert metadata_response.status_code == 200
+            assert "price" not in {field["name"] for field in metadata_response.json()["fields"]}
 
             filter_response = client.post(
                 "/api/filterx/books/filter",

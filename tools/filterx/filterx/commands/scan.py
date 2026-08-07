@@ -6,7 +6,8 @@ from typing import Any
 
 from filterx.core.config import load_effective_config
 from filterx.core.io import write_json
-from filterx.core.scanner import run_scan
+from filterx.core.scanner import run_registered_scan
+from filterx.scanners import ScannerError
 
 
 def run(args: Any) -> int:
@@ -29,16 +30,39 @@ def run(args: Any) -> int:
     if dry_run is None:
         dry_run = bool(cfg["safety"].get("dry_run_default", True))
 
-    result = run_scan(cfg, project_root)
+    try:
+        result = run_registered_scan(cfg, project_root)
+    except (ScannerError, ValueError) as exc:
+        code = exc.code if isinstance(exc, ScannerError) else "SCANNER_NOT_REGISTERED"
+        context = exc.context if isinstance(exc, ScannerError) else {}
+        payload = {
+            "dry_run": dry_run or bool(args.check),
+            "wrote_files": False,
+            "diagnostics": {
+                "errors": [{"code": code, "message": str(exc), "context": context}],
+                "warnings": [],
+                "info": [],
+            },
+            "entity_count": 0,
+        }
+        if args.json:
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"FilterX scan failed: {exc}")
+        return 2
 
     scan_path = project_root / cfg["output"]["scan_file"]
     diagnostics_path = project_root / cfg["output"]["diagnostics_file"]
     plan_path = project_root / cfg["output"]["plan_file"]
+    emit_ir = bool(cfg["scan"].get("emit_ir", False)) or str(cfg["scan"].get("framework", "sqlalchemy")) != "sqlalchemy"
+    ir_path = project_root / cfg["output"].get("ir_file", ".filterx/ir.json")
 
     if not dry_run and not args.check:
         write_json(scan_path, result.scan)
         write_json(diagnostics_path, result.diagnostics)
         write_json(plan_path, result.plan)
+        if emit_ir and result.ir is not None:
+            write_json(ir_path, result.ir.to_dict())
 
     payload = {
         "dry_run": dry_run or bool(args.check),
@@ -49,6 +73,8 @@ def run(args: Any) -> int:
         "diagnostics": result.diagnostics,
         "entity_count": result.scan["graph_stats"]["entity_count"],
     }
+    if emit_ir:
+        payload["ir_file"] = str(ir_path)
 
     if args.json:
         print(json.dumps(payload, indent=2))
@@ -60,6 +86,8 @@ def run(args: Any) -> int:
         print(f"- Scan file: {payload['scan_file']}")
         print(f"- Diagnostics file: {payload['diagnostics_file']}")
         print(f"- Plan file: {payload['plan_file']}")
+        if emit_ir:
+            print(f"- IR file: {payload['ir_file']}")
 
     errors = result.diagnostics.get("errors", [])
     warnings = result.diagnostics.get("warnings", [])

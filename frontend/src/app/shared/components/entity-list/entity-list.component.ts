@@ -24,6 +24,7 @@ import { SortOrder } from "../../../core/enums/sort-order.enum";
 import { FilterOperation } from "../../../core/enums/filter-operation.enum";
 import { QueryState } from "../../../core/interfaces/query-state.interface";
 import { EntityQueryService } from "../../../core/services/entity-query.service";
+import { ExportFormat } from "../../../core/services/generic-query.service";
 import { SavedFilterService } from "../../../core/services/saved-filter.service";
 
 import { AdvancedSearchPanelComponent } from "../advanced-search-panel/advanced-search-panel.component";
@@ -98,6 +99,21 @@ import { DataTableComponent } from "../data-table/data-table.component";
           >
         </div>
         <div class="context-right">
+          <div class="export-actions" aria-label="Export results">
+            <button
+              type="button"
+              class="export-action"
+              *ngFor="let format of exportFormats"
+              [disabled]="!!exportingFormat"
+              (click)="exportResults(format)"
+            >
+              {{
+                exportingFormat === format
+                  ? "Exporting..."
+                  : format.toUpperCase()
+              }}
+            </button>
+          </div>
           <button
             type="button"
             class="context-action"
@@ -218,6 +234,35 @@ import { DataTableComponent } from "../data-table/data-table.component";
         display: flex;
         align-items: center;
         gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .export-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .export-action {
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid #b8d5ee;
+        background: #f1f8fe;
+        color: var(--color-primary-strong);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .export-action:hover:not(:disabled) {
+        background: #e3f1fc;
+        border-color: #8ebce2;
+      }
+
+      .export-action:disabled {
+        cursor: wait;
+        opacity: 0.6;
       }
 
       .context-action {
@@ -373,6 +418,8 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   sortOrder: SortOrder = SortOrder.ASC;
   groupBy: string | null = null;
   groupedBuckets: Array<{ key: unknown; count: number }> = [];
+  readonly exportFormats: ExportFormat[] = ["csv", "xlsx", "json"];
+  exportingFormat: ExportFormat | null = null;
 
   savedFilters: SavedFilter[] = [];
 
@@ -640,6 +687,41 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
 
   retryLoad(): void {
     this.loadData();
+  }
+
+  exportResults(format: ExportFormat): void {
+    if (!this.config?.apiEndpoint || this.exportingFormat) {
+      return;
+    }
+
+    this.entityQueryService.setBaseUrl(this.config.apiEndpoint);
+    this.exportingFormat = format;
+    this.entityQueryService
+      .exportWithState(this.buildQueryState(), format)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.exportingFormat = null)),
+      )
+      .subscribe({
+        next: (blob) => this.downloadExport(blob, format),
+        error: (error) => {
+          console.error("Error exporting data:", error);
+          this.errorMessage =
+            error?.error?.detail || error?.message || "Could not export data";
+        },
+      });
+  }
+
+  private downloadExport(blob: Blob, format: ExportFormat): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const baseName = (this.config?.name || "filterx-export")
+      .replace(/[^a-z0-9_-]+/gi, "-")
+      .toLowerCase();
+    link.href = url;
+    link.download = `${baseName}.${format}`;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   get hasActiveCriteria(): boolean {

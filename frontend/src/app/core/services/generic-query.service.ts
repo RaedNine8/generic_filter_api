@@ -23,6 +23,8 @@ import { SortOrder } from "../enums/sort-order.enum";
 import { ApiError, QueryState } from "../interfaces/query-state.interface";
 import { FILTERX_CONFIG, joinFilterxUrl } from "../config/filterx-config";
 
+export type ExportFormat = "csv" | "xlsx" | "json";
+
 @Injectable({
   providedIn: "root",
 })
@@ -108,6 +110,32 @@ export abstract class GenericQueryService<T> {
         return this.handleError(error);
       }),
     );
+  }
+
+  exportWithState(state: QueryState, format: ExportFormat): Observable<Blob> {
+    let params = new HttpParams().set("format", format);
+    if (state.sort?.sort_by) {
+      params = params
+        .set("sort_by", state.sort.sort_by)
+        .set("order", state.sort.order);
+    }
+    if (state.search) {
+      params = params.set("search", state.search);
+    }
+
+    const treePayload = state.filterTree
+      ? toBackendPayload(state.filterTree)
+      : null;
+    const body = treePayload
+      ? { filter_tree: treePayload }
+      : { filters: state.filters || [] };
+
+    return this.http
+      .post(`${this.requestBaseUrl}/export`, body, {
+        params,
+        responseType: "blob",
+      })
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   getMetadata(): Observable<any> {

@@ -2001,11 +2001,11 @@ def _frontend_remove_candidates(patch_dir: Path) -> list[str]:
     return candidates
 
 
-def run_install(args: Any) -> int:
+def _run_angular_install(args: Any) -> int:
     return _run_install_impl(args)
 
 
-def run_validate(args: Any) -> int:
+def _run_angular_validate(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -2071,7 +2071,7 @@ def run_validate(args: Any) -> int:
     return 0
 
 
-def run_remove(args: Any) -> int:
+def _run_angular_remove(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -2133,3 +2133,40 @@ def run_remove(args: Any) -> int:
         print(f"- Removed files: {len(payload['removed'])}")
 
     return 0
+
+
+def _frontend_renderer(args: Any) -> Any:
+    from filterx.renderers import RendererTarget, renderer_registry
+
+    project_root = Path(args.project_root).resolve()
+    config_path = Path(args.config).resolve() if args.config else None
+    cfg = load_effective_config(project_root, config_path).raw
+    return renderer_registry.resolve(
+        RendererTarget.FRONTEND,
+        str(cfg["frontend"].get("framework", "angular")),
+    )
+
+
+def _run_with_renderer(args: Any, action: str) -> int:
+    try:
+        renderer = _frontend_renderer(args)
+    except ValueError as exc:
+        payload = {"errors": [{"code": "FRONTEND_RENDERER_NOT_REGISTERED", "message": str(exc)}]}
+        if getattr(args, "json", False):
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"FilterX frontend {action} failed: {exc}")
+        return 2
+    return int(getattr(renderer, action)(args))
+
+
+def run_install(args: Any) -> int:
+    return _run_with_renderer(args, "install")
+
+
+def run_validate(args: Any) -> int:
+    return _run_with_renderer(args, "validate")
+
+
+def run_remove(args: Any) -> int:
+    return _run_with_renderer(args, "remove")

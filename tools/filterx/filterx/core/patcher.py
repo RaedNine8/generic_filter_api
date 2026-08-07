@@ -7,7 +7,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Mapping, Optional
 
 from .conflicts import check_anchor_exists
 from .io import ensure_parent_dir, utc_now_iso, write_json
@@ -19,9 +19,11 @@ from .manifest import (
     save_manifest,
     set_entry,
 )
+from .structured_merge import render_gradle_merge, render_maven_merge
 
-PatchKind = Literal["generated_file", "anchor_insert", "delete_file"]
+PatchKind = Literal["generated_file", "anchor_insert", "delete_file", "structured_merge"]
 InsertMode = Literal["after", "before"]
+StructuredFormat = Literal["json", "xml", "gradle"]
 
 
 @dataclass
@@ -34,6 +36,8 @@ class PatchOp:
     snippet: Optional[str] = None
     insert_mode: InsertMode = "after"
     description: str = ""
+    structured_format: Optional[StructuredFormat] = None
+    merge: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -136,6 +140,42 @@ def _apply_anchor_insert(original: str, anchor: str, snippet: str, mode: InsertM
     return original
 
 
+def _deep_merge_mapping(base: Dict[str, Any], overlay: Mapping[str, Any]) -> Dict[str, Any]:
+    merged = dict(base)
+    for key, value in overlay.items():
+        if isinstance(value, Mapping) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge_mapping(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _render_json_merge(original: str, overlay: Mapping[str, Any]) -> str:
+    parsed = json.loads(original) if original.strip() else {}
+    if not isinstance(parsed, dict):
+        raise ValueError("Structured JSON merge requires an object at the document root.")
+    indent_match = next(
+        (len(line) - len(line.lstrip(" ")) for line in original.splitlines()[1:] if line.startswith(" ")),
+        2,
+    )
+    indent = indent_match if indent_match > 0 else 2
+    newline = "\r\n" if "\r\n" in original else "\n"
+    rendered = json.dumps(_deep_merge_mapping(parsed, overlay), indent=indent, ensure_ascii=False)
+    return rendered.replace("\n", newline) + newline
+
+
+def _render_structured_merge(op: PatchOp, original: str) -> str:
+    if op.structured_format == "json":
+        return _render_json_merge(original, op.merge)
+    if op.structured_format == "xml":
+        return render_maven_merge(original, op.merge)
+    if op.structured_format == "gradle":
+        return render_gradle_merge(original, op.merge, kotlin_dsl=op.path.endswith(".kts"))
+    raise ValueError(
+        f"No parser-backed structured patcher is registered for format '{op.structured_format or 'unspecified'}'."
+    )
+
+
 
 def apply_patch_operations(
     project_root: Path,
@@ -158,7 +198,7 @@ def apply_patch_operations(
     bundle_root = patch_dir / patch_id
     backups: List[Dict[str, str | bool]] = []
 
-    # Preflight for anchor ops
+    # Preflight operations whose safety can be established without writing.
     for op in operations:
         if op.kind == "anchor_insert":
             if not op.anchor or not op.snippet:
@@ -180,6 +220,33 @@ def apply_patch_operations(
                         context={k: str(v) for k, v in conflict.context.items()},
                     )
                 )
+        elif op.kind == "structured_merge":
+            target = _resolve(project_root, op.path)
+            if op.structured_format not in {"json", "xml", "gradle"}:
+                issues.append(
+                    PatchIssue(
+                        code="CONFLICT_STRUCTURED_FORMAT_UNKNOWN",
+                        message="Structured merge requires json, xml, or gradle format metadata.",
+                        context={"path": op.path, "format": str(op.structured_format)},
+                    )
+                )
+            else:
+                try:
+                    if target.exists():
+                        original = target.read_text(encoding="utf-8")
+                    elif op.structured_format == "json":
+                        original = "{}\n"
+                    else:
+                        original = ""
+                    _render_structured_merge(op, original)
+                except (json.JSONDecodeError, ValueError, SyntaxError) as exc:
+                    issues.append(
+                        PatchIssue(
+                            code="CONFLICT_STRUCTURED_DOCUMENT_INVALID",
+                            message="Structured dependency document could not be parsed safely.",
+                            context={"path": op.path, "format": op.structured_format, "error": str(exc)},
+                        )
+                    )
 
     if strict_conflict_mode and any(i.code.startswith("CONFLICT_") for i in issues):
         return ApplyResult(
@@ -261,6 +328,41 @@ def apply_patch_operations(
             backups.append(_backup_file(project_root, bundle_root, target))
             target.unlink(missing_ok=True)
             delete_entry(manifest, rel)
+
+        elif op.kind == "structured_merge":
+            if target.exists():
+                old_content = target.read_text(encoding="utf-8")
+            elif op.structured_format == "json":
+                old_content = "{}\n"
+            elif op.structured_format == "gradle":
+                old_content = ""
+            else:
+                old_content = ""
+            try:
+                new_content = _render_structured_merge(op, old_content)
+            except (json.JSONDecodeError, ValueError, SyntaxError):
+                skipped_ops += 1
+                continue
+            if new_content == old_content:
+                skipped_ops += 1
+                continue
+
+            touched_files.append(rel)
+            applied_ops += 1
+            if dry_run or check_mode:
+                continue
+
+            backups.append(_backup_file(project_root, bundle_root, target))
+            ensure_parent_dir(target)
+            target.write_text(new_content, encoding="utf-8", newline="")
+            set_entry(
+                manifest,
+                relative_path=rel,
+                kind="structured_merge",
+                sha256=_sha256_text(new_content),
+                patch_id=patch_id,
+                metadata={"owner": op.owner, "format": op.structured_format},
+            )
 
     if not (dry_run or check_mode):
         ensure_parent_dir(bundle_root)
