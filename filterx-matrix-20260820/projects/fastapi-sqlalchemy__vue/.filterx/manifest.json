@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "created_at": "2026-08-20T19:35:12.273391+00:00",
+  "updated_at": "2026-08-20T19:35:13.567876+00:00",
+  "entries": {
+    "app/filterx_generated/__init__.py": {
+      "kind": "generated_file",
+      "sha256": "4c58362d8712c5e35d4a4321c29ae67b2e740619d458415890b771899bf5c3e6",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.285433+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/entities.py": {
+      "kind": "generated_file",
+      "sha256": "31657a4d48c473a8261c4b0ca53ad992e7120cd3b444f862023ab4e6aed4a41e",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.287687+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/metadata.py": {
+      "kind": "generated_file",
+      "sha256": "ff8b90709c0a468a51d6e4d2c03b1cf7f8833b60ae05746d240d8cbd8ad8e9d2",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.287687+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/router_factory.py": {
+      "kind": "generated_file",
+      "sha256": "68b532756bf52ba34d6854eae4b48cd9e55168de53441eb57793a19fdd781933",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.289192+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/router.py": {
+      "kind": "generated_file",
+      "sha256": "117ece792c1f2f49cc4634093a4cbbe5eadbc5482ffca866c020888c04ca76a7",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.290198+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/filterx_generated/predicates.py": {
+      "kind": "generated_file",
+      "sha256": "6fe9d97fd1b084108803544ebe335360eadfef3e9c09b05d42fd2821801c170e",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.291200+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "app/main.py": {
+      "kind": "anchor_insert",
+      "sha256": "2f9ad4615c926cb476797d611fa4b98e10b79fe67c7437396944322e8879dc14",
+      "last_patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "updated_at": "2026-08-20T19:35:12.296218+00:00",
+      "metadata": {
+        "anchor": "# FILTERX:ROUTER_MOUNT",
+        "snippet_hash": "b36dd60cc566a8eb7c20232a562bbcf3bd29e4433d1b8d0921d1f19d4ceb4e75"
+      }
+    },
+    "frontend/src/filterx-generated/types.ts": {
+      "kind": "generated_file",
+      "sha256": "4ac1602800eb86fc145d977bf350ae455a842d39e105b2777428bfc593595dce",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.584415+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/entities.ts": {
+      "kind": "generated_file",
+      "sha256": "822c646ae28d8ed2a60f5c37c399d6c6fa6370de5c9462cec3620dcda8e22cf9",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.585414+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/api.ts": {
+      "kind": "generated_file",
+      "sha256": "94c53566af83ec276a2cf4bba592c0f0bb9c253ba09b7a7641b556f916945965",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.586414+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/filterx.css": {
+      "kind": "generated_file",
+      "sha256": "e71f44092822fac9a691987b935b367ef5b5f0fbc48ca1c53ee371afd6968836",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.587415+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/FilterxApp.vue": {
+      "kind": "generated_file",
+      "sha256": "4c4f21c3d7a1bf30969f43968798e21bdde6c84af8ad225df0ca055d3a97a3f1",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.588414+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/FilterxFilterBuilder.vue": {
+      "kind": "generated_file",
+      "sha256": "c746d427c6523758accb61942ca574e4d9e59d205b423244df3c5f1ba1bb026c",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.589923+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "ac0df29fc7e74edd1ea301d58ed86762bd362bb7986e04b0e8633391f3671663",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.601924+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/package.json": {
+      "kind": "structured_merge",
+      "sha256": "a389dd60b1bbbb6cf1cdd5f7fb98e247b18ff45af9714ddad03a23bc39c832b5",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.603930+00:00",
+      "metadata": {
+        "owner": "host",
+        "format": "json"
+      }
+    },
+    "frontend/src/App.vue": {
+      "kind": "generated_file",
+      "sha256": "6de93e79297adcf72fcf0dd5918db3ea7f22489bb0de125fe1f411e6ded785b8",
+      "last_patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "updated_at": "2026-08-20T19:35:12.605930+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    }
+  },
+  "patch_history": [
+    {
+      "patch_id": "patch-20260820T193512.273391Z-bfdf3c0e",
+      "created_at": "2026-08-20T19:35:12.297208+00:00",
+      "mode": "apply",
+      "description": "backend.install",
+      "touched_files": [
+        "app/filterx_generated/__init__.py",
+        "app/filterx_generated/entities.py",
+        "app/filterx_generated/metadata.py",
+        "app/filterx_generated/router_factory.py",
+        "app/filterx_generated/router.py",
+        "app/filterx_generated/predicates.py",
+        "app/main.py"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T193512.570323Z-a7649347",
+      "created_at": "2026-08-20T19:35:12.606930+00:00",
+      "mode": "apply",
+      "description": "frontend.install.vue",
+      "touched_files": [
+        "frontend/src/filterx-generated/types.ts",
+        "frontend/src/filterx-generated/entities.ts",
+        "frontend/src/filterx-generated/api.ts",
+        "frontend/src/filterx-generated/filterx.css",
+        "frontend/src/filterx-generated/FilterxApp.vue",
+        "frontend/src/filterx-generated/FilterxFilterBuilder.vue",
+        "frontend/src/filterx-generated/index.ts",
+        "frontend/package.json",
+        "frontend/src/App.vue"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T193513.202469Z-ca37c7d6",
+      "created_at": "2026-08-20T19:35:13.205466+00:00",
+      "mode": "apply",
+      "description": "backend.install",
+      "touched_files": []
+    },
+    {
+      "patch_id": "patch-20260820T193513.490102Z-47f00e99",
+      "created_at": "2026-08-20T19:35:13.567876+00:00",
+      "mode": "apply",
+      "description": "frontend.install.vue",
+      "touched_files": []
+    }
+  ]
+}

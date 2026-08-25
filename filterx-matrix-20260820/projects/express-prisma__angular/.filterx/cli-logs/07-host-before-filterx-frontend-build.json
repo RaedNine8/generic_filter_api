@@ -1,0 +1,14 @@
+{
+  "stage": "host-before-filterx-frontend-build",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "run",
+    "build"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+  "exit_code": 0,
+  "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m❯\u001b[39m Building...\n\u001b[32m✔\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m179.93 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m48.10 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m40 bytes\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m40 bytes\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m179.97 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m48.14 kB\u001b[22m\n\nApplication bundle generation complete. [12.789 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend\\dist\\filterx-host\n\n",
+  "stderr": "",
+  "duration_seconds": 27.0,
+  "log_file": ".filterx/cli-logs/07-host-before-filterx-frontend-build.json"
+}

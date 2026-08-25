@@ -1,0 +1,22 @@
+{
+  "stage": "frontend-install",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "frontend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"vue\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200252.853286Z-cd46aaf7\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.vue\",\n    \"frontend/src/filterx-generated/FilterxFilterBuilder.vue\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/package.json\",\n    \"frontend/src/App.vue\"\n  ],\n  \"applied_ops\": 9,\n  \"skipped_ops\": 0,\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.312,
+  "log_file": ".filterx/cli-logs/10-frontend-install.json"
+}

@@ -1,0 +1,15 @@
+{
+  "stage": "post-rollback-frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 2 packages, removed 3 packages, and changed 8 packages in 3s\n",
+  "stderr": "",
+  "duration_seconds": 3.687,
+  "log_file": ".filterx/cli-logs/19-post-rollback-frontend-npm-install.json"
+}

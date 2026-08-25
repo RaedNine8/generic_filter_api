@@ -1,0 +1,220 @@
+{
+  "version": 1,
+  "created_at": "2026-08-20T20:10:59.512331+00:00",
+  "updated_at": "2026-08-20T20:11:00.512323+00:00",
+  "entries": {
+    "src/main/java/com/example/filterx/generated/FilterxMetadata.java": {
+      "kind": "generated_file",
+      "sha256": "1d4d5e6a6b3518975a0f2e1f698663f8f89302b85f1fcb14127ee1761f26e5c9",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.512331+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxDtos.java": {
+      "kind": "generated_file",
+      "sha256": "f2c1bcd4b4cc9ce18148a88fab7df571d7f89e1d2fcc360081f7f28c3862af66",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.512331+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxRequests.java": {
+      "kind": "generated_file",
+      "sha256": "fc18e9228c18dfa478cfe28a213a8d82553251a817a86f176b8fdf7a0ad9927f",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxSecurity.java": {
+      "kind": "generated_file",
+      "sha256": "1ca6d28ab02216faf5162982a037804e99b671c9a95caabf49fa2652f2cc537e",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxSpecifications.java": {
+      "kind": "generated_file",
+      "sha256": "d99a53c80080d5b96a4496169ecbaa6b24d7f5a1262815e7d316fcb64c4b064f",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxQueryService.java": {
+      "kind": "generated_file",
+      "sha256": "8ef370f32ab919863c5b48df032d528ef47fc235fb9cb0f9961aa1faefca0304",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxExportService.java": {
+      "kind": "generated_file",
+      "sha256": "173385b4bda15109e5fbc7133522e6755bc3988efc5568eceac92a7ac16aae97",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxController.java": {
+      "kind": "generated_file",
+      "sha256": "764ed3e7b42bf60ff5c1b6a898a76ac90f8103a4996df354f1e6f7580bdfe653",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.519711+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxConfiguration.java": {
+      "kind": "generated_file",
+      "sha256": "78dc012d2f908577bcc97e01b06b7d705167a33c397ef89580ae23493186af3a",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.527176+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java": {
+      "kind": "generated_file",
+      "sha256": "db7a8411d602114fbaae16ac8b016b0d64e96d56d7379634415491f4d82f868e",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.528604+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "pom.xml": {
+      "kind": "structured_merge",
+      "sha256": "55704ea04fd717ba7886456cd2161ef8326c0aa66a5e6e959c187155d6309535",
+      "last_patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "updated_at": "2026-08-20T20:10:59.529612+00:00",
+      "metadata": {
+        "owner": "host",
+        "format": "xml"
+      }
+    },
+    "frontend/src/filterx-generated/types.ts": {
+      "kind": "generated_file",
+      "sha256": "8f6e06c360da69bee57fd9700544961ff5bdc208c8243f68883b061512ca94f9",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/entities.ts": {
+      "kind": "generated_file",
+      "sha256": "e49ec8866eeefa1f9ea5bf81618eac6917efcedc8e37b4141409db75f6c3d0c7",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/api.ts": {
+      "kind": "generated_file",
+      "sha256": "94c53566af83ec276a2cf4bba592c0f0bb9c253ba09b7a7641b556f916945965",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/filterx.css": {
+      "kind": "generated_file",
+      "sha256": "e71f44092822fac9a691987b935b367ef5b5f0fbc48ca1c53ee371afd6968836",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/FilterxApp.tsx": {
+      "kind": "generated_file",
+      "sha256": "66f03fa8625f73202bf594b1c1dbb7807c1941d1b27171354af53f777571bc1d",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "b65b91b75135ac45ec69e00c9a6e7b54bb6aac772d2d0d18bb63f785ad9043fd",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx/page.tsx": {
+      "kind": "generated_file",
+      "sha256": "33c53598d63950ff0489f169dfcf4f23015a3ef745f954156888150611bbe745",
+      "last_patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "updated_at": "2026-08-20T20:10:59.749662+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    }
+  },
+  "patch_history": [
+    {
+      "patch_id": "patch-20260820T201059.512331Z-6ee27ed6",
+      "created_at": "2026-08-20T20:10:59.529612+00:00",
+      "mode": "apply",
+      "description": "backend.install.spring-boot-jpa",
+      "touched_files": [
+        "src/main/java/com/example/filterx/generated/FilterxMetadata.java",
+        "src/main/java/com/example/filterx/generated/FilterxDtos.java",
+        "src/main/java/com/example/filterx/generated/FilterxRequests.java",
+        "src/main/java/com/example/filterx/generated/FilterxSecurity.java",
+        "src/main/java/com/example/filterx/generated/FilterxSpecifications.java",
+        "src/main/java/com/example/filterx/generated/FilterxQueryService.java",
+        "src/main/java/com/example/filterx/generated/FilterxExportService.java",
+        "src/main/java/com/example/filterx/generated/FilterxController.java",
+        "src/main/java/com/example/filterx/generated/FilterxConfiguration.java",
+        "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java",
+        "pom.xml"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T201059.739689Z-e8c98a03",
+      "created_at": "2026-08-20T20:10:59.749662+00:00",
+      "mode": "apply",
+      "description": "frontend.install.nextjs",
+      "touched_files": [
+        "frontend/src/filterx-generated/types.ts",
+        "frontend/src/filterx-generated/entities.ts",
+        "frontend/src/filterx-generated/api.ts",
+        "frontend/src/filterx-generated/filterx.css",
+        "frontend/src/filterx-generated/FilterxApp.tsx",
+        "frontend/src/filterx-generated/index.ts",
+        "frontend/src/app/filterx/page.tsx"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T201100.249748Z-e0c502d0",
+      "created_at": "2026-08-20T20:11:00.249748+00:00",
+      "mode": "apply",
+      "description": "backend.install.spring-boot-jpa",
+      "touched_files": []
+    },
+    {
+      "patch_id": "patch-20260820T201100.479866Z-f2af1f91",
+      "created_at": "2026-08-20T20:11:00.512323+00:00",
+      "mode": "apply",
+      "description": "frontend.install.nextjs",
+      "touched_files": []
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+
+> filterx-next-matrix@1.0.0 dev
+> next dev -H 127.0.0.1 -p 3000
+
+   ▲ Next.js 15.5.23
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.7s
+ ○ Compiling / ...
+ ✓ Compiled / in 612ms (519 modules)
+ GET / 200 in 952ms
+ GET / 200 in 40ms

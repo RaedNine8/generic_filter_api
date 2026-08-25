@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-02",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T200029.673219Z-1ab20f7e",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T200029.673219Z-1ab20f7e\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.219,
+  "log_file": ".filterx/cli-logs/22-rollback-02.json"
+}

@@ -472,6 +472,8 @@ public class FilterxQueryService {{
         metadata.field(entity, groupField);
         guardCost(request);
         Object principal = servletRequest.getAttribute(FilterxSecurity.IdentityFilter.PRINCIPAL_ATTRIBUTE);
+        if (!visibility.visible(principal, entity, groupField, action, servletRequest))
+            throw new FilterxRequestException("FIELD_FORBIDDEN", "Grouping by field '" + groupField + "' is not permitted.");
         Specification<Object> specification = compose(entity, request, search, principal, action, servletRequest);
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = cb.createTupleQuery();

@@ -1,0 +1,21 @@
+{
+  "stage": "scan",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "scan",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__nextjs\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__nextjs\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__nextjs\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2,\n  \"ir_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__nextjs\\\\.filterx\\\\ir.json\"\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.297,
+  "log_file": ".filterx/cli-logs/08-scan.json"
+}

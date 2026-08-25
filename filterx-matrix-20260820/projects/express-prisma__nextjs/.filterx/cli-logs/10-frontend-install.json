@@ -1,0 +1,22 @@
+{
+  "stage": "frontend-install",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "frontend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"nextjs\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200029.199442Z-0c064771\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 1,\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.25,
+  "log_file": ".filterx/cli-logs/10-frontend-install.json"
+}

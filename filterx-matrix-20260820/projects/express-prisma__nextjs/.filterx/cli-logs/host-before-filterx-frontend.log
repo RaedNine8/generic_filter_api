@@ -1,0 +1,21 @@
+
+> filterx-next-matrix@1.0.0 dev
+> next dev -H 127.0.0.1 -p 3000
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\filterx-matrix-20260820\projects\express-prisma__nextjs\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\filterx-matrix-20260820\projects\express-prisma__nextjs\frontend\package-lock.json
+
+   ▲ Next.js 15.5.23
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 2s
+ ○ Compiling / ...
+ ✓ Compiled / in 711ms (519 modules)
+ GET / 200 in 784ms
+ GET / 200 in 39ms

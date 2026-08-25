@@ -1,0 +1,20 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__react-vite\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T193038.831405Z-0ec52154\",\n    \"patch-20260820T193039.142705Z-06c4933a\",\n    \"patch-20260820T193039.766410Z-685a7d4f\",\n    \"patch-20260820T193040.052776Z-6508d37c\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.25,
+  "log_file": ".filterx/cli-logs/15-rollback-list.json"
+}

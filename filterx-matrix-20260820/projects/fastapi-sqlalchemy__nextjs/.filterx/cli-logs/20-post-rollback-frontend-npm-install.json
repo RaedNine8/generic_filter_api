@@ -1,0 +1,15 @@
+{
+  "stage": "post-rollback-frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+  "exit_code": 0,
+  "stdout": "\nup to date in 687ms\n",
+  "stderr": "",
+  "duration_seconds": 0.985,
+  "log_file": ".filterx/cli-logs/20-post-rollback-frontend-npm-install.json"
+}

@@ -1,0 +1,15 @@
+{
+  "stage": "spring-host-compile",
+  "command": [
+    "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+    "-q",
+    "-DskipTests",
+    "compile"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 3.047,
+  "log_file": ".filterx/cli-logs/01-spring-host-compile.json"
+}

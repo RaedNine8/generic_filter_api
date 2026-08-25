@@ -1,0 +1,21 @@
+{
+  "stage": "rollback-02",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T193302.691351Z-1db17af7",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T193302.691351Z-1db17af7\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.266,
+  "log_file": ".filterx/cli-logs/17-rollback-02.json"
+}

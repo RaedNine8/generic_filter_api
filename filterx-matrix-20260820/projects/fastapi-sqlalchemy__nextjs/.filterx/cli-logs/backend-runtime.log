@@ -1,0 +1,25 @@
+INFO:     Started server process [624]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57191 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57194 - "GET /api/filterx/metadata HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57195 - "GET /api/filterx/books?size=20&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57196 - "GET /api/filterx/books?size=20&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57197 - "GET /api/filterx/books?size=20&title_eq=Alpha%20Filtering HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57198 - "GET /api/filterx/books?size=20&genre_in=Tech%2CBusiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57199 - "GET /api/filterx/books?size=20&note_is_null=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57200 - "GET /api/filterx/books?size=20&search=beta HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57201 - "GET /api/filterx/books?size=20&sort_by=title&order=desc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57202 - "GET /api/filterx/books?page=1&size=1&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57203 - "GET /api/filterx/books?page=2&size=1&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57204 - "GET /api/filterx/books?page=3&size=1&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57205 - "POST /api/filterx/books/filter?sort_by=title HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57206 - "POST /api/filterx/books/filter?sort_by=title HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57207 - "GET /api/filterx/books/group-by/genre HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57208 - "POST /api/filterx/books/group-by/genre/filter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57209 - "GET /api/filterx/books/group-by/price HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:57210 - "POST /api/filterx/books/export?format=json&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57211 - "POST /api/filterx/books/export?format=csv&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57212 - "POST /api/filterx/books/export?format=xlsx&sort_by=title&order=asc HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51054 - "GET /api/filterx/metadata HTTP/1.1" 200 OK

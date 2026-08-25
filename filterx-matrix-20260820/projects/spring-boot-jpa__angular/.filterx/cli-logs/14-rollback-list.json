@@ -1,0 +1,22 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T200617.641227Z-79c625a8\",\n    \"patch-20260820T200618.548168Z-6ea38dbd\",\n    \"patch-20260820T200619.306008Z-bf127713\",\n    \"patch-20260820T200619.607619Z-cf4b809f\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.219,
+  "log_file": ".filterx/cli-logs/14-rollback-list.json"
+}

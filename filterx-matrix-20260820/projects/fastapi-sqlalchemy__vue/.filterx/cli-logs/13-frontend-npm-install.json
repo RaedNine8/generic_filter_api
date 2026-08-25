@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 3 packages, and changed 3 packages in 2s\n",
+  "stderr": "",
+  "duration_seconds": 2.343,
+  "log_file": ".filterx/cli-logs/13-frontend-npm-install.json"
+}

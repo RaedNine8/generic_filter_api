@@ -1,0 +1,18 @@
+{
+  "stage": "host-before-filterx-db-push",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "exec",
+    "prisma",
+    "db",
+    "push",
+    "--",
+    "--skip-generate"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite",
+  "exit_code": 0,
+  "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"filterx.db\" at \"file:./filterx.db\"\n\nSQLite database filterx.db created at file:./filterx.db\n\nYour database is now in sync with your Prisma schema. Done in 24ms\n\n",
+  "stderr": "Environment variables loaded from .env\n",
+  "duration_seconds": 2.109,
+  "log_file": ".filterx/cli-logs/04-host-before-filterx-db-push.json"
+}

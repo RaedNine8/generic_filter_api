@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-01",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T201100.479866Z-f2af1f91",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T201100.479866Z-f2af1f91\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.188,
+  "log_file": ".filterx/cli-logs/15-rollback-01.json"
+}

@@ -1,0 +1,63 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2026-08-20T21:06:46.819+01:00  INFO 19104 --- [           main] com.example.FilterxFixtureApplication    : Starting FilterxFixtureApplication v1.0.0 using Java 21.0.8 with PID 19104 (C:\filterx-matrix-20260820\projects\spring-boot-jpa__angular\target\filterx-matrix-1.0.0.jar started by raedn in C:\filterx-matrix-20260820\projects\spring-boot-jpa__angular)
+2026-08-20T21:06:46.819+01:00  INFO 19104 --- [           main] com.example.FilterxFixtureApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-08-20T21:06:47.979+01:00  INFO 19104 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-20T21:06:48.009+01:00  INFO 19104 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18 ms. Found 0 JPA repository interfaces.
+2026-08-20T21:06:49.199+01:00  INFO 19104 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8000 (http)
+2026-08-20T21:06:49.222+01:00  INFO 19104 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-20T21:06:49.222+01:00  INFO 19104 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-08-20T21:06:49.274+01:00  INFO 19104 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-08-20T21:06:49.275+01:00  INFO 19104 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2407 ms
+2026-08-20T21:06:49.902+01:00  INFO 19104 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-08-20T21:06:50.013+01:00  INFO 19104 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2026-08-20T21:06:50.066+01:00  INFO 19104 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-08-20T21:06:50.546+01:00  INFO 19104 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-20T21:06:50.591+01:00  INFO 19104 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-20T21:06:55.135+01:00  INFO 19104 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn1: url=jdbc:h2:file:./filterx user=
+2026-08-20T21:06:55.137+01:00  INFO 19104 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-20T21:06:55.199+01:00  INFO 19104 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-20T21:06:56.205+01:00  INFO 19104 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-20T21:06:56.252+01:00  INFO 19104 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-20T21:06:57.320+01:00  WARN 19104 --- [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: c137cdd2-85cf-4318-999d-4276ac6dd06b
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-08-20T21:06:57.366+01:00  INFO 19104 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-08-20T21:06:59.442+01:00  INFO 19104 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8000 (http) with context path '/'
+2026-08-20T21:06:59.463+01:00  INFO 19104 --- [           main] com.example.FilterxFixtureApplication    : Started FilterxFixtureApplication in 13.083 seconds (process running for 13.572)
+2026-08-20T21:06:59.738+01:00  INFO 19104 --- [0.1-8000-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-20T21:06:59.738+01:00  INFO 19104 --- [0.1-8000-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-20T21:06:59.739+01:00  INFO 19104 --- [0.1-8000-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-08-20T21:07:00.224+01:00  INFO 19104 --- [0.1-8000-exec-5] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=2
+2026-08-20T21:07:00.273+01:00  INFO 19104 --- [0.1-8000-exec-4] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=1
+2026-08-20T21:07:00.287+01:00  INFO 19104 --- [0.1-8000-exec-3] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=1
+2026-08-20T21:07:00.323+01:00  INFO 19104 --- [0.1-8000-exec-6] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=2
+2026-08-20T21:07:00.335+01:00  INFO 19104 --- [0.1-8000-exec-7] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=1
+2026-08-20T21:07:00.390+01:00  INFO 19104 --- [0.1-8000-exec-9] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=1
+2026-08-20T21:07:00.401+01:00  INFO 19104 --- [0.1-8000-exec-8] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=20 total=2
+2026-08-20T21:07:00.435+01:00  INFO 19104 --- [.1-8000-exec-10] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=1 size=1 total=2
+2026-08-20T21:07:00.468+01:00  INFO 19104 --- [0.1-8000-exec-2] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=2 size=1 total=2
+2026-08-20T21:07:00.499+01:00  INFO 19104 --- [0.1-8000-exec-1] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=query page=3 size=1 total=2
+2026-08-20T21:07:00.623+01:00  INFO 19104 --- [0.1-8000-exec-5] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=filter page=1 size=20 total=1
+2026-08-20T21:07:00.643+01:00  INFO 19104 --- [0.1-8000-exec-4] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=filter page=1 size=20 total=2
+2026-08-20T21:07:00.749+01:00  INFO 19104 --- [         task-1] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=export page=1 size=250 total=2
+2026-08-20T21:07:00.789+01:00  INFO 19104 --- [         task-2] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=export page=1 size=250 total=2
+2026-08-20T21:07:01.847+01:00  INFO 19104 --- [         task-3] c.e.f.generated.FilterxQueryService      : filterx_query entity=Book action=export page=1 size=250 total=2

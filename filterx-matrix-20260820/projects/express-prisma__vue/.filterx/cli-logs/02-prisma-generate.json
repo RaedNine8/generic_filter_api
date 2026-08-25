@@ -1,0 +1,15 @@
+{
+  "stage": "prisma-generate",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "exec",
+    "prisma",
+    "generate"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+  "exit_code": 0,
+  "stdout": "Prisma schema loaded from prisma\\schema.prisma\n\n✔ Generated Prisma Client (v6.19.3) to .\\node_modules\\@prisma\\client in 90ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\nTip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints\n\n",
+  "stderr": "Environment variables loaded from .env\n",
+  "duration_seconds": 5.172,
+  "log_file": ".filterx/cli-logs/02-prisma-generate.json"
+}

@@ -1,0 +1,509 @@
+{
+  "name": "spring-boot-jpa__nextjs",
+  "backend": "spring-boot-jpa",
+  "frontend": "nextjs",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "spring-host-compile",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "compile"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 4.203,
+      "log_file": ".filterx/cli-logs/01-spring-host-compile.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 26 packages in 19s\n",
+      "stderr": "",
+      "duration_seconds": 19.172,
+      "log_file": ".filterx/cli-logs/02-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 5.047,
+      "log_file": ".filterx/cli-logs/03-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 5.8s\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/4) ...\n   Generating static pages (1/4) \n   Generating static pages (2/4) \n   Generating static pages (3/4) \n \u2713 Generating static pages (4/4)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u2514 \u25cb /_not-found                            995 B         104 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.95 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "",
+      "duration_seconds": 35.985,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__nextjs\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__nextjs\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__nextjs\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2,\n  \"ir_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__nextjs\\\\.filterx\\\\ir.json\"\n}\n",
+      "stderr": "",
+      "duration_seconds": 7.797,
+      "log_file": ".filterx/cli-logs/05-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201059.512331Z-6ee27ed6\",\n  \"applied_ops\": 11,\n  \"skipped_ops\": 0,\n  \"touched_files\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\",\n    \"pom.xml\"\n  ],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.281,
+      "log_file": ".filterx/cli-logs/06-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"nextjs\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201059.739689Z-e8c98a03\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 1,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/07-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.203,
+      "log_file": ".filterx/cli-logs/08-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201100.249748Z-e0c502d0\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 11,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.297,
+      "log_file": ".filterx/cli-logs/09-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"nextjs\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201100.479866Z-f2af1f91\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 8,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/10-frontend-reinstall.json"
+    },
+    {
+      "stage": "host-after-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 5.141,
+      "log_file": ".filterx/cli-logs/11-host-after-filterx-package.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nup to date in 533ms\n",
+      "stderr": "",
+      "duration_seconds": 0.766,
+      "log_file": ".filterx/cli-logs/12-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 8.6s\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/5) ...\n   Generating static pages (1/5) \n   Generating static pages (2/5) \n   Generating static pages (3/5) \n \u2713 Generating static pages (5/5)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u251c \u25cb /_not-found                            995 B         104 kB\n\u2514 \u25cb /filterx                             2.76 kB         105 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.96 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend\\node_modules\\next\\dist\\build\\webpack\\loaders\\css-loader\\src\\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend\\node_modules\\next\\dist\\build\\webpack\\loaders\\postcss-loader\\src\\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend\\src\\filterx-generated\\filterx.css': No serializer registered for Warning\n<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning\n \u26a0 Compiled with warnings in 7.5s\n\n./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css\nWarning\n\n(1:694) autoprefixer: end value has mixed support, consider using flex-end instead\n\nImport trace for requested module:\n./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css\n./src/filterx-generated/filterx.css\n./src/filterx-generated/FilterxApp.tsx\n\n",
+      "duration_seconds": 20.516,
+      "log_file": ".filterx/cli-logs/13-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__nextjs\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T201059.512331Z-6ee27ed6\",\n    \"patch-20260820T201059.739689Z-e8c98a03\",\n    \"patch-20260820T201100.249748Z-e0c502d0\",\n    \"patch-20260820T201100.479866Z-f2af1f91\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.203,
+      "log_file": ".filterx/cli-logs/14-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T201100.479866Z-f2af1f91",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T201100.479866Z-f2af1f91\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.188,
+      "log_file": ".filterx/cli-logs/15-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T201100.249748Z-e0c502d0",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T201100.249748Z-e0c502d0\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/16-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T201059.739689Z-e8c98a03",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T201059.739689Z-e8c98a03\",\n  \"restored\": [],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"count\": 7\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.203,
+      "log_file": ".filterx/cli-logs/17-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T201059.512331Z-6ee27ed6",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T201059.512331Z-6ee27ed6\",\n  \"restored\": [\n    \"pom.xml\"\n  ],\n  \"removed\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\"\n  ],\n  \"count\": 11\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/18-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nup to date in 531ms\n",
+      "stderr": "",
+      "duration_seconds": 0.75,
+      "log_file": ".filterx/cli-logs/19-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 4.187,
+      "log_file": ".filterx/cli-logs/20-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 1649ms\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/4) ...\n   Generating static pages (1/4) \n   Generating static pages (2/4) \n   Generating static pages (3/4) \n \u2713 Generating static pages (4/4)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u2514 \u25cb /_not-found                            995 B         104 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.95 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "",
+      "duration_seconds": 12.953,
+      "log_file": ".filterx/cli-logs/21-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    "filterx.yaml": "8b75fc71ea81b7db6e9a744facd28c9a597ca77e28734b99585837ad25d39441",
+    "frontend/next-env.d.ts": "85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6",
+    "frontend/next.config.ts": "4f726d227c9b96a1c232a7c06933d925c5c3a46a57bd4798ee7ae4163125a88a",
+    "frontend/package.json": "c256e72893c49cac0dc742a153b5a1ad493536d208cc495903ace562eaa34b13",
+    "frontend/src/app/layout.tsx": "d98ac855ef79a037c60b7d7cf93c8cc25fedefbb9372eb40fbab42d7503c9027",
+    "frontend/src/app/page.tsx": "cb57483843396030732dd474c6309b1393f68b0a88d504a02c8d788fe8245dad",
+    "frontend/tsconfig.json": "e3ba0bafff04f187ecbea0ecb6cd74002473d4b000881228a98fe3632ff5f30a",
+    "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+    "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+    "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+    "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+    "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+    "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+    "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+    "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+  }
+}

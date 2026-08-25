@@ -878,13 +878,21 @@ def _build_app_config_with_primeng(
             content = content.replace("  providers: [", "  providers: [\n    provideFilterx(),")
         changed = True
     if "provideAnimationsAsync" not in content:
-        content = content.replace(
+        updated = content.replace(
             "import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';",
             "import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';\nimport { provideAnimationsAsync } from '@angular/platform-browser/animations/async';",
         ).replace(
             'import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";',
             'import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";\nimport { provideAnimationsAsync } from "@angular/platform-browser/animations/async";',
         )
+        if updated == content:
+            import_line = "import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';\n"
+            core_import = re.search(r"^import\s+\{[^}]*\bApplicationConfig\b[^}]*\}\s+from\s+(['\"])@angular/core\1;\s*$", content, re.MULTILINE)
+            if core_import:
+                updated = content[: core_import.end()] + "\n" + import_line.rstrip("\n") + content[core_import.end() :]
+            else:
+                updated = import_line + content
+        content = updated
         changed = True
     if angular_major is not None and angular_major < 18:
         if "provideAnimationsAsync()" not in content:

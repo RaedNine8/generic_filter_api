@@ -1,0 +1,315 @@
+{
+  "patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+  "created_at": "2026-08-20T20:06:18.649665+00:00",
+  "description": "frontend.install",
+  "touched_files": [
+    "frontend/proxy.conf.cjs",
+    "frontend/package.json",
+    "frontend/angular.json",
+    "frontend/src/app/app.config.ts",
+    "frontend/src/app/core/index.ts",
+    "frontend/src/app/core/config/filterx-config.ts",
+    "frontend/src/app/core/enums/index.ts",
+    "frontend/src/app/core/enums/filter-operation.enum.ts",
+    "frontend/src/app/core/enums/sort-order.enum.ts",
+    "frontend/src/app/core/interfaces/index.ts",
+    "frontend/src/app/core/interfaces/entity-config.interface.ts",
+    "frontend/src/app/core/interfaces/field-config.interface.ts",
+    "frontend/src/app/core/interfaces/filter.interface.ts",
+    "frontend/src/app/core/interfaces/filter-tree.interface.ts",
+    "frontend/src/app/core/interfaces/pagination.interface.ts",
+    "frontend/src/app/core/interfaces/query-state.interface.ts",
+    "frontend/src/app/core/interfaces/saved-filter.interface.ts",
+    "frontend/src/app/core/services/index.ts",
+    "frontend/src/app/core/services/entity-query.service.ts",
+    "frontend/src/app/core/services/filter-state-manager.service.ts",
+    "frontend/src/app/core/services/generic-query.service.ts",
+    "frontend/src/app/core/services/saved-filter.service.ts",
+    "frontend/src/app/shared/index.ts",
+    "frontend/src/app/shared/components/index.ts",
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html",
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss",
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts",
+    "frontend/src/app/shared/components/data-table/data-table.component.html",
+    "frontend/src/app/shared/components/data-table/data-table.component.scss",
+    "frontend/src/app/shared/components/data-table/data-table.component.ts",
+    "frontend/src/app/shared/components/entity-list/entity-list.component.ts",
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.html",
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.scss",
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.ts",
+    "frontend/src/app/shared/components/pagination/pagination.component.html",
+    "frontend/src/app/shared/components/pagination/pagination.component.scss",
+    "frontend/src/app/shared/components/pagination/pagination.component.ts",
+    "frontend/src/app/shared/components/search-box/search-box.component.html",
+    "frontend/src/app/shared/components/search-box/search-box.component.scss",
+    "frontend/src/app/shared/components/search-box/search-box.component.ts",
+    "frontend/src/app/shared/components/sort-header/sort-header.component.ts",
+    "frontend/src/filterx.scss",
+    "frontend/src/app/filterx-generated/entities/author.config.ts",
+    "frontend/src/app/filterx-generated/pages/author.page.ts",
+    "frontend/src/app/filterx-generated/entities/book.config.ts",
+    "frontend/src/app/filterx-generated/pages/book.page.ts",
+    "frontend/src/app/filterx-generated/routes.ts",
+    "frontend/src/app/filterx-generated/entities/index.ts",
+    "frontend/src/app/filterx-generated/index.ts",
+    "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts",
+    "frontend/src/app/app.routes.ts"
+  ],
+  "backups": [
+    {
+      "relative_path": "frontend/proxy.conf.cjs",
+      "existed": true,
+      "backup_path": "backup\\frontend\\proxy.conf.cjs"
+    },
+    {
+      "relative_path": "frontend/package.json",
+      "existed": true,
+      "backup_path": "backup\\frontend\\package.json"
+    },
+    {
+      "relative_path": "frontend/angular.json",
+      "existed": true,
+      "backup_path": "backup\\frontend\\angular.json"
+    },
+    {
+      "relative_path": "frontend/src/app/app.config.ts",
+      "existed": true,
+      "backup_path": "backup\\frontend\\src\\app\\app.config.ts"
+    },
+    {
+      "relative_path": "frontend/src/app/core/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/config/filterx-config.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/enums/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/enums/filter-operation.enum.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/enums/sort-order.enum.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/entity-config.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/field-config.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/filter.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/filter-tree.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/pagination.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/query-state.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/interfaces/saved-filter.interface.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/services/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/services/entity-query.service.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/services/filter-state-manager.service.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/services/generic-query.service.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/core/services/saved-filter.service.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/data-table/data-table.component.html",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/data-table/data-table.component.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/data-table/data-table.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/entity-list/entity-list.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/filter-builder/filter-builder.component.html",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/filter-builder/filter-builder.component.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/filter-builder/filter-builder.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/pagination/pagination.component.html",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/pagination/pagination.component.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/pagination/pagination.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/search-box/search-box.component.html",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/search-box/search-box.component.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/search-box/search-box.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/shared/components/sort-header/sort-header.component.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx.scss",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/entities/author.config.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/pages/author.page.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/entities/book.config.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/pages/book.page.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/routes.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/entities/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/app.routes.ts",
+      "existed": true,
+      "backup_path": "backup\\frontend\\src\\app\\app.routes.ts"
+    }
+  ]
+}

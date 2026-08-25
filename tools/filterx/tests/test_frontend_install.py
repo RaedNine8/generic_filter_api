@@ -202,6 +202,31 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
     assert (tmp_path / "frontend/src/filterx.scss").exists()
 
 
+def test_standalone_config_imports_async_animations_from_minimal_core_import(tmp_path: Path) -> None:
+    app_config = tmp_path / "frontend/src/app/app.config.ts"
+    _write_file(
+        app_config,
+        "import { ApplicationConfig } from '@angular/core';\n"
+        "import { provideRouter } from '@angular/router';\n"
+        "import { routes } from './app.routes';\n"
+        "export const appConfig: ApplicationConfig = { providers: [provideRouter(routes),\n"
+        "  // FILTERX:PROVIDERS\n"
+        "] };\n",
+    )
+
+    patch = frontend._build_app_config_with_primeng(
+        tmp_path,
+        "frontend/src/app/app.config.ts",
+        "// FILTERX:PROVIDERS",
+        angular_major=18,
+    )
+
+    assert patch is not None
+    _, content = patch
+    assert "import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';" in content
+    assert "provideAnimationsAsync()," in content
+
+
 def test_frontend_install_supports_app_routing_module_without_anchor(tmp_path: Path) -> None:
     config_path = _write_config(tmp_path)
     _write_scan(tmp_path)

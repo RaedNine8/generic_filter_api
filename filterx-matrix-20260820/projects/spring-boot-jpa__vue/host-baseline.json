@@ -1,0 +1,19 @@
+{
+  "filterx.yaml": "fc49bb1da60747b1ef6f9200a8a00f2366915db22d102cacbb1acc044b887a9e",
+  "frontend/index.html": "6fc21c08748c5994327261461d211675190ec16d6cc435c6124266bd38d6ba6d",
+  "frontend/package.json": "3285514374ec0c8c9d598d707613bd9c120552c0b9b361ddf0a7a7d6abf34455",
+  "frontend/src/App.vue": "7edfcb965e6e2e874e78a75298c8d5920f0eeec991fccd90ee95cb8c703a47bb",
+  "frontend/src/env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+  "frontend/src/main.ts": "7173bae20eafc58a87988d3d9aeaeae12b06819798905787f6821c2b11b709fa",
+  "frontend/tsconfig.json": "7d1c0e13acfa0903d21b58a51c350eb4bb21320b74e41913612b6a26614d272f",
+  "frontend/tsconfig.tsbuildinfo": "b7dbc27f08c83ef9197d0de092c2820fb42bd3a19b2f0f5fa7e3854e472425f7",
+  "frontend/vite.config.ts": "41b636dff9c7dc1e52e1caf2541b19356715b16e037cb4551c27b4fb8673f2b5",
+  "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+  "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+  "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+  "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+  "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+  "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+  "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+  "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+}

@@ -1,0 +1,15 @@
+{
+  "stage": "backend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+  "exit_code": 0,
+  "stdout": "\nadded 115 packages in 25s\n",
+  "stderr": "",
+  "duration_seconds": 25.281,
+  "log_file": ".filterx/cli-logs/01-backend-npm-install.json"
+}

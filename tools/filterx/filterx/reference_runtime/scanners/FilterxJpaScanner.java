@@ -376,11 +376,11 @@ public final class FilterxJpaScanner {
     private static List<String> operations(String type) {
         return switch (type) {
             case "integer", "decimal", "date", "datetime" ->
-                List.of("eq", "neq", "gt", "gte", "lt", "lte", "in", "not_in", "is_null");
+                List.of("eq", "ne", "gt", "gte", "lt", "lte", "in", "not_in", "is_null");
             case "string" ->
-                List.of("eq", "neq", "contains", "icontains", "starts_with", "ends_with", "in", "not_in", "is_null");
-            case "enum", "uuid", "boolean" -> List.of("eq", "neq", "in", "not_in", "is_null");
-            default -> List.of("eq", "neq", "is_null");
+                List.of("eq", "ne", "like", "ilike", "starts_with", "ends_with", "in", "not_in", "is_null");
+            case "enum", "uuid", "boolean" -> List.of("eq", "ne", "in", "not_in", "is_null");
+            default -> List.of("eq", "ne", "is_null");
         };
     }
 

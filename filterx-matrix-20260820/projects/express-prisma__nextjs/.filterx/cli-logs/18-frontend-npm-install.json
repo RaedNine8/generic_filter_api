@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\frontend",
+  "exit_code": 0,
+  "stdout": "\nup to date in 686ms\n",
+  "stderr": "",
+  "duration_seconds": 0.984,
+  "log_file": ".filterx/cli-logs/18-frontend-npm-install.json"
+}

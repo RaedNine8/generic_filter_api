@@ -1,0 +1,20 @@
+{
+  "stage": "backend-install",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+    "backend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193301.777964Z-1f4e02e3\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\",\n    \"app/main.py\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 0,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.312,
+  "log_file": ".filterx/cli-logs/07-backend-install.json"
+}

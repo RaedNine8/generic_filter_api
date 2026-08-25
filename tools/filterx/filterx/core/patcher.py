@@ -112,7 +112,7 @@ def _backup_file(project_root: Path, bundle_root: Path, target_path: Path) -> Di
     existed = target_path.exists()
     if existed:
         ensure_parent_dir(backup_file)
-        backup_file.write_text(target_path.read_text(encoding="utf-8"), encoding="utf-8")
+        backup_file.write_bytes(target_path.read_bytes())
 
     return {
         "relative_path": rel,
@@ -424,7 +424,7 @@ def rollback_patch_bundle(project_root: Path, patch_dir: Path, patch_id: str) ->
             backup_rel = item["backup_path"]
             backup_file = bundle_root / backup_rel
             ensure_parent_dir(target)
-            target.write_text(backup_file.read_text(encoding="utf-8"), encoding="utf-8")
+            target.write_bytes(backup_file.read_bytes())
             restored.append(rel)
         else:
             if target.exists():

@@ -61,6 +61,35 @@ def test_apply_and_rollback_patch_bundle(tmp_path: Path):
     assert "app.include_router(filterx_router)" not in restored_text
 
 
+def test_rollback_preserves_original_file_bytes(tmp_path: Path):
+    target = tmp_path / "main.py"
+    original = b"first\n# FILTERX:ROUTER_MOUNT\nlast\n"
+    target.write_bytes(original)
+
+    result = apply_patch_operations(
+        project_root=tmp_path,
+        operations=[
+            PatchOp(
+                kind="anchor_insert",
+                path="main.py",
+                anchor="# FILTERX:ROUTER_MOUNT",
+                snippet="mounted = True",
+                insert_mode="after",
+            )
+        ],
+        manifest_path=tmp_path / ".filterx" / "manifest.json",
+        patch_dir=tmp_path / ".filterx" / "patches",
+        dry_run=False,
+        check_mode=False,
+        strict_conflict_mode=True,
+        description="byte-exact rollback",
+    )
+
+    rollback_patch_bundle(tmp_path, tmp_path / ".filterx" / "patches", result.patch_id)
+
+    assert target.read_bytes() == original
+
+
 def test_anchor_conflict_blocks_patch_when_strict(tmp_path: Path):
     project_root = tmp_path
     target = project_root / "main.py"

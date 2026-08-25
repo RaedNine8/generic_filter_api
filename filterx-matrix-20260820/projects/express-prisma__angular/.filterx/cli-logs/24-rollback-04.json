@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-04",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T195606.443186Z-04c6bc66",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T195606.443186Z-04c6bc66\",\n  \"restored\": [\n    \"package.json\",\n    \"src/app.ts\"\n  ],\n  \"removed\": [\n    \"src/filterx-generated/types.ts\",\n    \"src/filterx-generated/metadata.ts\",\n    \"src/filterx-generated/validation.ts\",\n    \"src/filterx-generated/query.ts\",\n    \"src/filterx-generated/security.ts\",\n    \"src/filterx-generated/router.ts\",\n    \"src/filterx-generated/index.ts\"\n  ],\n  \"count\": 9\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.235,
+  "log_file": ".filterx/cli-logs/24-rollback-04.json"
+}

@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-04",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T200617.641227Z-79c625a8",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T200617.641227Z-79c625a8\",\n  \"restored\": [\n    \"pom.xml\"\n  ],\n  \"removed\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\"\n  ],\n  \"count\": 11\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.25,
+  "log_file": ".filterx/cli-logs/18-rollback-04.json"
+}

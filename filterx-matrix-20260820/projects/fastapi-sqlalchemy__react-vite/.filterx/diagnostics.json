@@ -1,0 +1,33 @@
+{
+  "errors": [],
+  "warnings": [
+    {
+      "code": "RELATIONSHIP_CYCLES_DETECTED",
+      "message": "Relationship cycles were detected in model graph.",
+      "context": {
+        "cycles": [
+          [
+            "Author",
+            "Book",
+            "Author"
+          ]
+        ]
+      }
+    },
+    {
+      "code": "FRONTEND_FILE_NOT_FOUND",
+      "message": "Frontend target file 'routes_file' not found.",
+      "context": {
+        "path": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\frontend\\src\\app\\app.routes.ts"
+      }
+    },
+    {
+      "code": "FRONTEND_FILE_NOT_FOUND",
+      "message": "Frontend target file 'app_config_file' not found.",
+      "context": {
+        "path": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\frontend\\src\\app\\app.config.ts"
+      }
+    }
+  ],
+  "info": []
+}

@@ -1,0 +1,51 @@
+{
+  "patch_id": "patch-20260820T193302.072560Z-fbf45be7",
+  "created_at": "2026-08-20T19:33:02.092247+00:00",
+  "description": "frontend.install.nextjs",
+  "touched_files": [
+    "frontend/src/filterx-generated/types.ts",
+    "frontend/src/filterx-generated/entities.ts",
+    "frontend/src/filterx-generated/api.ts",
+    "frontend/src/filterx-generated/filterx.css",
+    "frontend/src/filterx-generated/FilterxApp.tsx",
+    "frontend/src/filterx-generated/index.ts",
+    "frontend/src/app/filterx/page.tsx"
+  ],
+  "backups": [
+    {
+      "relative_path": "frontend/src/filterx-generated/types.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/entities.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/api.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/filterx.css",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/FilterxApp.tsx",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/app/filterx/page.tsx",
+      "existed": false,
+      "backup_path": ""
+    }
+  ]
+}

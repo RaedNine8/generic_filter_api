@@ -553,6 +553,8 @@ export function createFilterxRouter(prisma: Record<string, unknown>, hooks: Filt
       const cost = queryCost(filters, parsedBody.filter_tree);
       if (cost > DEFAULT_MAX_QUERY_COST) throw new FilterxQueryError('QUERY_COST_EXCEEDED', `Query cost ${{cost}} exceeds limit ${{DEFAULT_MAX_QUERY_COST}}.`);
       const action = body === undefined ? 'group' : 'group.filter';
+      if (!(await hooks.fieldVisible({{ principal, request, entity, field: field.name, action }})))
+        throw new FilterxQueryError('FIELD_FORBIDDEN', `Grouping by field '${{field.name}}' is not permitted.`);
       const rowScope = await hooks.rowPredicate({{ principal, request, entity, action }});
       const search = typeof request.query.search === 'string' ? request.query.search : undefined;
       const where = combineWhere(

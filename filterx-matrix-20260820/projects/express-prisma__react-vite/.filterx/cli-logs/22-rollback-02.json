@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-02",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T195802.766902Z-6b54717f",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T195802.766902Z-6b54717f\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.235,
+  "log_file": ".filterx/cli-logs/22-rollback-02.json"
+}

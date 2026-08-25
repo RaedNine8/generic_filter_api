@@ -1,0 +1,21 @@
+{
+  "stage": "rollback-03",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T193039.142705Z-06c4933a",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T193039.142705Z-06c4933a\",\n  \"restored\": [\n    \"frontend/package.json\",\n    \"frontend/src/App.tsx\"\n  ],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\"\n  ],\n  \"count\": 8\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.266,
+  "log_file": ".filterx/cli-logs/18-rollback-03.json"
+}

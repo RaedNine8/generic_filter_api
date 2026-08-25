@@ -322,7 +322,7 @@ class WebFrontendRenderer:
             print(json.dumps(payload, indent=2) if getattr(args, "json", False) else str(exc))
             return 2
         result = apply_patch_operations(project_root=project_root, operations=operations, manifest_path=project_root / cfg["safety"]["idempotency_manifest"], patch_dir=project_root / cfg["output"]["patch_dir"], dry_run=_dry_run(args, cfg), check_mode=bool(getattr(args, "check", False)), strict_conflict_mode=bool(cfg["safety"].get("strict_conflict_mode", True)), description=f"frontend.install.{self.name}")
-        payload = {"framework": self.name, "dry_run": result.dry_run, "patch_id": result.patch_id, "generated_root": settings["root"], "entity_count": len(ir.entities), "touched_files": result.touched_files, "issues": [{"code": issue.code, "message": issue.message, "context": issue.context} for issue in result.issues]}
+        payload = {"framework": self.name, "dry_run": result.dry_run, "patch_id": result.patch_id, "generated_root": settings["root"], "entity_count": len(ir.entities), "touched_files": result.touched_files, "applied_ops": result.applied_ops, "skipped_ops": result.skipped_ops, "issues": [{"code": issue.code, "message": issue.message, "context": issue.context} for issue in result.issues]}
         print(json.dumps(payload, indent=2) if getattr(args, "json", False) else f"FilterX {self.name} frontend install completed.")
         return 3 if result.has_conflicts else 0
 

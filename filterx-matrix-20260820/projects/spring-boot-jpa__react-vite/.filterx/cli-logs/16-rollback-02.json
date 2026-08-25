@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-02",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T200822.249746Z-1c5a7385",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T200822.249746Z-1c5a7385\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.265,
+  "log_file": ".filterx/cli-logs/16-rollback-02.json"
+}

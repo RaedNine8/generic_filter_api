@@ -1,0 +1,14 @@
+{
+  "stage": "host-after-filterx-frontend-build",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "run",
+    "build"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+  "exit_code": 0,
+  "stdout": "\n> filterx-vue-matrix@1.0.0 build\n> vue-tsc -b && vite build\n\n\u001b[36mvite v6.4.3 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m✓\u001b[39m 17 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                 \u001b[39m\u001b[1m\u001b[2m 0.17 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip:  0.15 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[35massets/index-Az9atVBU.css  \u001b[39m\u001b[1m\u001b[2m 2.07 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip:  0.82 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-COY3xYZI.js   \u001b[39m\u001b[1m\u001b[2m75.03 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m │ gzip: 29.08 kB\u001b[22m\n\u001b[32m✓ built in 1.06s\u001b[39m\n",
+  "stderr": "",
+  "duration_seconds": 4.328,
+  "log_file": ".filterx/cli-logs/14-host-after-filterx-frontend-build.json"
+}

@@ -1,0 +1,22 @@
+{
+  ".env": "acc26b6d7abf3f1a66c6d4a15b4ba55605e3d5a82e98f8773898b0f490861a59",
+  "filterx.yaml": "a4901b328793acb7a9edb79042ba5b7598253019645ebe667c5c2e733d909551",
+  "frontend/angular.json": "a6850fa50de1d3628ee2e633ab2a8571eec52e0fdc314b65cadd4b7fcd320b71",
+  "frontend/package.json": "1007c83b2fa8e2c45c73cbce8eba8bcb18415a09b9f496aea13e6ead1a1f7467",
+  "frontend/proxy.conf.cjs": "dc7eaf609813511aacc42ba57deb8f4a6d50268cfec140c550116de07fe628df",
+  "frontend/src/app/app.component.ts": "a5566f593bb99d66b8d8c2101f41be24f0cab68362710af000150f56a069aa5d",
+  "frontend/src/app/app.config.ts": "3ccee89cff2cdc1b2186af686ea07ead54cbd9c539f78063b5c04bc9ff2611f5",
+  "frontend/src/app/app.routes.ts": "d3ab096e7850f039afb8ea01ac4259bacada31bad9f4bea5663ab450cbacc5f0",
+  "frontend/src/index.html": "53d3ba4b3d08ed16585db6521206d8bbd1a493c155486a1ef8f269c257bbb0d9",
+  "frontend/src/main.ts": "53843204586c410ba2953494a997de679a3fcfa5d83668605f4b91443c68a8e0",
+  "frontend/src/styles.scss": "3615a642fdb308a6ed9eba627a63049e7067bd003885dc113b077275ac276813",
+  "frontend/tsconfig.app.json": "caa84e8abdba5afa155da8dc22276ae5144efe50508f6c346ecf99e7ad5015f3",
+  "frontend/tsconfig.json": "86cc0cc3a1586ec956c2e477de4ed857c169ab6be8229078eb5f0048b975855d",
+  "package.json": "d4947429ef0054b1cf40146a49a6c59d5dddc15ba4315fd8631115b44da96d3f",
+  "prisma/schema.prisma": "262fd5570e51b85324240a8c16b3aa0a5fe49d1d7022629dd95fb22771496aa6",
+  "seed.mjs": "6799343c6f35775c0ca5b7950d6cf243099bf0fc91d674be7d14378ea0bd8dc1",
+  "src/app.ts": "014dae423c64727d2db694f9023db4644cff0b75ca33fbd2497a1506a054808f",
+  "src/filterx-hooks.ts": "f4745d5c7f33ef2b18fb6e9ae70c1592905081406f0d141b28bd382e8ebb9055",
+  "src/server.ts": "61c89a369dfde655c675b929d04fcd612b75107af45a1ed0607988aa4090e9c4",
+  "tsconfig.json": "9f25aa7f23558679865a41c91c5320c510405a84699639d15273fc0288076a3f"
+}

@@ -1,0 +1,19 @@
+{
+  "stage": "scan",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+    "scan",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'routes_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\frontend\\\\src\\\\app\\\\app.routes.ts\"\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'app_config_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\frontend\\\\src\\\\app\\\\app.config.ts\"\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2\n}\n",
+  "stderr": "",
+  "duration_seconds": 1.234,
+  "log_file": ".filterx/cli-logs/06-scan.json"
+}

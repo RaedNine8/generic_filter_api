@@ -1,0 +1,15 @@
+{
+  "stage": "post-rollback-frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+  "exit_code": 0,
+  "stdout": "\nremoved 6 packages in 2s\n",
+  "stderr": "",
+  "duration_seconds": 2.469,
+  "log_file": ".filterx/cli-logs/19-post-rollback-frontend-npm-install.json"
+}
