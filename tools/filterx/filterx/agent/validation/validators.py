@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Iterable
 
 from filterx.agent.grounding.schema_repository import SchemaRepository
@@ -10,11 +10,13 @@ from .base import FilterValidationError, Validator
 
 NULLARY_OPS = {"is_null", "is_not_null"}
 LIST_OPS = {"in", "not_in"}
+MAX_FILTER_TREE_DEPTH = 20
+MAX_FILTER_TREE_NODES = 500
 
 
 class SchemaShapeValidator(Validator):
     def validate(self, entity_name: str, filter_tree: dict[str, Any]) -> list[FilterValidationError]:
-        return list(_validate_node_shape(filter_tree, "$"))
+        return list(_validate_node_shape(filter_tree, "$", node_count=[0]))
 
 
 class FieldExistsValidator(Validator):
@@ -41,8 +43,10 @@ class OperationAllowedValidator(Validator):
         for path, node in _condition_nodes(filter_tree):
             field = str(node.get("field") or "")
             operation = str(node.get("operation") or "")
+            if self.repository.get_field(entity_name, field) is None:
+                continue
             allowed_ops = self.repository.allowed_ops(entity_name, field)
-            if allowed_ops and operation not in allowed_ops:
+            if operation not in allowed_ops:
                 errors.append(
                     FilterValidationError(
                         "OPERATION_NOT_ALLOWED",
@@ -95,10 +99,40 @@ class ValueTypeValidator(Validator):
                             {"field": field_name, "field_type": field_type, "value": item},
                         )
                     )
+                elif field_type == "enum" and field.get("enum_values") and item not in field["enum_values"]:
+                    errors.append(
+                        FilterValidationError(
+                            "INVALID_ENUM_VALUE",
+                            f"Value for field '{field_name}' must be one of its declared enum values.",
+                            path,
+                            {"field": field_name, "allowed_values": list(field["enum_values"]), "value": item},
+                        )
+                    )
         return errors
 
 
-def _validate_node_shape(node: Any, path: str) -> Iterable[FilterValidationError]:
+def _validate_node_shape(
+    node: Any,
+    path: str,
+    *,
+    depth: int = 0,
+    node_count: list[int],
+) -> Iterable[FilterValidationError]:
+    node_count[0] += 1
+    if node_count[0] > MAX_FILTER_TREE_NODES:
+        yield FilterValidationError(
+            "FILTER_TREE_TOO_LARGE",
+            f"Filter tree exceeds the maximum of {MAX_FILTER_TREE_NODES} nodes.",
+            path,
+        )
+        return
+    if depth > MAX_FILTER_TREE_DEPTH:
+        yield FilterValidationError(
+            "FILTER_TREE_TOO_DEEP",
+            f"Filter tree exceeds the maximum depth of {MAX_FILTER_TREE_DEPTH}.",
+            path,
+        )
+        return
     if not isinstance(node, dict):
         yield FilterValidationError("INVALID_SCHEMA_SHAPE", "Filter tree node must be an object.", path)
         return
@@ -117,7 +151,12 @@ def _validate_node_shape(node: Any, path: str) -> Iterable[FilterValidationError
             yield FilterValidationError("INVALID_SCHEMA_SHAPE", "Operator node requires at least one child.", path)
             return
         for index, child in enumerate(children):
-            yield from _validate_node_shape(child, f"{path}.children[{index}]")
+            yield from _validate_node_shape(
+                child,
+                f"{path}.children[{index}]",
+                depth=depth + 1,
+                node_count=node_count,
+            )
         return
     yield FilterValidationError("INVALID_SCHEMA_SHAPE", "Node type must be 'operator' or 'condition'.", path)
 
@@ -142,7 +181,10 @@ def _matches_field_type(field_type: str, value: Any) -> bool:
         if not isinstance(value, str):
             return False
         try:
-            datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if field_type == "date":
+                date.fromisoformat(value)
+            else:
+                datetime.fromisoformat(value.replace("Z", "+00:00"))
             return True
         except ValueError:
             return False

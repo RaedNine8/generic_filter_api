@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "created_at": "2026-08-20T20:02:52.555046+00:00",
+  "updated_at": "2026-08-20T20:02:53.888019+00:00",
+  "entries": {
+    "src/filterx-generated/types.ts": {
+      "kind": "generated_file",
+      "sha256": "8272286f7f10186517d4944b9239ad9fa48abef78a52fb2bdf5eb3f292d78589",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.556046+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/metadata.ts": {
+      "kind": "generated_file",
+      "sha256": "b03bf8b85257cbec94b788c901e7940daf817fbafb55da8c238b3f84f6e6da2b",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.558046+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/validation.ts": {
+      "kind": "generated_file",
+      "sha256": "0089ea00ebc70695fc19acb10316ffa7e82d8f6421425bf1ba0aba0a1a852796",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.558046+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/query.ts": {
+      "kind": "generated_file",
+      "sha256": "7205e81f495eda862f73f4eb9b9bbbd8fed172ab5818bb34514aafb4335ac538",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.564575+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/security.ts": {
+      "kind": "generated_file",
+      "sha256": "25eb54355debd10ccd4a28df2ef782099e0a927314c60fb490f6f85f0ad27627",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.565576+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/router.ts": {
+      "kind": "generated_file",
+      "sha256": "d223f18f46d3f2547de07a1336fce01cf73661afd72ab3832c340927b12302e4",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.566670+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "96eaa302286282a51a0fca78dd8bafbf7eb816853a4d96ca9a07b1a1e36085a2",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.568672+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "package.json": {
+      "kind": "structured_merge",
+      "sha256": "a84b36d69a0dd2886a70e15d4a11a0a2c35c491556cfd6cb56d57a232e9765ae",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.570177+00:00",
+      "metadata": {
+        "owner": "host",
+        "format": "json"
+      }
+    },
+    "src/app.ts": {
+      "kind": "anchor_insert",
+      "sha256": "2166da6599f16fbf8cc3a2d369b49dddfcc92e2c2f7d2bc089b72b2bb0b0ef90",
+      "last_patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "updated_at": "2026-08-20T20:02:52.572179+00:00",
+      "metadata": {
+        "anchor": "// FILTERX:ROUTER_MOUNT",
+        "snippet_hash": "2941a7fa6d40f3cd2df407a35203194533cea06f89e373d00b434ebac22d47d4"
+      }
+    },
+    "frontend/src/filterx-generated/types.ts": {
+      "kind": "generated_file",
+      "sha256": "78049aba8b7f8ac4eadb9718d8ceae7f6cfa4df100696176ed2a79e4bfabdff6",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.867268+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/entities.ts": {
+      "kind": "generated_file",
+      "sha256": "bc02f2d9c14317f09f9ca473d99ec349dbf2fe62e1c05abf39ed479e4afdc2fd",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.868267+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/api.ts": {
+      "kind": "generated_file",
+      "sha256": "94c53566af83ec276a2cf4bba592c0f0bb9c253ba09b7a7641b556f916945965",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.869773+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/filterx.css": {
+      "kind": "generated_file",
+      "sha256": "e71f44092822fac9a691987b935b367ef5b5f0fbc48ca1c53ee371afd6968836",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.871803+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/FilterxApp.vue": {
+      "kind": "generated_file",
+      "sha256": "4c4f21c3d7a1bf30969f43968798e21bdde6c84af8ad225df0ca055d3a97a3f1",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.873778+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/FilterxFilterBuilder.vue": {
+      "kind": "generated_file",
+      "sha256": "c746d427c6523758accb61942ca574e4d9e59d205b423244df3c5f1ba1bb026c",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.875120+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "ac0df29fc7e74edd1ea301d58ed86762bd362bb7986e04b0e8633391f3671663",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.886556+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/package.json": {
+      "kind": "structured_merge",
+      "sha256": "a389dd60b1bbbb6cf1cdd5f7fb98e247b18ff45af9714ddad03a23bc39c832b5",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.889268+00:00",
+      "metadata": {
+        "owner": "host",
+        "format": "json"
+      }
+    },
+    "frontend/src/App.vue": {
+      "kind": "generated_file",
+      "sha256": "6de93e79297adcf72fcf0dd5918db3ea7f22489bb0de125fe1f411e6ded785b8",
+      "last_patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "updated_at": "2026-08-20T20:02:52.890274+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    }
+  },
+  "patch_history": [
+    {
+      "patch_id": "patch-20260820T200252.555046Z-2f6d7d79",
+      "created_at": "2026-08-20T20:02:52.573178+00:00",
+      "mode": "apply",
+      "description": "backend.install.express-prisma",
+      "touched_files": [
+        "src/filterx-generated/types.ts",
+        "src/filterx-generated/metadata.ts",
+        "src/filterx-generated/validation.ts",
+        "src/filterx-generated/query.ts",
+        "src/filterx-generated/security.ts",
+        "src/filterx-generated/router.ts",
+        "src/filterx-generated/index.ts",
+        "package.json",
+        "src/app.ts"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+      "created_at": "2026-08-20T20:02:52.891274+00:00",
+      "mode": "apply",
+      "description": "frontend.install.vue",
+      "touched_files": [
+        "frontend/src/filterx-generated/types.ts",
+        "frontend/src/filterx-generated/entities.ts",
+        "frontend/src/filterx-generated/api.ts",
+        "frontend/src/filterx-generated/filterx.css",
+        "frontend/src/filterx-generated/FilterxApp.vue",
+        "frontend/src/filterx-generated/FilterxFilterBuilder.vue",
+        "frontend/src/filterx-generated/index.ts",
+        "frontend/package.json",
+        "frontend/src/App.vue"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T200253.442699Z-27efcd46",
+      "created_at": "2026-08-20T20:02:53.512698+00:00",
+      "mode": "apply",
+      "description": "backend.install.express-prisma",
+      "touched_files": []
+    },
+    {
+      "patch_id": "patch-20260820T200253.782168Z-2a9ca8ff",
+      "created_at": "2026-08-20T20:02:53.888019+00:00",
+      "mode": "apply",
+      "description": "frontend.install.vue",
+      "touched_files": []
+    }
+  ]
+}

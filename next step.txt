@@ -1,0 +1,17 @@
+next step is to test the implementation in multptiple dummy projects
+with several combinations :
+spring + angular
+fastAPI + react
+express + vueJS
+spring + react
+etc ...
+do a diagnostic if things are working correctly,
+if there's issues address them and fixe them
+list all the commands executed in  the right order to help me gain time.
+
+update the readme and update the ascii gifs of the cli commands in the readme
+and especially  removing my directory and make a dummy exemple of directories
+with the according commands to execute
+
+and updating / rebasing the agentic layer branche on the new main and then testing identifiers
+and merging it 

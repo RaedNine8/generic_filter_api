@@ -1,0 +1,17 @@
+{
+  "app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "app/database.py": "f8badcb1048ed39a9ff58c6784c5c43470c0ae81a7baf3c18ca2bc45fd58a716",
+  "app/main.py": "c9e9b60fb37445d8a0ca150f4f924324f137d36772123f12ad4eb7090634f520",
+  "app/models/__init__.py": "6c7551bf40f22f50e5c5967cdb50287a7ab4f18ca54ae4fdaaada0b0a6841a08",
+  "app/models/author.py": "0230b43a556c5c6d28d856d357305154c167dacf8d55f5ff8a71f71d47a1571d",
+  "app/models/book.py": "cbb083129f954772a127ed941a90119f132f2b478bf530e59376ced2d4026a8b",
+  "app/security.py": "eb8dacccc05d76dc364d666c87d5808142177b6444b75b716a8d63611194a39f",
+  "filterx.yaml": "6148ba951e51dd3efc8b2731371d64eabd1cbbb18dab479c7fd64cf25bd2243f",
+  "frontend/next-env.d.ts": "85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6",
+  "frontend/next.config.ts": "4f726d227c9b96a1c232a7c06933d925c5c3a46a57bd4798ee7ae4163125a88a",
+  "frontend/package.json": "c256e72893c49cac0dc742a153b5a1ad493536d208cc495903ace562eaa34b13",
+  "frontend/src/app/layout.tsx": "d98ac855ef79a037c60b7d7cf93c8cc25fedefbb9372eb40fbab42d7503c9027",
+  "frontend/src/app/page.tsx": "cb57483843396030732dd474c6309b1393f68b0a88d504a02c8d788fe8245dad",
+  "frontend/tsconfig.json": "e3ba0bafff04f187ecbea0ecb6cd74002473d4b000881228a98fe3632ff5f30a",
+  "seed.py": "dc47d14658751f525cae0033d105cf42dab17a0494782b34c355d9282b71d246"
+}

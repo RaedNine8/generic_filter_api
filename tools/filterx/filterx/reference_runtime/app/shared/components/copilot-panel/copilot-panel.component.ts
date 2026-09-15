@@ -66,9 +66,9 @@ export class CopilotPanelComponent {
       .subscribe({
         next: (response) => {
           this.summary = response.summary;
-          if (this.preview) {
-            this.applyFilter.emit(this.preview.filterTree);
-          }
+          this.applyFilter.emit(
+            this.copilotService.fromBackendTree(response.filter_tree),
+          );
         },
         error: (error) => {
           this.errorMessage = this.errorText(error);
@@ -83,11 +83,15 @@ export class CopilotPanelComponent {
     this.errorMessage = "";
   }
 
-  private errorText(error: any): string {
-    const detail = error?.error?.detail;
+  private errorText(error: unknown): string {
+    const candidate = error as {
+      error?: { detail?: string | { detail?: string; error?: string } };
+      message?: string;
+    };
+    const detail = candidate.error?.detail;
     if (typeof detail === "string") return detail;
     if (detail?.detail) return detail.detail;
     if (detail?.error) return detail.error;
-    return error?.message || "Copilot request failed";
+    return candidate.message || "Copilot request failed";
   }
 }

@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 10 packages, removed 8 packages, and changed 2 packages in 6s\n",
+  "stderr": "npm warn deprecated @primeng/themes@18.0.2: Deprecated. This package is no longer maintained. Please migrate to @primeuix/themes: https://www.npmjs.com/package/@primeuix/themes\n",
+  "duration_seconds": 6.532,
+  "log_file": ".filterx/cli-logs/12-frontend-npm-install.json"
+}

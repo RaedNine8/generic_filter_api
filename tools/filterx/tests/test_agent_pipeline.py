@@ -4,11 +4,22 @@ from pathlib import Path
 
 import pytest
 
-from app.filterx_generated.entities import ENTITIES
 from filterx.agent.grounding.schema_repository import SchemaRepository
 from filterx.agent.pipeline import CopilotGraph
 from filterx.agent.providers.base import LLMProvider, LLMRequest, LLMResponse
 from filterx.agent.validation import FieldExistsValidator, OperationAllowedValidator, SchemaShapeValidator, ValidationPipeline, ValueTypeValidator
+
+
+ENTITIES = [
+    {
+        "model": "Book",
+        "table": "books",
+        "fields": [
+            {"name": "rating", "type": "float", "ops": ["eq", "gt", "gte", "lt", "lte"]},
+        ],
+        "relationships": [],
+    }
+]
 
 
 class ScriptedProvider(LLMProvider):
@@ -42,4 +53,24 @@ async def test_copilot_graph_retries_after_validation_error() -> None:
 
     assert result.valid is True
     assert result.filter_tree["field"] == "rating"
+    assert len(provider.requests) == 2
+
+
+@pytest.mark.asyncio
+async def test_copilot_graph_retries_after_malformed_json() -> None:
+    repository = SchemaRepository(Path("missing.json"), entities=ENTITIES)
+    pipeline = ValidationPipeline([
+        SchemaShapeValidator(),
+        FieldExistsValidator(repository),
+        OperationAllowedValidator(repository),
+        ValueTypeValidator(repository),
+    ])
+    provider = ScriptedProvider([
+        "not json",
+        '{"filter_tree":{"node_type":"condition","field":"rating","operation":"gt","value":4.0}}',
+    ])
+
+    result = await CopilotGraph(repository, provider, pipeline, max_validation_retries=1).run("Book", "high rated")
+
+    assert result.valid is True
     assert len(provider.requests) == 2

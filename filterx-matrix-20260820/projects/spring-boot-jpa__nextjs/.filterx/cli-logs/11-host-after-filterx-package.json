@@ -1,0 +1,15 @@
+{
+  "stage": "host-after-filterx-package",
+  "command": [
+    "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+    "-q",
+    "-DskipTests",
+    "package"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 5.141,
+  "log_file": ".filterx/cli-logs/11-host-after-filterx-package.json"
+}

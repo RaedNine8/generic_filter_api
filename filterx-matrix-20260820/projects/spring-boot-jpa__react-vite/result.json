@@ -1,0 +1,510 @@
+{
+  "name": "spring-boot-jpa__react-vite",
+  "backend": "spring-boot-jpa",
+  "frontend": "react-vite",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "spring-host-compile",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "compile"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 4.0,
+      "log_file": ".filterx/cli-logs/01-spring-host-compile.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 68 packages in 9s\n",
+      "stderr": "",
+      "duration_seconds": 9.484,
+      "log_file": ".filterx/cli-logs/02-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 4.328,
+      "log_file": ".filterx/cli-logs/03-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-react-matrix@1.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v5.4.21 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 30 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m  0.10 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.11 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-BJkQUMwc.js  \u001b[39m\u001b[1m\u001b[2m142.53 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 45.75 kB\u001b[22m\n\u001b[32m\u2713 built in 979ms\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 3.609,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__react-vite\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__react-vite\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__react-vite\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2,\n  \"ir_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__react-vite\\\\.filterx\\\\ir.json\"\n}\n",
+      "stderr": "",
+      "duration_seconds": 9.032,
+      "log_file": ".filterx/cli-logs/05-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200821.429701Z-67c818b4\",\n  \"applied_ops\": 11,\n  \"skipped_ops\": 0,\n  \"touched_files\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\",\n    \"pom.xml\"\n  ],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.25,
+      "log_file": ".filterx/cli-logs/06-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"react-vite\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200821.673852Z-3efdec1a\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/package.json\",\n    \"frontend/src/App.tsx\"\n  ],\n  \"applied_ops\": 8,\n  \"skipped_ops\": 0,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.25,
+      "log_file": ".filterx/cli-logs/07-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.25,
+      "log_file": ".filterx/cli-logs/08-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200822.249746Z-1c5a7385\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 11,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.297,
+      "log_file": ".filterx/cli-logs/09-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"react-vite\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200822.521613Z-cb065afc\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.328,
+      "log_file": ".filterx/cli-logs/10-frontend-reinstall.json"
+    },
+    {
+      "stage": "host-after-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 6.781,
+      "log_file": ".filterx/cli-logs/11-host-after-filterx-package.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 3 packages, removed 2 packages, and changed 8 packages in 6s\n",
+      "stderr": "",
+      "duration_seconds": 6.031,
+      "log_file": ".filterx/cli-logs/12-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-react-matrix@1.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v6.4.3 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 28 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m  0.10 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.11 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-B2pOlzJG.js  \u001b[39m\u001b[1m\u001b[2m194.58 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 60.84 kB\u001b[22m\n\u001b[32m\u2713 built in 1.03s\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 3.75,
+      "log_file": ".filterx/cli-logs/13-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__react-vite\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T200821.429701Z-67c818b4\",\n    \"patch-20260820T200821.673852Z-3efdec1a\",\n    \"patch-20260820T200822.249746Z-1c5a7385\",\n    \"patch-20260820T200822.521613Z-cb065afc\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/14-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200822.521613Z-cb065afc",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200822.521613Z-cb065afc\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/15-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200822.249746Z-1c5a7385",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200822.249746Z-1c5a7385\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/16-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200821.673852Z-3efdec1a",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200821.673852Z-3efdec1a\",\n  \"restored\": [\n    \"frontend/package.json\",\n    \"frontend/src/App.tsx\"\n  ],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\"\n  ],\n  \"count\": 8\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/17-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200821.429701Z-67c818b4",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200821.429701Z-67c818b4\",\n  \"restored\": [\n    \"pom.xml\"\n  ],\n  \"removed\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\"\n  ],\n  \"count\": 11\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/18-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 2 packages, removed 3 packages, and changed 8 packages in 3s\n",
+      "stderr": "",
+      "duration_seconds": 3.687,
+      "log_file": ".filterx/cli-logs/19-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 5.282,
+      "log_file": ".filterx/cli-logs/20-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-react-matrix@1.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v5.4.21 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 30 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m  0.10 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.11 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-BJkQUMwc.js  \u001b[39m\u001b[1m\u001b[2m142.53 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 45.75 kB\u001b[22m\n\u001b[32m\u2713 built in 897ms\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 2.766,
+      "log_file": ".filterx/cli-logs/21-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    "filterx.yaml": "bd614ac0fa092fe77fa549f85c5c3e397e38642de84e649f4ef5fffd6c01063a",
+    "frontend/index.html": "4a528f95431e4251fda2710be50b2bf295ed2221ecc559ca4be982ae803c9ab4",
+    "frontend/package.json": "518a36cc21a8913b446dc8dbae7bf7096a3df268fb3c11684d050fb28c355bd1",
+    "frontend/src/App.tsx": "2b27db07066ad78c304c8c5582dc2f175e674af8d2933bb12a090fcbf35cc395",
+    "frontend/src/main.tsx": "3b20254b3446c1c3f4924c2fee27227cc6d8b05e3e11890459ab4ce85088dc49",
+    "frontend/tsconfig.json": "09bcbf227dbd6e0078b7492de5c8633cf2b575f07de54e7d5930f72666adab29",
+    "frontend/tsconfig.tsbuildinfo": "09f7fc94ae51c5f0d6e28bbc1f6f709d5343e8f6831aba69359bb9b253d3a79e",
+    "frontend/vite.config.ts": "5966f042992ff4de3d220498546511176930ad4fab24928e1bd521d6950db56b",
+    "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+    "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+    "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+    "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+    "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+    "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+    "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+    "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+  }
+}

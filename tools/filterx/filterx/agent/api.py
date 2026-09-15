@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import asyncio
-import importlib
+import hashlib
 import secrets
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Mapping
 
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, Field
 
 from filterx.agent.grounding.schema_repository import SchemaRepository
 from filterx.agent.pipeline.copilot_graph import CopilotGraph
@@ -19,12 +18,12 @@ from filterx.agent.validation import FieldExistsValidator, OperationAllowedValid
 
 
 class CopilotQueryRequest(BaseModel):
-    entity: str
-    prompt: str
+    entity: str = Field(min_length=1, max_length=120)
+    prompt: str = Field(min_length=1, max_length=4000)
 
 
 class CopilotExecuteRequest(BaseModel):
-    confirmation_token: str
+    confirmation_token: str = Field(min_length=16, max_length=256)
 
 
 @dataclass
@@ -32,6 +31,7 @@ class PendingFilter:
     entity: str
     filter_tree: dict[str, Any]
     explanation: str
+    principal_key: str
     expires_at: float
 
 
@@ -41,27 +41,39 @@ def create_copilot_router(
     entities: Iterable[dict[str, Any]],
     scan_file: str | Path,
     agent_config: dict[str, Any],
-    session_dependency: Callable[..., Any],
-    query_executor_cls: type[Any],
-    pagination_cls: type[Any],
-    filter_node_cls: type[Any] | None = None,
-    model_registry: dict[str, type[Any]] | None = None,
-    response_model_registry: dict[str, type[Any]] | None = None,
+    auth_dependency: Callable[..., Any] | None = None,
+    permission_hook: Callable[..., Any] | None = None,
+    field_visibility_hook: Callable[..., Any] | None = None,
 ) -> APIRouter:
     prefix = _normalize_prefix(api_prefix)
     router = APIRouter(prefix=f"{prefix}/filterx/copilot", tags=["filterx-copilot"])
     repository = SchemaRepository(Path(scan_file), entities=entities)
     pipeline = _build_pipeline(repository, agent_config)
     pending: dict[str, PendingFilter] = {}
-    ttl_seconds = int(agent_config.get("safety", {}).get("confirmation_ttl_seconds", 600))
-    models = model_registry or {}
-    response_registry = response_model_registry or {}
+    ttl_seconds = max(1, int(agent_config.get("safety", {}).get("confirmation_ttl_seconds", 600)))
+    max_pending = max(1, int(agent_config.get("safety", {}).get("max_pending_confirmations", 1000)))
+    get_principal = auth_dependency or _anonymous_principal
     router.state = {"pipeline": pipeline, "pending": pending}
 
     @router.post("/query")
-    async def query_copilot(request: CopilotQueryRequest) -> dict[str, Any]:
+    async def query_copilot(
+        body: CopilotQueryRequest,
+        request: Request,
+        principal: Any = Depends(get_principal),
+    ) -> dict[str, Any]:
+        entity_name = body.entity.strip()
+        prompt = body.prompt.strip()
+        if not entity_name or not prompt:
+            raise HTTPException(status_code=422, detail={"error": "copilot_request_empty", "detail": "Entity and prompt must not be blank."})
+        _authorize(permission_hook, principal=principal, request=request, entity=repository.get_entity(entity_name), action="copilot.preview")
+        request_repository = repository
+        request_pipeline = router.state["pipeline"]
+        if field_visibility_hook is not None:
+            visible_entities = _visible_entities(repository.list_entities(), field_visibility_hook, principal, request)
+            request_repository = SchemaRepository(Path(scan_file), entities=visible_entities)
+            request_pipeline = _pipeline_with_repository(request_pipeline, request_repository)
         try:
-            result = await router.state["pipeline"].run(request.entity, request.prompt)
+            result = await request_pipeline.run(entity_name, prompt)
         except LLMProviderError as exc:
             raise HTTPException(
                 status_code=503,
@@ -72,28 +84,43 @@ def create_copilot_router(
                 status_code=422,
                 detail={"error": "copilot_validation_failed", "issues": [error.__dict__ for error in result.validation_errors]},
             )
-        token = secrets.token_urlsafe(24)
-        pending[token] = PendingFilter(result.entity, result.filter_tree, result.explanation, time.time() + ttl_seconds)
         _purge_expired(pending)
+        while len(pending) >= max_pending:
+            oldest_token = min(pending, key=lambda key: pending[key].expires_at)
+            pending.pop(oldest_token, None)
+        token = secrets.token_urlsafe(32)
+        pending[token] = PendingFilter(
+            result.entity,
+            result.filter_tree,
+            result.explanation,
+            _principal_key(principal),
+            time.time() + ttl_seconds,
+        )
         return {"filter_tree": result.filter_tree, "explanation": result.explanation, "confirmation_token": token}
 
     @router.post("/execute")
-    async def execute_copilot(request: CopilotExecuteRequest, db: Any = Depends(session_dependency)) -> dict[str, Any]:
+    async def execute_copilot(
+        body: CopilotExecuteRequest,
+        request: Request,
+        principal: Any = Depends(get_principal),
+    ) -> dict[str, Any]:
         _purge_expired(pending)
-        item = pending.pop(request.confirmation_token, None)
+        item = pending.get(body.confirmation_token)
         if item is None:
             raise HTTPException(status_code=404, detail={"error": "confirmation_token_not_found", "detail": "The confirmation token is missing or expired."})
+        if not secrets.compare_digest(item.principal_key, _principal_key(principal)):
+            raise HTTPException(status_code=403, detail={"error": "confirmation_token_owner_mismatch", "detail": "The confirmation token belongs to another principal."})
         entity = repository.get_entity(item.entity)
+        _authorize(permission_hook, principal=principal, request=request, entity=entity, action="copilot.confirm")
+        pending.pop(body.confirmation_token, None)
         if entity is None:
             raise HTTPException(status_code=404, detail=f"Unknown FilterX entity: {item.entity}")
-        model = models.get(str(entity.get("model"))) or _model_for_entity(entity)
-        executor = query_executor_cls(model=model, db=db, searchable_fields=_searchable_fields(entity), sortable_fields=None, default_sort_field=_default_sort_field(entity))
-        filter_node = _build_filter_node(item.filter_tree, filter_node_cls)
-        pagination = pagination_cls(page=1, size=20)
-        rows, total = await asyncio.to_thread(executor.execute, pagination=pagination, filter_tree=filter_node)
-        response_model = response_registry.get(str(entity.get("model")))
-        data = _serialize_rows(rows, response_model)
-        return {"data": data, "meta": {"page": 1, "size": 20, "total_items": total}, "summary": f"Returned {len(data)} of {total} results for {item.entity}.", "explanation": item.explanation}
+        return {
+            "entity": item.entity,
+            "filter_tree": item.filter_tree,
+            "summary": f"Confirmed filter for {item.entity}.",
+            "explanation": item.explanation,
+        }
 
     return router
 
@@ -104,8 +131,8 @@ def _build_pipeline(repository: SchemaRepository, agent_config: dict[str, Any]) 
     if compile_cfg is None:
         raise RuntimeError("FilterX copilot requires at least one provider with the 'compile' role.")
     fallback_cfgs = [provider for provider in providers_cfg if "fallback" in provider.get("roles", [])]
-    primary = create_provider(str(compile_cfg["name"]), api_key_env=str(compile_cfg["api_key_env"]), model=str(compile_cfg["model"]))
-    fallbacks = [create_provider(str(cfg["name"]), api_key_env=str(cfg["api_key_env"]), model=str(cfg["model"])) for cfg in fallback_cfgs]
+    primary = create_provider(str(compile_cfg["name"]), **_provider_kwargs(compile_cfg))
+    fallbacks = [create_provider(str(cfg["name"]), **_provider_kwargs(cfg)) for cfg in fallback_cfgs]
     safety = agent_config.get("safety", {})
     provider = ResilientLLMClient(
         primary,
@@ -125,6 +152,33 @@ def _build_pipeline(repository: SchemaRepository, agent_config: dict[str, Any]) 
     return CopilotGraph(repository, provider, validation_pipeline, max_validation_retries=int(safety.get("max_validation_retries", 3)))
 
 
+def _provider_kwargs(config: Mapping[str, Any]) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {"model": str(config["model"])}
+    for key in ("api_key_env", "base_url", "timeout_seconds"):
+        if key in config and config[key] is not None:
+            kwargs[key] = config[key]
+    if str(config.get("name", "")).strip().lower() in {"openai", "openai-compatible"}:
+        for key in ("require_api_key", "json_mode"):
+            if key in config and config[key] is not None:
+                kwargs[key] = config[key]
+    return kwargs
+
+
+def _pipeline_with_repository(pipeline: CopilotGraph, repository: SchemaRepository) -> CopilotGraph:
+    validation_pipeline = ValidationPipeline([
+        SchemaShapeValidator(),
+        FieldExistsValidator(repository),
+        OperationAllowedValidator(repository),
+        ValueTypeValidator(repository),
+    ])
+    return CopilotGraph(
+        repository,
+        pipeline.provider,
+        validation_pipeline,
+        max_validation_retries=pipeline.max_validation_retries,
+    )
+
+
 def _normalize_prefix(api_prefix: str) -> str:
     prefix = api_prefix.strip() or "/api"
     if not prefix.startswith("/"):
@@ -139,35 +193,84 @@ def _purge_expired(pending: dict[str, PendingFilter]) -> None:
             pending.pop(token, None)
 
 
-def _model_for_entity(entity: dict[str, Any]) -> type[Any]:
-    module = importlib.import_module(str(entity["module"]))
-    return getattr(module, str(entity["model"]))
+def _anonymous_principal() -> None:
+    return None
 
 
-def _searchable_fields(entity: dict[str, Any]) -> list[str]:
-    return [str(field.get("name")) for field in entity.get("fields", []) if str(field.get("type")) in {"string", "text", "enum"}]
+def _principal_key(principal: Any) -> str:
+    identity: str
+    if principal is None:
+        identity = "anonymous"
+    elif isinstance(principal, Mapping):
+        for field in ("sub", "id", "user_id", "username", "email"):
+            if principal.get(field) is not None:
+                identity = f"{field}:{principal[field]}"
+                break
+        else:
+            identity = f"mapping:{sorted((str(key), str(value)) for key, value in principal.items())}"
+    else:
+        identity = ""
+        for field in ("sub", "id", "user_id", "username", "email"):
+            value = getattr(principal, field, None)
+            if value is not None:
+                identity = f"{field}:{value}"
+                break
+        if not identity:
+            identity = f"{type(principal).__module__}.{type(principal).__qualname__}:{principal}"
+    return hashlib.sha256(identity.encode("utf-8")).hexdigest()
 
 
-def _default_sort_field(entity: dict[str, Any]) -> str:
-    primary_keys = entity.get("primary_keys") or []
-    return str(primary_keys[0]) if primary_keys else "id"
+def _authorize(
+    permission_hook: Callable[..., Any] | None,
+    *,
+    principal: Any,
+    request: Request,
+    entity: dict[str, Any] | None,
+    action: str,
+) -> None:
+    if permission_hook is None:
+        return
+    allowed = permission_hook(principal=principal, request=request, entity=entity, action=action)
+    if allowed is False:
+        raise HTTPException(status_code=403, detail="FilterX copilot action is not permitted.")
 
 
-def _build_filter_node(filter_tree: dict[str, Any], filter_node_cls: type[Any] | None) -> Any:
-    if filter_node_cls is None:
-        try:
-            from app.schema.filter_node import FilterNode
-        except ImportError as exc:  # pragma: no cover
-            raise RuntimeError("The host app must expose app.schema.filter_node.FilterNode.") from exc
-        filter_node_cls = FilterNode
-    return filter_node_cls.model_validate(filter_tree)
-
-
-def _serialize_rows(rows: list[Any], response_model: type[Any] | None) -> list[dict[str, Any]]:
-    if response_model is not None:
-        return [response_model.model_validate(row).model_dump(mode="json") for row in rows]
-    output: list[dict[str, Any]] = []
-    for row in rows:
-        values = {key: value for key, value in vars(row).items() if not key.startswith("_")}
-        output.append(values)
-    return output
+def _visible_entities(
+    entities: Iterable[dict[str, Any]],
+    hook: Callable[..., Any],
+    principal: Any,
+    request: Request,
+) -> list[dict[str, Any]]:
+    visible_entities: list[dict[str, Any]] = []
+    for entity in entities:
+        visible = dict(entity)
+        visible["fields"] = [
+            field
+            for field in entity.get("fields", [])
+            if hook(
+                principal=principal,
+                request=request,
+                entity=entity,
+                field=str(field.get("name", "")),
+                action="copilot.preview",
+            )
+        ]
+        relationships: list[dict[str, Any]] = []
+        for relationship in entity.get("relationships", []):
+            relation = dict(relationship)
+            relation_name = str(relation.get("name", ""))
+            relation["related_fields"] = [
+                field
+                for field in relation.get("related_fields", [])
+                if hook(
+                    principal=principal,
+                    request=request,
+                    entity=entity,
+                    field=f"{relation_name}.{field.get('name', '')}",
+                    action="copilot.preview",
+                )
+            ]
+            relationships.append(relation)
+        visible["relationships"] = relationships
+        visible_entities.append(visible)
+    return visible_entities

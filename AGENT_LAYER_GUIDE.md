@@ -1,65 +1,270 @@
-## LLM API Integration (Provider Abstraction)
+# FilterX Agent Layer
 
-**Implemented by:** tools/filterx/filterx/agent/providers/base.py, tools/filterx/filterx/agent/providers/registry.py, tools/filterx/filterx/agent/providers/groq_provider.py, tools/filterx/filterx/agent/providers/gemini_provider.py
+Filter Copilot converts plain-language requests into the same validated filter-tree JSON used by FilterX. The model never receives database credentials and never executes SQL. A request follows this flow:
 
-**What it does (plain language):** FilterX talks to language models through one small shared interface called `LLMProvider`. Groq and Gemini each translate that shared request into their own HTTP format, then translate the provider response back into the same `LLMResponse` shape. The rest of the copilot code never needs to know which provider produced the answer.
+1. Load the selected entity metadata from the FilterX scan.
+2. Send only that metadata and the user's request to the configured model.
+3. Parse and validate the model's proposed filter tree.
+4. Return a preview and a short-lived confirmation token.
+5. Confirm the token in a second request.
+6. Apply the confirmed tree through the normal `/api/filterx/{entity}/filter` endpoint.
 
-**Key things to remember:**
+The last step deliberately uses the standard FilterX endpoint so existing permission hooks, row predicates, field visibility, query-cost limits, and response serialization remain authoritative.
 
-- Provider-specific JSON stays inside the provider adapter, so the pipeline can stay provider-neutral.
-- Retryable failures such as timeouts and rate limits are different from fatal failures such as missing API keys; the distinction controls whether retry logic should run.
+## Current support
 
-## Vector Databases (Grounding And Future Retrieval)
+- Agent API: FastAPI + SQLAlchemy backend renderer.
+- Generated copilot panel: Angular frontend renderer.
+- Other frontends can call the two HTTP endpoints directly.
+- Grounding source: `.filterx/scan.json` plus generated entity metadata.
+- Providers: Groq, Gemini, and any OpenAI-compatible HTTP endpoint.
+- Local/open-source servers: Ollama, LM Studio, LocalAI, and vLLM through `openai-compatible`.
 
-**Implemented by:** tools/filterx/filterx/agent/grounding/schema_repository.py, tools/filterx/filterx/core/config.py
+The configuration validator rejects `agent.enabled: true` with unsupported backend renderers instead of generating broken imports.
 
-**What it does (plain language):** Phase 1 grounds the copilot in `.filterx/scan.json`, which is the metadata FilterX already creates by scanning real SQLAlchemy models. `SchemaRepository` loads and caches that file, then answers questions such as which entities exist, which fields they have, and which operations each field allows. A vector database is configured but disabled for now; it would plug in beside this repository later to retrieve the most relevant schema facts for very large projects.
+## Install the agent dependencies
 
-**Key things to remember:**
+From a clone of this repository:
 
-- The LLM is not trusted to invent fields; every proposed field and operation is checked against scanned metadata.
-- Vector search is a later scaling tool, not the source of truth. The scanned schema remains the authority.
+```powershell
+python -m pip install -e ".\tools\filterx[agent]"
+```
 
-## Agentic Orchestration (LangGraph Pipeline)
+For a Git installation:
 
-**Implemented by:** tools/filterx/filterx/agent/pipeline/copilot_graph.py
+```powershell
+python -m pip install "filterx-cli[agent] @ git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
+```
 
-**What it does (plain language):** The copilot request is handled as a small workflow: resolve the entity, ask the model to compile a filter, validate that filter, and retry with feedback when validation fails. LangGraph provides the workflow engine for that loop. If LangGraph is not importable in a lightweight environment, the code uses the same steps in a tiny fallback runner so tests and basic imports still work.
+The normal agent extra is lightweight. Experimental vector-store dependencies are separate:
 
-**Key things to remember:**
+```powershell
+python -m pip install -e ".\tools\filterx[agent,agent-vector]"
+```
 
-- Validation retries are about correcting the model's filter JSON; provider retries are about network or service failures. They are separate counters.
-- The graph returns a preview result, not executed data, because execution requires an explicit second call.
+Vector retrieval is not enabled in the current agent workflow; scan metadata remains the source of truth.
 
-## Ensure The AI Behaves Correctly Within The App
+## Configure `filterx.yaml`
 
-**Implemented by:** tools/filterx/filterx/agent/validation/base.py, tools/filterx/filterx/agent/validation/validators.py, tools/filterx/filterx/agent/api.py, app/filterx_generated/copilot_router.py
+The existing FastAPI configuration and `# FILTERX:ROUTER_MOUNT` anchor are reused. No second copilot-specific anchor is required unless `agent.mount_anchor` is explicitly set.
 
-**What it does (plain language):** The validation chain checks the generated filter in layers: first the JSON shape, then whether fields exist, whether operations are allowed, and whether values match field types. If the filter passes, the API returns a plain-English preview and a confirmation token. The query only runs after the frontend sends that token back to `/api/filterx/copilot/execute`.
+### Free local option: Ollama, no API key
 
-**Key things to remember:**
+Install Ollama, then pull a tool-capable instruct model:
 
-- The human preview is the safety gate. Collapsing preview and execution into one endpoint would remove the user approval step.
-- Validators collect multiple problems at once so the retry prompt can give the model useful feedback in a single round trip.
+```powershell
+ollama pull qwen2.5:7b
+```
 
-## Resilience And Production Readiness
+Use this configuration:
 
-**Implemented by:** tools/filterx/filterx/agent/providers/resilient.py, tools/filterx/filterx/agent/api.py
+```yaml
+agent:
+  enabled: true
+  providers:
+    - name: openai-compatible
+      model: qwen2.5:7b
+      base_url: http://localhost:11434/v1
+      api_key_env: ""
+      require_api_key: false
+      json_mode: true
+      timeout_seconds: 60
+      roles: [compile]
+  safety:
+    require_human_preview: true
+    max_validation_retries: 3
+    max_provider_retries: 2
+    circuit_breaker_failure_threshold: 5
+    circuit_breaker_reset_seconds: 60
+    confirmation_ttl_seconds: 600
+    max_pending_confirmations: 1000
+```
 
-**What it does (plain language):** `ResilientLLMClient` wraps any provider and adds retry behavior with backoff for temporary problems. It also has a circuit breaker, which means a provider that keeps failing is skipped for a short period instead of slowing down every request. The API turns exhausted provider failures into a clear 503 response for the frontend.
+If a local server or model rejects OpenAI JSON mode, set `json_mode: false`. FilterX still parses and validates the returned JSON.
 
-**Key things to remember:**
+### Free hosted option: Groq
 
-- Only `LLMRetryableError` is retried. `LLMFatalError` is surfaced quickly because retrying bad credentials or malformed requests wastes time.
-- Circuit breaker state is tracked per provider name, so fallback providers can still serve requests when the primary provider is unhealthy.
+Create a developer key in the Groq console and expose it only as an environment variable:
 
-## Extensibility (Adding A New Provider)
+```powershell
+$env:GROQ_API_KEY = "your-key"
+```
 
-**Implemented by:** tools/filterx/filterx/agent/providers/registry.py, tools/filterx/tests/test_agent_providers.py, filterx.yaml
+```yaml
+agent:
+  enabled: true
+  providers:
+    - name: groq
+      model: llama-3.3-70b-versatile
+      api_key_env: GROQ_API_KEY
+      timeout_seconds: 30
+      roles: [compile]
+  safety:
+    require_human_preview: true
+    max_validation_retries: 3
+    max_provider_retries: 3
+    circuit_breaker_failure_threshold: 5
+    circuit_breaker_reset_seconds: 60
+    confirmation_ttl_seconds: 600
+    max_pending_confirmations: 1000
+```
 
-**What it does (plain language):** New providers are registered with a decorator instead of being hardcoded into the pipeline. To add one, create a new file in `tools/filterx/filterx/agent/providers/`, subclass `LLMProvider`, implement `complete()`, and decorate the class with `@register_provider("your-name")`. Then add a provider entry in `agent.providers` with its `name`, `api_key_env`, `model`, and `roles`.
+Groq's available model names and free-tier limits can change; use a currently available chat model if the example is retired.
 
-**Key things to remember:**
+### Free hosted option: Gemini
 
-- The pipeline asks the registry for providers by name, so adding provider number three does not require editing pipeline code.
-- Keep each provider responsible for its own wire format. The shared DTOs are the boundary that keeps the rest of FilterX simple.
+Create a key in Google AI Studio and expose it as an environment variable:
+
+```powershell
+$env:GEMINI_API_KEY = "your-key"
+```
+
+```yaml
+agent:
+  enabled: true
+  providers:
+    - name: gemini
+      model: gemini-2.5-flash
+      api_key_env: GEMINI_API_KEY
+      timeout_seconds: 30
+      roles: [compile]
+  safety:
+    require_human_preview: true
+    max_validation_retries: 3
+    max_provider_retries: 3
+    circuit_breaker_failure_threshold: 5
+    circuit_breaker_reset_seconds: 60
+    confirmation_ttl_seconds: 600
+    max_pending_confirmations: 1000
+```
+
+### Hosted OpenAI-compatible endpoint
+
+The generic adapter also supports services such as OpenRouter or an organization-hosted vLLM endpoint:
+
+```powershell
+$env:MY_LLM_API_KEY = "your-key"
+```
+
+```yaml
+agent:
+  enabled: true
+  providers:
+    - name: openai-compatible
+      model: your-model-name
+      base_url: https://your-provider.example/v1
+      api_key_env: MY_LLM_API_KEY
+      require_api_key: true
+      json_mode: true
+      timeout_seconds: 30
+      roles: [compile]
+```
+
+FilterX appends `/chat/completions` unless `base_url` already ends with that path.
+
+## Configure fallback providers
+
+Exactly one provider must have the `compile` role. Any number can have the `fallback` role. For example, use local Ollama first and Groq only when the local service is unavailable:
+
+```yaml
+agent:
+  enabled: true
+  providers:
+    - name: openai-compatible
+      model: qwen2.5:7b
+      base_url: http://localhost:11434/v1
+      api_key_env: ""
+      roles: [compile]
+    - name: groq
+      model: llama-3.3-70b-versatile
+      api_key_env: GROQ_API_KEY
+      roles: [fallback]
+```
+
+Retryable timeouts, rate limits, and server errors use exponential backoff and then fall through. Missing credentials and invalid requests are fatal for that provider but may still use a configured fallback. Circuit breakers are tracked by provider and model.
+
+## Generate and validate
+
+Run the normal all-in-one flow. When `agent.enabled` is true, it now installs the backend, copilot router, frontend, and optional database integration in order:
+
+```powershell
+filterx install --project-root . --config filterx.yaml --dry-run --json
+filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx validate --project-root . --config filterx.yaml --json
+filterx copilot validate --project-root . --config filterx.yaml --json
+```
+
+Or run the agent step separately after scanning and installing the backend:
+
+```powershell
+filterx scan --project-root . --config filterx.yaml --no-dry-run --json
+filterx backend install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx copilot install --project-root . --config filterx.yaml --no-dry-run --yes --json
+```
+
+By default the generated router is written beside the generated FastAPI router and mounted at the backend router anchor. Override `agent.generated_file`, `agent.mount_file`, or `agent.mount_anchor` only when necessary.
+
+## Test the API directly
+
+Start the host FastAPI app using its normal command, then request a preview:
+
+```powershell
+$preview = Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8000/api/filterx/copilot/query" `
+  -ContentType "application/json" `
+  -Body '{"entity":"Book","prompt":"available books rated above 4"}'
+$preview
+```
+
+Confirm it:
+
+```powershell
+$body = @{ confirmation_token = $preview.confirmation_token } | ConvertTo-Json
+$confirmed = Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8000/api/filterx/copilot/execute" `
+  -ContentType "application/json" `
+  -Body $body
+$confirmed
+```
+
+Then submit `$confirmed.filter_tree` to the standard filtering endpoint. This is the request that reads data and enforces the normal FilterX authorization and row-security pipeline:
+
+```powershell
+$filterBody = @{ filter_tree = $confirmed.filter_tree } | ConvertTo-Json -Depth 20
+Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8000/api/filterx/Book/filter?page=1&size=20" `
+  -ContentType "application/json" `
+  -Body $filterBody
+```
+
+If the host uses authentication, include the same authorization headers in all three requests. Confirmation tokens are short-lived, single-use, and bound to the authenticated principal.
+
+## Security behavior
+
+- User prompts are treated as untrusted data.
+- Only scanned fields and declared operations are accepted.
+- Values are type-checked, including enum members.
+- Filter trees are limited by node count and depth.
+- Field-visibility hooks remove hidden schema fields before metadata is sent to the model.
+- Permission hooks receive `copilot.preview` and `copilot.confirm` actions.
+- The model never receives API keys; adapters read keys from environment variables.
+- Upstream error bodies are not returned to clients.
+- In-memory confirmation state is bounded and expired automatically.
+
+The built-in confirmation store is process-local. Multi-process or multi-instance production deployments should replace it with a shared TTL store before relying on cross-instance confirmations.
+
+## Run contributor tests
+
+From the repository root with the project environment active:
+
+```powershell
+$env:PYTHONPATH = ".\tools\filterx"
+python -m pytest tools/filterx/tests/test_agent_providers.py `
+  tools/filterx/tests/test_agent_pipeline.py `
+  tools/filterx/tests/test_agent_validators.py `
+  tools/filterx/tests/test_copilot_api.py `
+  tools/filterx/tests/test_copilot_install.py -q
+python -m pytest tools/filterx/tests -q
+```
+
+The provider tests use fake HTTP clients and do not consume API quota.

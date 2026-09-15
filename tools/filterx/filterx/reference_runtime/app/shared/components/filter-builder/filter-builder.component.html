@@ -1,218 +1,203 @@
-<div class="filter-builder">
-  <div class="filter-header">
-    <div class="header-left">
-      <i class="pi pi-filter mr-2"></i>
-      <h4 class="filter-title">Advanced Search Builder</h4>
-    </div>
-    <p-button
-      label="Clear All"
-      icon="pi pi-trash"
-      severity="secondary"
-      [text]="true"
-      size="small"
-      (onClick)="clearAll()"
-    ></p-button>
-  </div>
-
+<section class="filter-builder" aria-label="Advanced search builder">
+  <header class="filter-header">
+    <h4 class="filter-title">Advanced Search Builder</h4>
+    <button type="button" class="text-button danger" (click)="clearAll()">
+      Clear all
+    </button>
+  </header>
   <div class="filter-content">
-    <div class="tree-surface">
-      <p-tree [value]="primeNodes" scrollHeight="400px" class="filter-tree">
-        <ng-template let-node pTemplate="operator">
-          <div class="operator-node-row">
-            <p-button
-              [label]="node.data.node.operator"
-              size="small"
-              [styleClass]="
-                node.data.node.operator === 'AND'
-                  ? 'operator-toggle-btn operator-and'
-                  : 'operator-toggle-btn operator-or'
+    @if (tree; as root) {
+      <ng-container
+        *ngTemplateOutlet="
+          nodeTemplate;
+          context: { $implicit: root, parent: null }
+        "
+      ></ng-container>
+    }
+  </div>
+  @if (showApplyButton) {
+    <footer class="filter-footer">
+      <button type="button" class="apply-button" (click)="applyFilters()">
+        {{ applyButtonLabel }}
+      </button>
+    </footer>
+  }
+</section>
+<ng-template #nodeTemplate let-node let-parent="parent">
+  @if (node.nodeType === "operator") {
+    <section
+      class="filter-group"
+      [class.filter-group-or]="node.operator === 'OR'"
+      [attr.aria-label]="node.operator + ' filter group'"
+    >
+      <div class="group-header">
+        <button
+          type="button"
+          class="expand-button"
+          (click)="toggleExpanded(node)"
+          [attr.aria-expanded]="node.expanded !== false"
+          [attr.aria-label]="
+            node.expanded === false ? 'Expand group' : 'Collapse group'
+          "
+        >
+          {{ node.expanded === false ? "▸" : "▾" }}</button
+        ><button
+          type="button"
+          class="operator-button"
+          [class.operator-or]="node.operator === 'OR'"
+          (click)="toggleOperator(node)"
+          [attr.aria-label]="'Change ' + node.operator + ' group operator'"
+          title="Switch between AND and OR"
+        >
+          {{ node.operator }}</button
+        ><span class="operator-description">{{
+          node.operator === "AND"
+            ? "Match every condition"
+            : "Match any condition"
+        }}</span>
+        <div class="group-actions">
+          <button
+            type="button"
+            class="action-button"
+            (click)="addCondition(node)"
+          >
+            + Condition</button
+          ><button type="button" class="action-button" (click)="addGroup(node)">
+            + Group
+          </button>
+          @if (parent) {
+            <button
+              type="button"
+              class="icon-button danger"
+              (click)="removeNode(parent, node)"
+              [disabled]="!canRemoveChild(parent)"
+              aria-label="Remove group"
+              title="Remove group"
+            >
+              ×
+            </button>
+          }
+        </div>
+      </div>
+      @if (node.expanded !== false) {
+        <div class="group-children">
+          @for (child of node.children || []; track child.id) {
+            <ng-container
+              *ngTemplateOutlet="
+                nodeTemplate;
+                context: { $implicit: child, parent: node }
               "
-              (onClick)="toggleOperator(node.data.node)"
-            ></p-button>
-
-            <div class="node-actions ml-auto">
-              <p-button
-                icon="pi pi-plus"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                styleClass="action-btn action-add"
-                (onClick)="addCondition(node.data.node)"
-                pTooltip="Add Condition"
-              ></p-button>
-              <p-button
-                icon="pi pi-folder-plus"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                severity="secondary"
-                styleClass="action-btn action-group"
-                (onClick)="addGroup(node.data.node)"
-                pTooltip="Add Group"
-              ></p-button>
-              @if (node.data.parent) {
-                <p-button
-                  icon="pi pi-times"
-                  [rounded]="true"
-                  [text]="true"
-                  size="small"
-                  severity="danger"
-                  styleClass="action-btn action-remove"
-                  (onClick)="removeNode(node.data.parent, node.data.node)"
-                  pTooltip="Remove Group"
-                ></p-button>
-              }
-            </div>
-          </div>
-        </ng-template>
-
-        <ng-template let-node pTemplate="condition">
-          <div class="condition-node-row">
-            <select
-              class="builder-select flex-1"
-              [(ngModel)]="node.data.node.field"
-              (ngModelChange)="onFieldChange(node.data.node)"
-            >
-              <option [ngValue]="''" disabled>Field</option>
-              @for (field of fields; track field.name) {
-                <option [ngValue]="field.name">{{ field.label }}</option>
-              }
-            </select>
-
-            <select
-              class="builder-select flex-none w-32"
-              [(ngModel)]="node.data.node.operation"
-              (ngModelChange)="onOperationChange(node.data.node)"
-            >
-              @for (
-                op of getAvailableOperations(node.data.node.field || "");
-                track op
-              ) {
-                <option [ngValue]="op">{{ getOpLabel(op) }}</option>
-              }
-            </select>
-
-            @if (needsValue(node.data.node.operation)) {
-              <div class="value-container">
-                @if (needsMultipleValues(node.data.node.operation)) {
-                  <input
-                    class="builder-input"
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                    placeholder="v1, v2..."
-                  />
-                } @else if (needsRange(node.data.node.operation)) {
-                  <div class="flex gap-1 align-items-center">
-                    <input
-                      class="builder-input builder-input-sm"
-                      type="number"
-                      [(ngModel)]="node.data.node.value[0]"
-                      (ngModelChange)="onValueChange()"
-                      placeholder="Min"
-                    />
-                    <span>-</span>
-                    <input
-                      class="builder-input builder-input-sm"
-                      type="number"
-                      [(ngModel)]="node.data.node.value[1]"
-                      (ngModelChange)="onValueChange()"
-                      placeholder="Max"
-                    />
-                  </div>
-                } @else if (
-                  getFieldConfig(node.data.node.field || "")?.type === "boolean"
-                ) {
-                  <select
-                    class="builder-select"
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                  >
-                    <option [ngValue]="true">True</option>
-                    <option [ngValue]="false">False</option>
-                  </select>
-                } @else if (
-                  getFieldConfig(node.data.node.field || "")?.type ===
-                    "select" ||
-                  getFieldConfig(node.data.node.field || "")?.type === "enum"
-                ) {
-                  <select
-                    class="builder-select"
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                  >
-                    <option [ngValue]="''" disabled>Select</option>
-                    @for (
-                      opt of getFieldConfig(node.data.node.field || "")
-                        ?.options || [];
-                      track opt.label
-                    ) {
-                      <option [ngValue]="opt.value">{{ opt.label }}</option>
-                    }
-                  </select>
-                } @else if (
-                  getFieldConfig(node.data.node.field || "")?.type === "date" ||
-                  getFieldConfig(node.data.node.field || "")?.type ===
-                    "datetime"
-                ) {
-                  <input
-                    class="builder-input"
-                    [type]="
-                      getFieldConfig(node.data.node.field || '')?.type ===
-                      'datetime'
-                        ? 'datetime-local'
-                        : 'date'
-                    "
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                  />
-                } @else if (
-                  getFieldConfig(node.data.node.field || "")?.type === "number"
-                ) {
-                  <input
-                    class="builder-input"
-                    type="number"
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                  />
-                } @else {
-                  <input
-                    class="builder-input"
-                    [(ngModel)]="node.data.node.value"
-                    (ngModelChange)="onValueChange()"
-                    placeholder="Value"
-                  />
-                }
-              </div>
-            }
-
-            <p-button
-              icon="pi pi-times"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              severity="danger"
-              styleClass="action-btn action-remove"
-              (onClick)="removeNode(node.data.parent, node.data.node)"
-              [disabled]="!node.data.parent"
-              pTooltip="Remove Filter"
-            ></p-button>
-          </div>
-        </ng-template>
-      </p-tree>
-    </div>
-  </div>
-
-  <div class="filter-footer">
-    <div class="footer-actions">
-      @if (showApplyButton) {
-        <p-button
-          [label]="applyButtonLabel"
-          icon="pi pi-check"
-          styleClass="apply-btn"
-          (onClick)="applyFilters()"
-          class="w-full"
-        ></p-button>
+            ></ng-container>
+          }
+        </div>
       }
+    </section>
+  } @else {
+    <div class="condition-row">
+      <label
+        ><span class="sr-only">Field</span
+        ><select
+          class="builder-control"
+          [(ngModel)]="node.field"
+          (ngModelChange)="onFieldChange(node)"
+        >
+          <option [ngValue]="''" disabled>Choose field</option>
+          @for (field of fields; track field.name) {
+            <option [ngValue]="field.name">{{ field.label }}</option>
+          }
+        </select></label
+      >
+      <label
+        ><span class="sr-only">Operation</span
+        ><select
+          class="builder-control operation-control"
+          [(ngModel)]="node.operation"
+          (ngModelChange)="onOperationChange(node)"
+        >
+          @for (op of getAvailableOperations(node.field || ""); track op) {
+            <option [ngValue]="op">{{ getOpLabel(op) }}</option>
+          }
+        </select></label
+      >
+      @if (needsValue(node.operation)) {
+        <div class="value-control">
+          @if (needsMultipleValues(node.operation)) {
+            <input
+              class="builder-control"
+              [ngModel]="multipleValuesText(node.value)"
+              (ngModelChange)="onMultipleValueChange(node, $event)"
+              placeholder="Comma-separated values"
+              aria-label="Values"
+            />
+          } @else if (needsRange(node.operation)) {
+            <div class="range-control">
+              <input
+                class="builder-control"
+                [type]="getRangeInputType(node.field || '')"
+                [(ngModel)]="node.value[0]"
+                (ngModelChange)="onValueChange()"
+                aria-label="Range start"
+              /><span>to</span
+              ><input
+                class="builder-control"
+                [type]="getRangeInputType(node.field || '')"
+                [(ngModel)]="node.value[1]"
+                (ngModelChange)="onValueChange()"
+                aria-label="Range end"
+              />
+            </div>
+          } @else if (getFieldConfig(node.field || "")?.type === "boolean") {
+            <select
+              class="builder-control"
+              [(ngModel)]="node.value"
+              (ngModelChange)="onValueChange()"
+              aria-label="Boolean value"
+            >
+              <option [ngValue]="true">True</option>
+              <option [ngValue]="false">False</option>
+            </select>
+          } @else if (
+            getFieldConfig(node.field || "")?.type === "select" ||
+            getFieldConfig(node.field || "")?.type === "enum"
+          ) {
+            <select
+              class="builder-control"
+              [(ngModel)]="node.value"
+              (ngModelChange)="onValueChange()"
+              aria-label="Value"
+            >
+              <option [ngValue]="''" disabled>Choose value</option>
+              @for (
+                option of getFieldConfig(node.field || "")?.options || [];
+                track option.value
+              ) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          } @else {
+            <input
+              class="builder-control"
+              [type]="getInputType(node.field || '')"
+              [(ngModel)]="node.value"
+              (ngModelChange)="onValueChange()"
+              placeholder="Value"
+              aria-label="Value"
+            />
+          }
+        </div>
+      } @else {
+        <span class="no-value-hint">No value required</span>
+      }
+      <button
+        type="button"
+        class="icon-button danger"
+        (click)="removeNode(parent, node)"
+        [disabled]="!parent || !canRemoveChild(parent)"
+        aria-label="Remove condition"
+        title="Remove condition"
+      >
+        ×
+      </button>
     </div>
-  </div>
-</div>
+  }
+</ng-template>

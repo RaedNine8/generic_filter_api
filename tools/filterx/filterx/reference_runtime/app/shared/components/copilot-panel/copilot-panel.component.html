@@ -29,25 +29,19 @@
     </button>
   </div>
 
-  @if (errorMessage) {
-    <div class="copilot-message error">{{ errorMessage }}</div>
-  }
+  <div *ngIf="errorMessage" class="copilot-message error">{{ errorMessage }}</div>
 
-  @if (preview) {
-    <div class="copilot-preview">
-      <div class="preview-copy">{{ preview.explanation }}</div>
-      <button
-        type="button"
-        class="copilot-btn confirm"
-        [disabled]="executing"
-        (click)="confirmPreview()"
-      >
-        {{ executing ? "Running..." : "Apply filter" }}
-      </button>
-    </div>
-  }
+  <div *ngIf="preview" class="copilot-preview">
+    <div class="preview-copy">{{ preview.explanation }}</div>
+    <button
+      type="button"
+      class="copilot-btn confirm"
+      [disabled]="executing"
+      (click)="confirmPreview()"
+    >
+      {{ executing ? "Running..." : "Apply filter" }}
+    </button>
+  </div>
 
-  @if (summary) {
-    <div class="copilot-message success">{{ summary }}</div>
-  }
+  <div *ngIf="summary" class="copilot-message success">{{ summary }}</div>
 </section>

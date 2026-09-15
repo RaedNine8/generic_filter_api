@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 3 packages, and changed 3 packages in 3s\n",
+  "stderr": "",
+  "duration_seconds": 3.328,
+  "log_file": ".filterx/cli-logs/12-frontend-npm-install.json"
+}

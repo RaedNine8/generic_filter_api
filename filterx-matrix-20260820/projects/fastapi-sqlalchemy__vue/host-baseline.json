@@ -1,0 +1,19 @@
+{
+  "app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "app/database.py": "f8badcb1048ed39a9ff58c6784c5c43470c0ae81a7baf3c18ca2bc45fd58a716",
+  "app/main.py": "c9e9b60fb37445d8a0ca150f4f924324f137d36772123f12ad4eb7090634f520",
+  "app/models/__init__.py": "6c7551bf40f22f50e5c5967cdb50287a7ab4f18ca54ae4fdaaada0b0a6841a08",
+  "app/models/author.py": "0230b43a556c5c6d28d856d357305154c167dacf8d55f5ff8a71f71d47a1571d",
+  "app/models/book.py": "cbb083129f954772a127ed941a90119f132f2b478bf530e59376ced2d4026a8b",
+  "app/security.py": "eb8dacccc05d76dc364d666c87d5808142177b6444b75b716a8d63611194a39f",
+  "filterx.yaml": "70c0dee1a8f07e5d1134fc1c1c2d2ef7e48371f65fc6bbd081ba7986c22302cd",
+  "frontend/index.html": "6fc21c08748c5994327261461d211675190ec16d6cc435c6124266bd38d6ba6d",
+  "frontend/package.json": "3285514374ec0c8c9d598d707613bd9c120552c0b9b361ddf0a7a7d6abf34455",
+  "frontend/src/App.vue": "7edfcb965e6e2e874e78a75298c8d5920f0eeec991fccd90ee95cb8c703a47bb",
+  "frontend/src/env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+  "frontend/src/main.ts": "7173bae20eafc58a87988d3d9aeaeae12b06819798905787f6821c2b11b709fa",
+  "frontend/tsconfig.json": "7d1c0e13acfa0903d21b58a51c350eb4bb21320b74e41913612b6a26614d272f",
+  "frontend/tsconfig.tsbuildinfo": "b7dbc27f08c83ef9197d0de092c2820fb42bd3a19b2f0f5fa7e3854e472425f7",
+  "frontend/vite.config.ts": "41b636dff9c7dc1e52e1caf2541b19356715b16e037cb4551c27b4fb8673f2b5",
+  "seed.py": "dc47d14658751f525cae0033d105cf42dab17a0494782b34c355d9282b71d246"
+}

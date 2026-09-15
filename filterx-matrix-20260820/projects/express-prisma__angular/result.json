@@ -1,0 +1,637 @@
+{
+  "name": "express-prisma__angular",
+  "backend": "express-prisma",
+  "frontend": "angular",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "backend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\nadded 115 packages in 25s\n",
+      "stderr": "",
+      "duration_seconds": 25.281,
+      "log_file": ".filterx/cli-logs/01-backend-npm-install.json"
+    },
+    {
+      "stage": "prisma-generate",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "exec",
+        "prisma",
+        "generate"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "Prisma schema loaded from prisma\\schema.prisma\n\n\u2714 Generated Prisma Client (v6.19.3) to .\\node_modules\\@prisma\\client in 94ms\n\nStart by importing your Prisma Client (See: https://pris.ly/d/importing-client)\n\nTip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate\n\n",
+      "stderr": "Environment variables loaded from .env\n",
+      "duration_seconds": 4.938,
+      "log_file": ".filterx/cli-logs/02-prisma-generate.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 852 packages in 1m\n",
+      "stderr": "npm warn deprecated critters@0.0.24: Ownership of Critters has moved to the Nuxt team, who will be maintaining the project going forward. If you'd like to keep using Critters, please switch to the actively-maintained fork at https://github.com/danielroe/beasties\nnpm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\nnpm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\n",
+      "duration_seconds": 63.078,
+      "log_file": ".filterx/cli-logs/03-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-db-push",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "exec",
+        "prisma",
+        "db",
+        "push",
+        "--",
+        "--skip-generate"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"filterx.db\" at \"file:./filterx.db\"\n\nSQLite database filterx.db created at file:./filterx.db\n\nYour database is now in sync with your Prisma schema. Done in 62ms\n\n",
+      "stderr": "Environment variables loaded from .env\n",
+      "duration_seconds": 2.813,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-db-push.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "seed"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 seed\n> node seed.mjs\n\n",
+      "stderr": "",
+      "duration_seconds": 0.813,
+      "log_file": ".filterx/cli-logs/05-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 build\n> tsc\n\n",
+      "stderr": "",
+      "duration_seconds": 3.5,
+      "log_file": ".filterx/cli-logs/06-host-before-filterx-build.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m179.93 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m48.10 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m40 bytes\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m40 bytes\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m179.97 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m48.14 kB\u001b[22m\n\nApplication bundle generation complete. [12.789 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 27.0,
+      "log_file": ".filterx/cli-logs/07-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2,\n  \"ir_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\.filterx\\\\ir.json\"\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.469,
+      "log_file": ".filterx/cli-logs/08-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T195606.443186Z-04c6bc66\",\n  \"framework\": \"express-prisma\",\n  \"applied_ops\": 9,\n  \"skipped_ops\": 0,\n  \"touched_files\": [\n    \"src/filterx-generated/types.ts\",\n    \"src/filterx-generated/metadata.ts\",\n    \"src/filterx-generated/validation.ts\",\n    \"src/filterx-generated/query.ts\",\n    \"src/filterx-generated/security.ts\",\n    \"src/filterx-generated/router.ts\",\n    \"src/filterx-generated/index.ts\",\n    \"package.json\",\n    \"src/app.ts\"\n  ],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/09-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T195606.734861Z-7a39c26d\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\frontend\\\\src\\\\app\\\\filterx-generated\",\n  \"entity_count\": 2,\n  \"generated_route_count\": 2,\n  \"touched_files\": [\n    \"frontend/proxy.conf.cjs\",\n    \"frontend/package.json\",\n    \"frontend/angular.json\",\n    \"frontend/src/app/app.config.ts\",\n    \"frontend/src/app/core/index.ts\",\n    \"frontend/src/app/core/config/filterx-config.ts\",\n    \"frontend/src/app/core/enums/index.ts\",\n    \"frontend/src/app/core/enums/filter-operation.enum.ts\",\n    \"frontend/src/app/core/enums/sort-order.enum.ts\",\n    \"frontend/src/app/core/interfaces/index.ts\",\n    \"frontend/src/app/core/interfaces/entity-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/field-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter-tree.interface.ts\",\n    \"frontend/src/app/core/interfaces/pagination.interface.ts\",\n    \"frontend/src/app/core/interfaces/query-state.interface.ts\",\n    \"frontend/src/app/core/interfaces/saved-filter.interface.ts\",\n    \"frontend/src/app/core/services/index.ts\",\n    \"frontend/src/app/core/services/entity-query.service.ts\",\n    \"frontend/src/app/core/services/filter-state-manager.service.ts\",\n    \"frontend/src/app/core/services/generic-query.service.ts\",\n    \"frontend/src/app/core/services/saved-filter.service.ts\",\n    \"frontend/src/app/shared/index.ts\",\n    \"frontend/src/app/shared/components/index.ts\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.html\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.scss\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.ts\",\n    \"frontend/src/app/shared/components/entity-list/entity-list.component.ts\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.html\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.scss\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.ts\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.html\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.scss\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.ts\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.html\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.scss\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.ts\",\n    \"frontend/src/app/shared/components/sort-header/sort-header.component.ts\",\n    \"frontend/src/filterx.scss\",\n    \"frontend/src/app/filterx-generated/entities/author.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/author.page.ts\",\n    \"frontend/src/app/filterx-generated/entities/book.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/book.page.ts\",\n    \"frontend/src/app/filterx-generated/routes.ts\",\n    \"frontend/src/app/filterx-generated/entities/index.ts\",\n    \"frontend/src/app/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts\",\n    \"frontend/src/app/app.routes.ts\"\n  ],\n  \"applied_ops\": 51,\n  \"skipped_ops\": 4,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.344,
+      "log_file": ".filterx/cli-logs/10-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/11-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T195607.343407Z-77ce9882\",\n  \"framework\": \"express-prisma\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 9,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.375,
+      "log_file": ".filterx/cli-logs/12-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T195607.771486Z-339203c6\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\frontend\\\\src\\\\app\\\\filterx-generated\",\n  \"entity_count\": 2,\n  \"generated_route_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 52,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.735,
+      "log_file": ".filterx/cli-logs/13-frontend-reinstall.json"
+    },
+    {
+      "stage": "backend-npm-install-after-filterx",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\nadded 113 packages in 7s\n",
+      "stderr": "npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.\nnpm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.\nnpm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported\nnpm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated fstream@1.0.12: This package is no longer supported.\nnpm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\n",
+      "duration_seconds": 6.859,
+      "log_file": ".filterx/cli-logs/14-backend-npm-install-after-filterx.json"
+    },
+    {
+      "stage": "host-after-filterx-db-push",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "exec",
+        "prisma",
+        "db",
+        "push",
+        "--",
+        "--skip-generate"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"filterx.db\" at \"file:./filterx.db\"\n\nThe database is already in sync with the Prisma schema.\n\n",
+      "stderr": "Environment variables loaded from .env\n",
+      "duration_seconds": 2.484,
+      "log_file": ".filterx/cli-logs/15-host-after-filterx-db-push.json"
+    },
+    {
+      "stage": "host-after-filterx-seed",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "seed"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 seed\n> node seed.mjs\n\n",
+      "stderr": "",
+      "duration_seconds": 0.5,
+      "log_file": ".filterx/cli-logs/16-host-after-filterx-seed.json"
+    },
+    {
+      "stage": "host-after-filterx-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 build\n> tsc\n\n",
+      "stderr": "",
+      "duration_seconds": 2.063,
+      "log_file": ".filterx/cli-logs/17-host-after-filterx-build.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 10 packages, removed 8 packages, and changed 2 packages in 6s\n",
+      "stderr": "npm warn deprecated @primeng/themes@18.0.2: Deprecated. This package is no longer maintained. Please migrate to @primeuix/themes: https://www.npmjs.com/package/@primeuix/themes\n",
+      "duration_seconds": 6.156,
+      "log_file": ".filterx/cli-logs/18-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m211.85 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m37.65 kB\u001b[39m\n\u001b[32mchunk-FKCKESGN.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m\u001b[36m150.56 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m43.03 kB\u001b[39m\n\u001b[32mchunk-C3X5IGL4.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m \u001b[36m19.56 kB\u001b[39m\u001b[2m | \u001b[22m                \u001b[36m5.77 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m14.89 kB\u001b[39m\u001b[2m | \u001b[22m                \u001b[36m2.98 kB\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m396.87 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m89.43 kB\u001b[22m\n\n\u001b[1mLazy chunk files\u001b[22m   \u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mchunk-WLS7TXMN.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m\u001b[36m133.40 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m26.93 kB\u001b[39m\n\u001b[32mchunk-OH3CQDTE.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mbrowser\u001b[22m      \u001b[2m | \u001b[22m \u001b[36m67.20 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m17.44 kB\u001b[39m\n\u001b[32mchunk-3PQ3Z3CJ.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mbook-page\u001b[22m    \u001b[2m | \u001b[22m  \u001b[36m1.78 kB\u001b[39m\u001b[2m | \u001b[22m              \u001b[36m744 bytes\u001b[39m\n\u001b[32mchunk-PKTGI54B.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mauthor-page\u001b[22m  \u001b[2m | \u001b[22m  \u001b[36m1.29 kB\u001b[39m\u001b[2m | \u001b[22m              \u001b[36m638 bytes\u001b[39m\n\nApplication bundle generation complete. [6.917 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 8.297,
+      "log_file": ".filterx/cli-logs/19-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__angular\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T195606.443186Z-04c6bc66\",\n    \"patch-20260820T195606.734861Z-7a39c26d\",\n    \"patch-20260820T195607.343407Z-77ce9882\",\n    \"patch-20260820T195607.771486Z-339203c6\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.218,
+      "log_file": ".filterx/cli-logs/20-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T195607.771486Z-339203c6",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T195607.771486Z-339203c6\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/21-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T195607.343407Z-77ce9882",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T195607.343407Z-77ce9882\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.203,
+      "log_file": ".filterx/cli-logs/22-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T195606.734861Z-7a39c26d",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T195606.734861Z-7a39c26d\",\n  \"restored\": [\n    \"frontend/proxy.conf.cjs\",\n    \"frontend/package.json\",\n    \"frontend/angular.json\",\n    \"frontend/src/app/app.config.ts\",\n    \"frontend/src/app/app.routes.ts\"\n  ],\n  \"removed\": [\n    \"frontend/src/app/core/index.ts\",\n    \"frontend/src/app/core/config/filterx-config.ts\",\n    \"frontend/src/app/core/enums/index.ts\",\n    \"frontend/src/app/core/enums/filter-operation.enum.ts\",\n    \"frontend/src/app/core/enums/sort-order.enum.ts\",\n    \"frontend/src/app/core/interfaces/index.ts\",\n    \"frontend/src/app/core/interfaces/entity-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/field-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter-tree.interface.ts\",\n    \"frontend/src/app/core/interfaces/pagination.interface.ts\",\n    \"frontend/src/app/core/interfaces/query-state.interface.ts\",\n    \"frontend/src/app/core/interfaces/saved-filter.interface.ts\",\n    \"frontend/src/app/core/services/index.ts\",\n    \"frontend/src/app/core/services/entity-query.service.ts\",\n    \"frontend/src/app/core/services/filter-state-manager.service.ts\",\n    \"frontend/src/app/core/services/generic-query.service.ts\",\n    \"frontend/src/app/core/services/saved-filter.service.ts\",\n    \"frontend/src/app/shared/index.ts\",\n    \"frontend/src/app/shared/components/index.ts\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.html\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.scss\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.ts\",\n    \"frontend/src/app/shared/components/entity-list/entity-list.component.ts\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.html\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.scss\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.ts\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.html\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.scss\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.ts\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.html\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.scss\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.ts\",\n    \"frontend/src/app/shared/components/sort-header/sort-header.component.ts\",\n    \"frontend/src/filterx.scss\",\n    \"frontend/src/app/filterx-generated/entities/author.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/author.page.ts\",\n    \"frontend/src/app/filterx-generated/entities/book.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/book.page.ts\",\n    \"frontend/src/app/filterx-generated/routes.ts\",\n    \"frontend/src/app/filterx-generated/entities/index.ts\",\n    \"frontend/src/app/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts\"\n  ],\n  \"count\": 51\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.25,
+      "log_file": ".filterx/cli-logs/23-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T195606.443186Z-04c6bc66",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T195606.443186Z-04c6bc66\",\n  \"restored\": [\n    \"package.json\",\n    \"src/app.ts\"\n  ],\n  \"removed\": [\n    \"src/filterx-generated/types.ts\",\n    \"src/filterx-generated/metadata.ts\",\n    \"src/filterx-generated/validation.ts\",\n    \"src/filterx-generated/query.ts\",\n    \"src/filterx-generated/security.ts\",\n    \"src/filterx-generated/router.ts\",\n    \"src/filterx-generated/index.ts\"\n  ],\n  \"count\": 9\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.235,
+      "log_file": ".filterx/cli-logs/24-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nremoved 6 packages in 2s\n",
+      "stderr": "",
+      "duration_seconds": 1.969,
+      "log_file": ".filterx/cli-logs/25-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-db-push",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "exec",
+        "prisma",
+        "db",
+        "push",
+        "--",
+        "--skip-generate"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": SQLite database \"filterx.db\" at \"file:./filterx.db\"\n\nThe database is already in sync with the Prisma schema.\n\n",
+      "stderr": "Environment variables loaded from .env\n",
+      "duration_seconds": 2.156,
+      "log_file": ".filterx/cli-logs/26-host-before-filterx-db-push.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "seed"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 seed\n> node seed.mjs\n\n",
+      "stderr": "",
+      "duration_seconds": 0.516,
+      "log_file": ".filterx/cli-logs/27-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+      "exit_code": 0,
+      "stdout": "\n> filterx-express-matrix@1.0.0 build\n> tsc\n\n",
+      "stderr": "",
+      "duration_seconds": 1.109,
+      "log_file": ".filterx/cli-logs/28-host-before-filterx-build.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m179.93 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m48.10 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m40 bytes\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m40 bytes\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m179.97 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m48.14 kB\u001b[22m\n\nApplication bundle generation complete. [3.405 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 4.688,
+      "log_file": ".filterx/cli-logs/29-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    ".env": "acc26b6d7abf3f1a66c6d4a15b4ba55605e3d5a82e98f8773898b0f490861a59",
+    "filterx.yaml": "a4901b328793acb7a9edb79042ba5b7598253019645ebe667c5c2e733d909551",
+    "frontend/angular.json": "a6850fa50de1d3628ee2e633ab2a8571eec52e0fdc314b65cadd4b7fcd320b71",
+    "frontend/package.json": "1007c83b2fa8e2c45c73cbce8eba8bcb18415a09b9f496aea13e6ead1a1f7467",
+    "frontend/proxy.conf.cjs": "dc7eaf609813511aacc42ba57deb8f4a6d50268cfec140c550116de07fe628df",
+    "frontend/src/app/app.component.ts": "a5566f593bb99d66b8d8c2101f41be24f0cab68362710af000150f56a069aa5d",
+    "frontend/src/app/app.config.ts": "3ccee89cff2cdc1b2186af686ea07ead54cbd9c539f78063b5c04bc9ff2611f5",
+    "frontend/src/app/app.routes.ts": "d3ab096e7850f039afb8ea01ac4259bacada31bad9f4bea5663ab450cbacc5f0",
+    "frontend/src/index.html": "53d3ba4b3d08ed16585db6521206d8bbd1a493c155486a1ef8f269c257bbb0d9",
+    "frontend/src/main.ts": "53843204586c410ba2953494a997de679a3fcfa5d83668605f4b91443c68a8e0",
+    "frontend/src/styles.scss": "3615a642fdb308a6ed9eba627a63049e7067bd003885dc113b077275ac276813",
+    "frontend/tsconfig.app.json": "caa84e8abdba5afa155da8dc22276ae5144efe50508f6c346ecf99e7ad5015f3",
+    "frontend/tsconfig.json": "86cc0cc3a1586ec956c2e477de4ed857c169ab6be8229078eb5f0048b975855d",
+    "package.json": "d4947429ef0054b1cf40146a49a6c59d5dddc15ba4315fd8631115b44da96d3f",
+    "prisma/schema.prisma": "262fd5570e51b85324240a8c16b3aa0a5fe49d1d7022629dd95fb22771496aa6",
+    "seed.mjs": "6799343c6f35775c0ca5b7950d6cf243099bf0fc91d674be7d14378ea0bd8dc1",
+    "src/app.ts": "014dae423c64727d2db694f9023db4644cff0b75ca33fbd2497a1506a054808f",
+    "src/filterx-hooks.ts": "f4745d5c7f33ef2b18fb6e9ae70c1592905081406f0d141b28bd382e8ebb9055",
+    "src/server.ts": "61c89a369dfde655c675b929d04fcd612b75107af45a1ed0607988aa4090e9c4",
+    "tsconfig.json": "9f25aa7f23558679865a41c91c5320c510405a84699639d15273fc0288076a3f"
+  }
+}

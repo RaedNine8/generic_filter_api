@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, map } from "rxjs";
 
@@ -13,10 +13,18 @@ import {
   generateNodeId,
 } from "../interfaces/filter-tree.interface";
 import { FilterOperation } from "../enums/filter-operation.enum";
+import { FILTERX_CONFIG, joinFilterxUrl } from "../config/filterx-config";
 
 @Injectable({ providedIn: "root" })
 export class CopilotService {
-  private readonly baseUrl = "/api/filterx/copilot";
+  private readonly config = inject(FILTERX_CONFIG);
+
+  private get baseUrl(): string {
+    return joinFilterxUrl(
+      this.config.apiBaseUrl,
+      `${this.config.apiPrefix}/filterx/copilot`,
+    );
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -32,10 +40,10 @@ export class CopilotService {
       );
   }
 
-  execute<T = Record<string, unknown>>(
+  execute(
     confirmationToken: string,
-  ): Observable<CopilotExecuteResponse<T>> {
-    return this.http.post<CopilotExecuteResponse<T>>(
+  ): Observable<CopilotExecuteResponse> {
+    return this.http.post<CopilotExecuteResponse>(
       `${this.baseUrl}/execute`,
       {
         confirmation_token: confirmationToken,
@@ -43,7 +51,7 @@ export class CopilotService {
     );
   }
 
-  private fromBackendTree(node: Record<string, unknown>): FilterTreeNode {
+  fromBackendTree(node: Record<string, unknown>): FilterTreeNode {
     const nodeType =
       node["node_type"] === "operator" ? "operator" : "condition";
     if (nodeType === "operator") {

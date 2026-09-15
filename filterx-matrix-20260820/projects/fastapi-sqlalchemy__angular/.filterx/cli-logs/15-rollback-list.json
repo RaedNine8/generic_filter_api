@@ -1,0 +1,20 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__angular\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T174815.419479Z-0028faac\",\n    \"patch-20260820T174815.769424Z-9fc35530\",\n    \"patch-20260820T174816.486442Z-87eee371\",\n    \"patch-20260820T174816.780790Z-5462655f\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.265,
+  "log_file": ".filterx/cli-logs/15-rollback-list.json"
+}

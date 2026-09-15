@@ -1,0 +1,29 @@
+
+> filterx-angular-matrix@1.0.0 start
+> ng serve --host 127.0.0.1 --port 4200 --host 127.0.0.1 --port 4200
+
+[1m[33mOption 'host' has been specified multiple times. The value '127.0.0.1' will be used.[39m[22m
+[1m[33mOption 'port' has been specified multiple times. The value '4200' will be used.[39m[22m
+[1m[33mPrebundling has been configured but will not be used because scripts optimization is enabled.[39m[22m
+[33m❯[39m Building...
+[32m✔[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m         [2m | [22m[36m211.85 kB[39m[2m | [22m               [36m37.65 kB[39m
+[32mchunk-FKCKESGN.js[39m  [2m | [22m[2m-[22m            [2m | [22m[36m150.56 kB[39m[2m | [22m               [36m43.03 kB[39m
+[32mchunk-C3X5IGL4.js[39m  [2m | [22m[2m-[22m            [2m | [22m [36m19.56 kB[39m[2m | [22m                [36m5.77 kB[39m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m       [2m | [22m [36m14.89 kB[39m[2m | [22m                [36m2.98 kB[39m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m396.87 kB[22m[2m | [22m               [1m89.43 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-WLS7TXMN.js[39m  [2m | [22m[2m-[22m            [2m | [22m[36m133.40 kB[39m[2m | [22m               [36m26.93 kB[39m
+[32mchunk-OH3CQDTE.js[39m  [2m | [22m[2mbrowser[22m      [2m | [22m [36m67.20 kB[39m[2m | [22m               [36m17.44 kB[39m
+[32mchunk-3PQ3Z3CJ.js[39m  [2m | [22m[2mbook-page[22m    [2m | [22m  [36m1.78 kB[39m[2m | [22m              [36m744 bytes[39m
+[32mchunk-PKTGI54B.js[39m  [2m | [22m[2mauthor-page[22m  [2m | [22m  [36m1.29 kB[39m[2m | [22m              [36m638 bytes[39m
+
+Application bundle generation complete. [4.698 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m4200[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m

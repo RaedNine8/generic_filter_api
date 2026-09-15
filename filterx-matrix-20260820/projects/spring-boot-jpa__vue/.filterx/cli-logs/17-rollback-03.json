@@ -1,0 +1,23 @@
+{
+  "stage": "rollback-03",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T201302.147240Z-39573e61",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T201302.147240Z-39573e61\",\n  \"restored\": [\n    \"frontend/package.json\",\n    \"frontend/src/App.vue\"\n  ],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.vue\",\n    \"frontend/src/filterx-generated/FilterxFilterBuilder.vue\",\n    \"frontend/src/filterx-generated/index.ts\"\n  ],\n  \"count\": 9\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.25,
+  "log_file": ".filterx/cli-logs/17-rollback-03.json"
+}

@@ -1,0 +1,14 @@
+{
+  "stage": "host-before-filterx-seed",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "run",
+    "seed"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+  "exit_code": 0,
+  "stdout": "\n> filterx-express-matrix@1.0.0 seed\n> node seed.mjs\n\n",
+  "stderr": "",
+  "duration_seconds": 0.781,
+  "log_file": ".filterx/cli-logs/05-host-before-filterx-seed.json"
+}

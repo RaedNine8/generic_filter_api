@@ -1,0 +1,17 @@
+{
+  ".env": "acc26b6d7abf3f1a66c6d4a15b4ba55605e3d5a82e98f8773898b0f490861a59",
+  "filterx.yaml": "fdf7611129926b2c779298af4e562bbc32975c6a0be6063c61d06d239525ab6b",
+  "frontend/next-env.d.ts": "85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6",
+  "frontend/next.config.ts": "4f726d227c9b96a1c232a7c06933d925c5c3a46a57bd4798ee7ae4163125a88a",
+  "frontend/package.json": "c256e72893c49cac0dc742a153b5a1ad493536d208cc495903ace562eaa34b13",
+  "frontend/src/app/layout.tsx": "d98ac855ef79a037c60b7d7cf93c8cc25fedefbb9372eb40fbab42d7503c9027",
+  "frontend/src/app/page.tsx": "cb57483843396030732dd474c6309b1393f68b0a88d504a02c8d788fe8245dad",
+  "frontend/tsconfig.json": "e3ba0bafff04f187ecbea0ecb6cd74002473d4b000881228a98fe3632ff5f30a",
+  "package.json": "d4947429ef0054b1cf40146a49a6c59d5dddc15ba4315fd8631115b44da96d3f",
+  "prisma/schema.prisma": "262fd5570e51b85324240a8c16b3aa0a5fe49d1d7022629dd95fb22771496aa6",
+  "seed.mjs": "6799343c6f35775c0ca5b7950d6cf243099bf0fc91d674be7d14378ea0bd8dc1",
+  "src/app.ts": "014dae423c64727d2db694f9023db4644cff0b75ca33fbd2497a1506a054808f",
+  "src/filterx-hooks.ts": "f4745d5c7f33ef2b18fb6e9ae70c1592905081406f0d141b28bd382e8ebb9055",
+  "src/server.ts": "61c89a369dfde655c675b929d04fcd612b75107af45a1ed0607988aa4090e9c4",
+  "tsconfig.json": "9f25aa7f23558679865a41c91c5320c510405a84699639d15273fc0288076a3f"
+}

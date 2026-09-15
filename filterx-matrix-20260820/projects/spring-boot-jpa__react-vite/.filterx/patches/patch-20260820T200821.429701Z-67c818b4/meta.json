@@ -1,0 +1,75 @@
+{
+  "patch_id": "patch-20260820T200821.429701Z-67c818b4",
+  "created_at": "2026-08-20T20:08:21.457601+00:00",
+  "description": "backend.install.spring-boot-jpa",
+  "touched_files": [
+    "src/main/java/com/example/filterx/generated/FilterxMetadata.java",
+    "src/main/java/com/example/filterx/generated/FilterxDtos.java",
+    "src/main/java/com/example/filterx/generated/FilterxRequests.java",
+    "src/main/java/com/example/filterx/generated/FilterxSecurity.java",
+    "src/main/java/com/example/filterx/generated/FilterxSpecifications.java",
+    "src/main/java/com/example/filterx/generated/FilterxQueryService.java",
+    "src/main/java/com/example/filterx/generated/FilterxExportService.java",
+    "src/main/java/com/example/filterx/generated/FilterxController.java",
+    "src/main/java/com/example/filterx/generated/FilterxConfiguration.java",
+    "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java",
+    "pom.xml"
+  ],
+  "backups": [
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxMetadata.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxDtos.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxRequests.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxSecurity.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxSpecifications.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxQueryService.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxExportService.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxController.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxConfiguration.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "pom.xml",
+      "existed": true,
+      "backup_path": "backup\\pom.xml"
+    }
+  ]
+}

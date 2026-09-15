@@ -1,0 +1,22 @@
+{
+  "stage": "backend-install",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "backend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200252.555046Z-2f6d7d79\",\n  \"framework\": \"express-prisma\",\n  \"applied_ops\": 9,\n  \"skipped_ops\": 0,\n  \"touched_files\": [\n    \"src/filterx-generated/types.ts\",\n    \"src/filterx-generated/metadata.ts\",\n    \"src/filterx-generated/validation.ts\",\n    \"src/filterx-generated/query.ts\",\n    \"src/filterx-generated/security.ts\",\n    \"src/filterx-generated/router.ts\",\n    \"src/filterx-generated/index.ts\",\n    \"package.json\",\n    \"src/app.ts\"\n  ],\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.313,
+  "log_file": ".filterx/cli-logs/09-backend-install.json"
+}

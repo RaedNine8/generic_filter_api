@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import {
   HttpClient,
   HttpParams,
@@ -21,12 +21,18 @@ import {
 import { FilterOperation } from "../enums/filter-operation.enum";
 import { SortOrder } from "../enums/sort-order.enum";
 import { ApiError, QueryState } from "../interfaces/query-state.interface";
+import { FILTERX_CONFIG, joinFilterxUrl } from "../config/filterx-config";
 
 @Injectable({
   providedIn: "root",
 })
 export abstract class GenericQueryService<T> {
   protected abstract baseUrl: string;
+  private readonly filterxConfig = inject(FILTERX_CONFIG);
+
+  protected get requestBaseUrl(): string {
+    return joinFilterxUrl(this.filterxConfig.apiBaseUrl, this.baseUrl);
+  }
 
   protected defaultState: QueryState = {
     filterTree: null,
@@ -78,18 +84,18 @@ export abstract class GenericQueryService<T> {
           const treePayload = toBackendPayload(state.filterTree);
           if (!treePayload) {
             return this.http.get<Array<{ key: unknown; count: number }>>(
-              `${this.baseUrl}/group-by/${encodedField}`,
+              `${this.requestBaseUrl}/group-by/${encodedField}`,
               { params },
             );
           }
           return this.http.post<Array<{ key: unknown; count: number }>>(
-            `${this.baseUrl}/group-by/${encodedField}/filter`,
+            `${this.requestBaseUrl}/group-by/${encodedField}/filter`,
             treePayload,
             { params },
           );
         })()
       : this.http.get<Array<{ key: unknown; count: number }>>(
-          `${this.baseUrl}/group-by/${encodedField}`,
+          `${this.requestBaseUrl}/group-by/${encodedField}`,
           { params },
         );
 
@@ -106,7 +112,7 @@ export abstract class GenericQueryService<T> {
 
   getMetadata(): Observable<any> {
     return this.http
-      .get<any>(`${this.baseUrl}/metadata`)
+      .get<any>(`${this.requestBaseUrl}/metadata`)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
@@ -120,7 +126,7 @@ export abstract class GenericQueryService<T> {
 
     this._loading.next(true);
     return this.http
-      .post<PaginatedResponse<T>>(`${this.baseUrl}/filter`, body, {
+      .post<PaginatedResponse<T>>(`${this.requestBaseUrl}/filter`, body, {
         params: httpParams,
       })
       .pipe(
@@ -142,7 +148,7 @@ export abstract class GenericQueryService<T> {
     this._loading.next(true);
 
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);
@@ -162,7 +168,7 @@ export abstract class GenericQueryService<T> {
     this._loading.next(true);
 
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);
@@ -184,7 +190,7 @@ export abstract class GenericQueryService<T> {
     });
     this._loading.next(true);
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);

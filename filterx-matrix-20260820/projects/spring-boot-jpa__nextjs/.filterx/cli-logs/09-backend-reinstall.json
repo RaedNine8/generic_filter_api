@@ -1,0 +1,22 @@
+{
+  "stage": "backend-reinstall",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "backend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201100.249748Z-e0c502d0\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 11,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.297,
+  "log_file": ".filterx/cli-logs/09-backend-reinstall.json"
+}

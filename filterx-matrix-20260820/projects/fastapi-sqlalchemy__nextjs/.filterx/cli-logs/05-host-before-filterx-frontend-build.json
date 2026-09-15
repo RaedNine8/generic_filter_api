@@ -1,0 +1,14 @@
+{
+  "stage": "host-before-filterx-frontend-build",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "run",
+    "build"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+  "exit_code": 0,
+  "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   ▲ Next.js 15.5.23\n\n   Creating an optimized production build ...\n ✓ Compiled successfully in 6.6s\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/4) ...\n   Generating static pages (1/4) \n   Generating static pages (2/4) \n   Generating static pages (3/4) \n ✓ Generating static pages (4/4)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n┌ ○ /                                      127 B         103 kB\n└ ○ /_not-found                            993 B         104 kB\n+ First Load JS shared by all             103 kB\n  ├ chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  └ other shared chunks (total)          1.95 kB\n\n\n○  (Static)  prerendered as static content\n\n",
+  "stderr": "",
+  "duration_seconds": 37.782,
+  "log_file": ".filterx/cli-logs/05-host-before-filterx-frontend-build.json"
+}

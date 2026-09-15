@@ -6,6 +6,9 @@ from typing import Any, Dict, List
 
 from .io import ensure_parent_dir, load_json, utc_now_iso, write_json
 
+MANIFEST_VERSION = 1
+SUPPORTED_MANIFEST_VERSIONS = (MANIFEST_VERSION,)
+
 
 @dataclass
 class ManifestState:
@@ -15,7 +18,7 @@ class ManifestState:
 
 def _default_manifest() -> Dict[str, Any]:
     return {
-        "version": 1,
+        "version": MANIFEST_VERSION,
         "created_at": utc_now_iso(),
         "updated_at": utc_now_iso(),
         "entries": {},
@@ -34,8 +37,27 @@ def load_manifest(path: Path) -> ManifestState:
     if "patch_history" not in data or not isinstance(data["patch_history"], list):
         data["patch_history"] = []
     if "version" not in data:
-        data["version"] = 1
+        data["version"] = MANIFEST_VERSION
     return ManifestState(data=data, path=path)
+
+
+def validate_manifest(state: ManifestState) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    version = state.data.get("version", MANIFEST_VERSION)
+    if version not in SUPPORTED_MANIFEST_VERSIONS:
+        issues.append(
+            {
+                "code": "MANIFEST_VERSION_UNSUPPORTED",
+                "path": str(state.path),
+                "version": version,
+                "supported_versions": list(SUPPORTED_MANIFEST_VERSIONS),
+            }
+        )
+    if not isinstance(state.data.get("entries"), dict):
+        issues.append({"code": "MANIFEST_ENTRIES_INVALID", "path": str(state.path)})
+    if not isinstance(state.data.get("patch_history"), list):
+        issues.append({"code": "MANIFEST_PATCH_HISTORY_INVALID", "path": str(state.path)})
+    return issues
 
 
 def save_manifest(state: ManifestState) -> None:

@@ -1,0 +1,18 @@
+{
+  "filterx.yaml": "bd614ac0fa092fe77fa549f85c5c3e397e38642de84e649f4ef5fffd6c01063a",
+  "frontend/index.html": "4a528f95431e4251fda2710be50b2bf295ed2221ecc559ca4be982ae803c9ab4",
+  "frontend/package.json": "518a36cc21a8913b446dc8dbae7bf7096a3df268fb3c11684d050fb28c355bd1",
+  "frontend/src/App.tsx": "2b27db07066ad78c304c8c5582dc2f175e674af8d2933bb12a090fcbf35cc395",
+  "frontend/src/main.tsx": "3b20254b3446c1c3f4924c2fee27227cc6d8b05e3e11890459ab4ce85088dc49",
+  "frontend/tsconfig.json": "09bcbf227dbd6e0078b7492de5c8633cf2b575f07de54e7d5930f72666adab29",
+  "frontend/tsconfig.tsbuildinfo": "09f7fc94ae51c5f0d6e28bbc1f6f709d5343e8f6831aba69359bb9b253d3a79e",
+  "frontend/vite.config.ts": "5966f042992ff4de3d220498546511176930ad4fab24928e1bd521d6950db56b",
+  "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+  "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+  "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+  "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+  "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+  "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+  "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+  "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+}

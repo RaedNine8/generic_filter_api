@@ -1,0 +1,660 @@
+{
+  "version": 1,
+  "created_at": "2026-08-20T20:06:17.642234+00:00",
+  "updated_at": "2026-08-20T20:06:19.832358+00:00",
+  "entries": {
+    "src/main/java/com/example/filterx/generated/FilterxMetadata.java": {
+      "kind": "generated_file",
+      "sha256": "1d4d5e6a6b3518975a0f2e1f698663f8f89302b85f1fcb14127ee1761f26e5c9",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.649268+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxDtos.java": {
+      "kind": "generated_file",
+      "sha256": "f2c1bcd4b4cc9ce18148a88fab7df571d7f89e1d2fcc360081f7f28c3862af66",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.650294+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxRequests.java": {
+      "kind": "generated_file",
+      "sha256": "fc18e9228c18dfa478cfe28a213a8d82553251a817a86f176b8fdf7a0ad9927f",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.652308+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxSecurity.java": {
+      "kind": "generated_file",
+      "sha256": "1ca6d28ab02216faf5162982a037804e99b671c9a95caabf49fa2652f2cc537e",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.654304+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxSpecifications.java": {
+      "kind": "generated_file",
+      "sha256": "d99a53c80080d5b96a4496169ecbaa6b24d7f5a1262815e7d316fcb64c4b064f",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.655306+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxQueryService.java": {
+      "kind": "generated_file",
+      "sha256": "8ef370f32ab919863c5b48df032d528ef47fc235fb9cb0f9961aa1faefca0304",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.658305+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxExportService.java": {
+      "kind": "generated_file",
+      "sha256": "173385b4bda15109e5fbc7133522e6755bc3988efc5568eceac92a7ac16aae97",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.666253+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxController.java": {
+      "kind": "generated_file",
+      "sha256": "764ed3e7b42bf60ff5c1b6a898a76ac90f8103a4996df354f1e6f7580bdfe653",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.669256+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxConfiguration.java": {
+      "kind": "generated_file",
+      "sha256": "78dc012d2f908577bcc97e01b06b7d705167a33c397ef89580ae23493186af3a",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.671778+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java": {
+      "kind": "generated_file",
+      "sha256": "db7a8411d602114fbaae16ac8b016b0d64e96d56d7379634415491f4d82f868e",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.672781+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "pom.xml": {
+      "kind": "structured_merge",
+      "sha256": "55704ea04fd717ba7886456cd2161ef8326c0aa66a5e6e959c187155d6309535",
+      "last_patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "updated_at": "2026-08-20T20:06:17.677785+00:00",
+      "metadata": {
+        "owner": "host",
+        "format": "xml"
+      }
+    },
+    "frontend/proxy.conf.cjs": {
+      "kind": "generated_file",
+      "sha256": "cf85e76303af207191d3dfc3b0a11ace03ce2b438eea0bcf2bdf02aff6dcc597",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.560195+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/package.json": {
+      "kind": "generated_file",
+      "sha256": "ac317da8085d0c09c4f6c2278abea9eada31e3fb2e8972a1bbea280a7fcb7ae1",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.563707+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    },
+    "frontend/angular.json": {
+      "kind": "generated_file",
+      "sha256": "944ef8ca805f5b376c7cd831efa25810728108e716af131459bf83a52d4497d7",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.565718+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    },
+    "frontend/src/app/app.config.ts": {
+      "kind": "generated_file",
+      "sha256": "9d44fcc3842d45c57847db56b9de7f67bc842b76c8451a67d45fcb7d3291b60d",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.567716+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    },
+    "frontend/src/app/core/index.ts": {
+      "kind": "generated_file",
+      "sha256": "71b253607bc1b939f32d5ba871f379302b93726ba4a38bbbe74bb4da5acd3229",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.568718+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/config/filterx-config.ts": {
+      "kind": "generated_file",
+      "sha256": "a862bbc6d37431f6cae913743ea5f284362776e6b03a8005215af26a6bf3dc10",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.570808+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/enums/index.ts": {
+      "kind": "generated_file",
+      "sha256": "27a7ee14f4a57cc42b658ffe61f40736a3d6acfe908941068739b5be69a152d3",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.571810+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/enums/filter-operation.enum.ts": {
+      "kind": "generated_file",
+      "sha256": "eb2f53e6e0a5d096b11943c3e38868edf7238620973a30bf2197184e70fb9c43",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.572807+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/enums/sort-order.enum.ts": {
+      "kind": "generated_file",
+      "sha256": "fee1e2ccfef0ed2691404a813a1da85bcbd2037974beb4f5fdef5899f573ec7b",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.573807+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/index.ts": {
+      "kind": "generated_file",
+      "sha256": "b577d0674e4986a08fa9ac8ed0b4fb833384ad8d62ec32d32010f940fe1bf6c5",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.574807+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/entity-config.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "9ce92071fddfb81a7fcee5efe2bf63b62cbff4a3b52188a00e39dbd1e75eeda8",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.576809+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/field-config.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "a79fee8157867c179800f1120b58a410136c8baae107fcb3b19be7477c26395b",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.577811+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/filter.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "24ccc99751f359b6b78f1df49edbd6db87a0b9193d86f1a15c9643ddc882c821",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.580331+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/filter-tree.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "cad964a2955ae7bc5238f954db87744fc964bc3d954d57ffd17dc37b58d72a6f",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.582336+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/pagination.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "3b8c0bb8e2af9ecb9c58504cf46fb50a5ada4213c662406b4e8ce8ce372b8ccc",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.583338+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/query-state.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "d139a8599eecea4800e1e94aa0fb7bde49a8f6d6d3dc5cdc234240a7355d8e33",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.584336+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/interfaces/saved-filter.interface.ts": {
+      "kind": "generated_file",
+      "sha256": "31ff52ee50c05b23d5924937e3c5ede26594d11993fdc1d80c78c2b49ad3973a",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.585335+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/services/index.ts": {
+      "kind": "generated_file",
+      "sha256": "420d24eb17b6e9ae742069b2e320ef994f551efb9c8f15a26bd3e9c38fe7240a",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.586334+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/services/entity-query.service.ts": {
+      "kind": "generated_file",
+      "sha256": "42d10193b965a9d2f8cdc35c5ad397ff10eb5206d89cc601aeecff31e5b170bb",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.587336+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/services/filter-state-manager.service.ts": {
+      "kind": "generated_file",
+      "sha256": "5fb66d72c111b873df0af09480e1791edfc0dc576c17d7c95d02a12a014ad9a4",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.588336+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/services/generic-query.service.ts": {
+      "kind": "generated_file",
+      "sha256": "47287eec993ef9b2050efbb97d50aa394a67b60a53a724e31d4eaf8df6e041c6",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.589337+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/core/services/saved-filter.service.ts": {
+      "kind": "generated_file",
+      "sha256": "1bac2ec22dc1bae003e803fcd01a1807a9d51e7e7c62c587bd80e8ecf7116470",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.591393+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/index.ts": {
+      "kind": "generated_file",
+      "sha256": "0cd6f10b608309760abc24fa8d86bcc8bd9e7d00356eafa61ee9aad31e049719",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.592392+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/index.ts": {
+      "kind": "generated_file",
+      "sha256": "1daf145ecff83f10e7ad55aea9f65952ead7b82ec1fd1368fb1bcebb1cf9af88",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.594396+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html": {
+      "kind": "generated_file",
+      "sha256": "24ecc602fc6cbd06cbc79b5e70b90086ee34f595194cf35527b5a037b71a3bb2",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.597394+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss": {
+      "kind": "generated_file",
+      "sha256": "39acf6dd337ec8ec908f5142e62f8cc27c4f55ac0b246bbc3d7d0207bbaf5eda",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.599393+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts": {
+      "kind": "generated_file",
+      "sha256": "e8281fb13455e8441fd860ce1d9be629e97c60fbf54d3df699d4e3f55a443a2b",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.601473+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/data-table/data-table.component.html": {
+      "kind": "generated_file",
+      "sha256": "60c2aeba13884936f6e83205d9e22c3383080e9b2e852751cb47e9d926d9f57d",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.602474+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/data-table/data-table.component.scss": {
+      "kind": "generated_file",
+      "sha256": "962092b6291cabb584cab61ad166bfcc929991465e98fa451d6b2e1331b6f113",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.603474+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/data-table/data-table.component.ts": {
+      "kind": "generated_file",
+      "sha256": "bb6f53ccd8ccd68ebb690910f2158628a496c1be82ad298d65aaace05eb528c0",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.604474+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/entity-list/entity-list.component.ts": {
+      "kind": "generated_file",
+      "sha256": "101bb5996471fdfdabb17a5130678259424803ba6043c4e13d9ddf56eaaf7ad2",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.606472+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.html": {
+      "kind": "generated_file",
+      "sha256": "e80f0fd8fa70e2c8e5bd9454237a0ba35302717fbd9b7e4c27349d3b54dc91ae",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.607474+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.scss": {
+      "kind": "generated_file",
+      "sha256": "033adbd8e54d671bbb71fee7a6191033f529370fd031113bb013fa87d69a0ffd",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.608472+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/filter-builder/filter-builder.component.ts": {
+      "kind": "generated_file",
+      "sha256": "50c2c71e5c0daad2038df35ee213e684dae567c42fc9b543328392f2f157fc1d",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.611587+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/pagination/pagination.component.html": {
+      "kind": "generated_file",
+      "sha256": "66c038d14b3996b9c870470ed5a9d4b257869ce4a3d2faf5c7d50d17bb021e8d",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.616589+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/pagination/pagination.component.scss": {
+      "kind": "generated_file",
+      "sha256": "7c03473212697d46acf5d9fd91412a8ac46ffdc5a29a6beedb1360857c9235a0",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.618587+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/pagination/pagination.component.ts": {
+      "kind": "generated_file",
+      "sha256": "0ad659cb5f46d796a6013044451f43dd46bca7f6c1a8e3d266bfe1048eb5a14e",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.619587+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/search-box/search-box.component.html": {
+      "kind": "generated_file",
+      "sha256": "3a4f234aee58b179f54c319f4eefba0d54695ce449336e92bf05d0464e9c6e60",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.621102+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/search-box/search-box.component.scss": {
+      "kind": "generated_file",
+      "sha256": "10af82188590d8347605c4c0cb760fd578ed8d1e406773e1791df2bfc296e496",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.622109+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/search-box/search-box.component.ts": {
+      "kind": "generated_file",
+      "sha256": "998f79119c2fbfa337bf07af8def527cc1196873675d98e3c0f747ec058acd0b",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.623109+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/shared/components/sort-header/sort-header.component.ts": {
+      "kind": "generated_file",
+      "sha256": "22e0b9b25a0394d271c66fd9b21470895f02d6d34ed5fb30ccf97a4b0cdf2105",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.625108+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/filterx.scss": {
+      "kind": "generated_file",
+      "sha256": "f2502533a51937fd27b327e27a1d4a75413018f7b8df64b847c809465cede8c2",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.626107+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/author.config.ts": {
+      "kind": "generated_file",
+      "sha256": "dd0ad084ce20f101af008192e9900823463c7252eb7489efe7c7a26203104fbe",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.632637+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/pages/author.page.ts": {
+      "kind": "generated_file",
+      "sha256": "3415ac78cc975bf6ed7dd81aef29e7fb505b98b97bb40fcd2a8caf2668fa93e1",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.633637+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/book.config.ts": {
+      "kind": "generated_file",
+      "sha256": "5fd951512d23b38dceb5ad78f1b7992e69827ae80a250b2a9244f3c8d2c327b5",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.635640+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/pages/book.page.ts": {
+      "kind": "generated_file",
+      "sha256": "bddd9eb0cb99e3e513863f1ebf542e90f69d9c1f3703b5839b233e0dbc2a4520",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.637637+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/routes.ts": {
+      "kind": "generated_file",
+      "sha256": "3cfbe7f507d2ef41113667f0fe732fe106943bbfa0efe3e5f86dab598785a667",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.638637+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/entities/index.ts": {
+      "kind": "generated_file",
+      "sha256": "1910ba0b951cd899c227a9ab24704d3ebc2a7006a9b8337b0072e174094cf316",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.640145+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/index.ts": {
+      "kind": "generated_file",
+      "sha256": "3387664080ec202b26a07b02eaaae1ecdba82f9e5324885a473e0efe7cbb17d0",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.642159+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts": {
+      "kind": "generated_file",
+      "sha256": "38a4dd43b852a45705474afda8097988acdc94204ef6c2f5da932a4bac4d3fdc",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.647162+00:00",
+      "metadata": {
+        "owner": "filterx-generated"
+      }
+    },
+    "frontend/src/app/app.routes.ts": {
+      "kind": "generated_file",
+      "sha256": "338eba45400ded38b32da6cf6b6b9dd52828418002825ed3ee78228f549381cc",
+      "last_patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "updated_at": "2026-08-20T20:06:18.649665+00:00",
+      "metadata": {
+        "owner": "host"
+      }
+    }
+  },
+  "patch_history": [
+    {
+      "patch_id": "patch-20260820T200617.641227Z-79c625a8",
+      "created_at": "2026-08-20T20:06:17.680321+00:00",
+      "mode": "apply",
+      "description": "backend.install.spring-boot-jpa",
+      "touched_files": [
+        "src/main/java/com/example/filterx/generated/FilterxMetadata.java",
+        "src/main/java/com/example/filterx/generated/FilterxDtos.java",
+        "src/main/java/com/example/filterx/generated/FilterxRequests.java",
+        "src/main/java/com/example/filterx/generated/FilterxSecurity.java",
+        "src/main/java/com/example/filterx/generated/FilterxSpecifications.java",
+        "src/main/java/com/example/filterx/generated/FilterxQueryService.java",
+        "src/main/java/com/example/filterx/generated/FilterxExportService.java",
+        "src/main/java/com/example/filterx/generated/FilterxController.java",
+        "src/main/java/com/example/filterx/generated/FilterxConfiguration.java",
+        "src/main/java/com/example/filterx/generated/FilterxErrorHandler.java",
+        "pom.xml"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T200618.548168Z-6ea38dbd",
+      "created_at": "2026-08-20T20:06:18.650673+00:00",
+      "mode": "apply",
+      "description": "frontend.install",
+      "touched_files": [
+        "frontend/proxy.conf.cjs",
+        "frontend/package.json",
+        "frontend/angular.json",
+        "frontend/src/app/app.config.ts",
+        "frontend/src/app/core/index.ts",
+        "frontend/src/app/core/config/filterx-config.ts",
+        "frontend/src/app/core/enums/index.ts",
+        "frontend/src/app/core/enums/filter-operation.enum.ts",
+        "frontend/src/app/core/enums/sort-order.enum.ts",
+        "frontend/src/app/core/interfaces/index.ts",
+        "frontend/src/app/core/interfaces/entity-config.interface.ts",
+        "frontend/src/app/core/interfaces/field-config.interface.ts",
+        "frontend/src/app/core/interfaces/filter.interface.ts",
+        "frontend/src/app/core/interfaces/filter-tree.interface.ts",
+        "frontend/src/app/core/interfaces/pagination.interface.ts",
+        "frontend/src/app/core/interfaces/query-state.interface.ts",
+        "frontend/src/app/core/interfaces/saved-filter.interface.ts",
+        "frontend/src/app/core/services/index.ts",
+        "frontend/src/app/core/services/entity-query.service.ts",
+        "frontend/src/app/core/services/filter-state-manager.service.ts",
+        "frontend/src/app/core/services/generic-query.service.ts",
+        "frontend/src/app/core/services/saved-filter.service.ts",
+        "frontend/src/app/shared/index.ts",
+        "frontend/src/app/shared/components/index.ts",
+        "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html",
+        "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss",
+        "frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts",
+        "frontend/src/app/shared/components/data-table/data-table.component.html",
+        "frontend/src/app/shared/components/data-table/data-table.component.scss",
+        "frontend/src/app/shared/components/data-table/data-table.component.ts",
+        "frontend/src/app/shared/components/entity-list/entity-list.component.ts",
+        "frontend/src/app/shared/components/filter-builder/filter-builder.component.html",
+        "frontend/src/app/shared/components/filter-builder/filter-builder.component.scss",
+        "frontend/src/app/shared/components/filter-builder/filter-builder.component.ts",
+        "frontend/src/app/shared/components/pagination/pagination.component.html",
+        "frontend/src/app/shared/components/pagination/pagination.component.scss",
+        "frontend/src/app/shared/components/pagination/pagination.component.ts",
+        "frontend/src/app/shared/components/search-box/search-box.component.html",
+        "frontend/src/app/shared/components/search-box/search-box.component.scss",
+        "frontend/src/app/shared/components/search-box/search-box.component.ts",
+        "frontend/src/app/shared/components/sort-header/sort-header.component.ts",
+        "frontend/src/filterx.scss",
+        "frontend/src/app/filterx-generated/entities/author.config.ts",
+        "frontend/src/app/filterx-generated/pages/author.page.ts",
+        "frontend/src/app/filterx-generated/entities/book.config.ts",
+        "frontend/src/app/filterx-generated/pages/book.page.ts",
+        "frontend/src/app/filterx-generated/routes.ts",
+        "frontend/src/app/filterx-generated/entities/index.ts",
+        "frontend/src/app/filterx-generated/index.ts",
+        "frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts",
+        "frontend/src/app/app.routes.ts"
+      ]
+    },
+    {
+      "patch_id": "patch-20260820T200619.306008Z-bf127713",
+      "created_at": "2026-08-20T20:06:19.314446+00:00",
+      "mode": "apply",
+      "description": "backend.install.spring-boot-jpa",
+      "touched_files": []
+    },
+    {
+      "patch_id": "patch-20260820T200619.607619Z-cf4b809f",
+      "created_at": "2026-08-20T20:06:19.832358+00:00",
+      "mode": "apply",
+      "description": "frontend.install",
+      "touched_files": []
+    }
+  ]
+}

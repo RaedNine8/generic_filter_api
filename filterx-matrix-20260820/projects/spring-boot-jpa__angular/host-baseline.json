@@ -1,0 +1,22 @@
+{
+  "filterx.yaml": "6a53486c023ada93450ede7b39787595bf86bebebda2e38599b7a3634a506de3",
+  "frontend/angular.json": "a6850fa50de1d3628ee2e633ab2a8571eec52e0fdc314b65cadd4b7fcd320b71",
+  "frontend/package.json": "1007c83b2fa8e2c45c73cbce8eba8bcb18415a09b9f496aea13e6ead1a1f7467",
+  "frontend/proxy.conf.cjs": "dc7eaf609813511aacc42ba57deb8f4a6d50268cfec140c550116de07fe628df",
+  "frontend/src/app/app.component.ts": "a5566f593bb99d66b8d8c2101f41be24f0cab68362710af000150f56a069aa5d",
+  "frontend/src/app/app.config.ts": "3ccee89cff2cdc1b2186af686ea07ead54cbd9c539f78063b5c04bc9ff2611f5",
+  "frontend/src/app/app.routes.ts": "d3ab096e7850f039afb8ea01ac4259bacada31bad9f4bea5663ab450cbacc5f0",
+  "frontend/src/index.html": "53d3ba4b3d08ed16585db6521206d8bbd1a493c155486a1ef8f269c257bbb0d9",
+  "frontend/src/main.ts": "53843204586c410ba2953494a997de679a3fcfa5d83668605f4b91443c68a8e0",
+  "frontend/src/styles.scss": "3615a642fdb308a6ed9eba627a63049e7067bd003885dc113b077275ac276813",
+  "frontend/tsconfig.app.json": "caa84e8abdba5afa155da8dc22276ae5144efe50508f6c346ecf99e7ad5015f3",
+  "frontend/tsconfig.json": "86cc0cc3a1586ec956c2e477de4ed857c169ab6be8229078eb5f0048b975855d",
+  "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+  "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+  "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+  "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+  "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+  "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+  "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+  "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+}

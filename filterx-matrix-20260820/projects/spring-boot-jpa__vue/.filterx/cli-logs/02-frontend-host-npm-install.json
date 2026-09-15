@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-host-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 47 packages in 6s\n",
+  "stderr": "",
+  "duration_seconds": 6.313,
+  "log_file": ".filterx/cli-logs/02-frontend-host-npm-install.json"
+}

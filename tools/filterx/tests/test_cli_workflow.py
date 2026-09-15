@@ -182,6 +182,12 @@ def _enable_frontend_in_config(config_path: Path) -> None:
     config_path.write_text(content, encoding="utf-8")
 
 
+def _enable_agent_in_config(config_path: Path) -> None:
+    content = config_path.read_text(encoding="utf-8")
+    content = content.replace("scan:\n", "agent:\n  enabled: true\n\nscan:\n", 1)
+    config_path.write_text(content, encoding="utf-8")
+
+
 def test_full_workflow_scan_install_validate_and_rollback(tmp_path: Path) -> None:
     project_root = _setup_synthetic_project(tmp_path, include_anchor=True, add_route_conflict=False)
     config_path = project_root / "filterx.yaml"
@@ -212,6 +218,18 @@ def test_orchestrated_install_runs_scan_backend_and_validate(tmp_path: Path) -> 
     assert install.run(_args(project_root, config_path)) == 0
     assert (project_root / ".filterx/scan.json").exists()
     assert (project_root / "app/filterx_generated/metadata.py").exists()
+
+
+def test_orchestrated_install_includes_enabled_copilot(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path, include_anchor=True, add_route_conflict=False)
+    config_path = project_root / "filterx.yaml"
+    _enable_agent_in_config(config_path)
+
+    assert install.run(_args(project_root, config_path)) == 0
+
+    assert (project_root / "app/filterx_generated/copilot_router.py").exists()
+    main_content = (project_root / "app/main.py").read_text(encoding="utf-8")
+    assert "filterx_copilot_router" in main_content
 
 
 def test_backend_install_blocks_on_route_path_conflict(tmp_path: Path) -> None:
@@ -382,3 +400,35 @@ def test_scan_uses_backend_root_for_import_resolution(tmp_path: Path) -> None:
     scan_payload = json.loads((project_root / ".filterx/scan.json").read_text(encoding="utf-8"))
     assert scan_payload["graph_stats"]["entity_count"] == 1
     assert scan_payload["entities"][0]["model"] == "Employee"
+
+
+def test_scan_records_resolved_entity_scope(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path)
+    config_path = project_root / "filterx.yaml"
+
+    assert scan.run(_args(project_root, config_path, entities="Book")) == 0
+
+    scan_payload = json.loads((project_root / ".filterx/scan.json").read_text(encoding="utf-8"))
+    assert scan_payload["entity_scope"] == {
+        "available": ["Author", "Book"],
+        "requested": ["Book"],
+        "excluded": [],
+        "selected": ["Book"],
+        "unknown_requested": [],
+        "unknown_excluded": [],
+        "requested_and_excluded": [],
+    }
+    assert [entity["model"] for entity in scan_payload["entities"]] == ["Book"]
+
+
+def test_scan_rejects_unknown_requested_entity(tmp_path: Path) -> None:
+    project_root = _setup_synthetic_project(tmp_path)
+    config_path = project_root / "filterx.yaml"
+
+    assert scan.run(_args(project_root, config_path, entities="Missing")) == 2
+
+    diagnostics = json.loads(
+        (project_root / ".filterx/diagnostics.json").read_text(encoding="utf-8")
+    )
+    assert diagnostics["errors"][0]["code"] == "ENTITY_SCOPE_UNKNOWN_REQUESTED"
+    assert diagnostics["errors"][0]["context"]["unknown"] == ["Missing"]

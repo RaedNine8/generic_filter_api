@@ -1,0 +1,21 @@
+{
+  "stage": "rollback-03",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T193302.072560Z-fbf45be7",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T193302.072560Z-fbf45be7\",\n  \"restored\": [],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"count\": 7\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.281,
+  "log_file": ".filterx/cli-logs/18-rollback-03.json"
+}

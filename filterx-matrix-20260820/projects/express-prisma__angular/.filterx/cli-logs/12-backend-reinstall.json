@@ -1,0 +1,22 @@
+{
+  "stage": "backend-reinstall",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "backend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T195607.343407Z-77ce9882\",\n  \"framework\": \"express-prisma\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 9,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.375,
+  "log_file": ".filterx/cli-logs/12-backend-reinstall.json"
+}

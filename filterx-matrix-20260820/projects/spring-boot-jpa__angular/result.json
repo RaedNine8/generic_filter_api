@@ -1,0 +1,514 @@
+{
+  "name": "spring-boot-jpa__angular",
+  "backend": "spring-boot-jpa",
+  "frontend": "angular",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "spring-host-compile",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "compile"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 14.266,
+      "log_file": ".filterx/cli-logs/01-spring-host-compile.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 852 packages in 1m\n",
+      "stderr": "npm warn deprecated critters@0.0.24: Ownership of Critters has moved to the Nuxt team, who will be maintaining the project going forward. If you'd like to keep using Critters, please switch to the actively-maintained fork at https://github.com/danielroe/beasties\nnpm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).\nnpm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\nnpm warn cleanup Failed to remove some directories [\nnpm warn cleanup   [\nnpm warn cleanup     'C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\frontend\\\\node_modules\\\\nice-napi\\\\node_modules\\\\node-addon-api',\nnpm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend\\node_modules\\nice-napi\\node_modules\\node-addon-api'] {\nnpm warn cleanup       errno: -4048,\nnpm warn cleanup       code: 'EPERM',\nnpm warn cleanup       syscall: 'rmdir',\nnpm warn cleanup       path: 'C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\frontend\\\\node_modules\\\\nice-napi\\\\node_modules\\\\node-addon-api'\nnpm warn cleanup     }\nnpm warn cleanup   ]\nnpm warn cleanup ]\n",
+      "duration_seconds": 71.141,
+      "log_file": ".filterx/cli-logs/02-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 7.578,
+      "log_file": ".filterx/cli-logs/03-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m179.93 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m48.10 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m40 bytes\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m40 bytes\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m179.97 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m48.14 kB\u001b[22m\n\nApplication bundle generation complete. [12.977 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 28.266,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2,\n  \"ir_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\ir.json\"\n}\n",
+      "stderr": "",
+      "duration_seconds": 15.641,
+      "log_file": ".filterx/cli-logs/05-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200617.641227Z-79c625a8\",\n  \"applied_ops\": 11,\n  \"skipped_ops\": 0,\n  \"touched_files\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\",\n    \"pom.xml\"\n  ],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.422,
+      "log_file": ".filterx/cli-logs/06-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T200618.548168Z-6ea38dbd\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\frontend\\\\src\\\\app\\\\filterx-generated\",\n  \"entity_count\": 2,\n  \"generated_route_count\": 2,\n  \"touched_files\": [\n    \"frontend/proxy.conf.cjs\",\n    \"frontend/package.json\",\n    \"frontend/angular.json\",\n    \"frontend/src/app/app.config.ts\",\n    \"frontend/src/app/core/index.ts\",\n    \"frontend/src/app/core/config/filterx-config.ts\",\n    \"frontend/src/app/core/enums/index.ts\",\n    \"frontend/src/app/core/enums/filter-operation.enum.ts\",\n    \"frontend/src/app/core/enums/sort-order.enum.ts\",\n    \"frontend/src/app/core/interfaces/index.ts\",\n    \"frontend/src/app/core/interfaces/entity-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/field-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter-tree.interface.ts\",\n    \"frontend/src/app/core/interfaces/pagination.interface.ts\",\n    \"frontend/src/app/core/interfaces/query-state.interface.ts\",\n    \"frontend/src/app/core/interfaces/saved-filter.interface.ts\",\n    \"frontend/src/app/core/services/index.ts\",\n    \"frontend/src/app/core/services/entity-query.service.ts\",\n    \"frontend/src/app/core/services/filter-state-manager.service.ts\",\n    \"frontend/src/app/core/services/generic-query.service.ts\",\n    \"frontend/src/app/core/services/saved-filter.service.ts\",\n    \"frontend/src/app/shared/index.ts\",\n    \"frontend/src/app/shared/components/index.ts\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.html\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.scss\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.ts\",\n    \"frontend/src/app/shared/components/entity-list/entity-list.component.ts\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.html\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.scss\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.ts\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.html\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.scss\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.ts\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.html\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.scss\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.ts\",\n    \"frontend/src/app/shared/components/sort-header/sort-header.component.ts\",\n    \"frontend/src/filterx.scss\",\n    \"frontend/src/app/filterx-generated/entities/author.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/author.page.ts\",\n    \"frontend/src/app/filterx-generated/entities/book.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/book.page.ts\",\n    \"frontend/src/app/filterx-generated/routes.ts\",\n    \"frontend/src/app/filterx-generated/entities/index.ts\",\n    \"frontend/src/app/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts\",\n    \"frontend/src/app/app.routes.ts\"\n  ],\n  \"applied_ops\": 51,\n  \"skipped_ops\": 4,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.953,
+      "log_file": ".filterx/cli-logs/07-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/08-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"spring-boot-jpa\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T200619.306008Z-bf127713\",\n  \"applied_ops\": 0,\n  \"skipped_ops\": 11,\n  \"touched_files\": [],\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.391,
+      "log_file": ".filterx/cli-logs/09-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T200619.607619Z-cf4b809f\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\frontend\\\\src\\\\app\\\\filterx-generated\",\n  \"entity_count\": 2,\n  \"generated_route_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 52,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.516,
+      "log_file": ".filterx/cli-logs/10-frontend-reinstall.json"
+    },
+    {
+      "stage": "host-after-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 10.765,
+      "log_file": ".filterx/cli-logs/11-host-after-filterx-package.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 10 packages, removed 8 packages, and changed 2 packages in 6s\n",
+      "stderr": "npm warn deprecated @primeng/themes@18.0.2: Deprecated. This package is no longer maintained. Please migrate to @primeuix/themes: https://www.npmjs.com/package/@primeuix/themes\n",
+      "duration_seconds": 6.532,
+      "log_file": ".filterx/cli-logs/12-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m211.86 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m37.58 kB\u001b[39m\n\u001b[32mchunk-FKCKESGN.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m\u001b[36m150.56 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m43.03 kB\u001b[39m\n\u001b[32mchunk-C3X5IGL4.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m \u001b[36m19.56 kB\u001b[39m\u001b[2m | \u001b[22m                \u001b[36m5.77 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m14.89 kB\u001b[39m\u001b[2m | \u001b[22m                \u001b[36m2.98 kB\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m396.88 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m89.36 kB\u001b[22m\n\n\u001b[1mLazy chunk files\u001b[22m   \u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mchunk-WLS7TXMN.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2m-\u001b[22m            \u001b[2m | \u001b[22m\u001b[36m133.40 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m26.93 kB\u001b[39m\n\u001b[32mchunk-OH3CQDTE.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mbrowser\u001b[22m      \u001b[2m | \u001b[22m \u001b[36m67.20 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m17.44 kB\u001b[39m\n\u001b[32mchunk-M3MUAKVU.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mbook-page\u001b[22m    \u001b[2m | \u001b[22m  \u001b[36m1.78 kB\u001b[39m\u001b[2m | \u001b[22m              \u001b[36m745 bytes\u001b[39m\n\u001b[32mchunk-UG235I4B.js\u001b[39m  \u001b[2m | \u001b[22m\u001b[2mauthor-page\u001b[22m  \u001b[2m | \u001b[22m  \u001b[36m1.29 kB\u001b[39m\u001b[2m | \u001b[22m              \u001b[36m639 bytes\u001b[39m\n\nApplication bundle generation complete. [7.374 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 8.718,
+      "log_file": ".filterx/cli-logs/13-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__angular\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T200617.641227Z-79c625a8\",\n    \"patch-20260820T200618.548168Z-6ea38dbd\",\n    \"patch-20260820T200619.306008Z-bf127713\",\n    \"patch-20260820T200619.607619Z-cf4b809f\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/14-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200619.607619Z-cf4b809f",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200619.607619Z-cf4b809f\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.219,
+      "log_file": ".filterx/cli-logs/15-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200619.306008Z-bf127713",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200619.306008Z-bf127713\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.235,
+      "log_file": ".filterx/cli-logs/16-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200618.548168Z-6ea38dbd",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200618.548168Z-6ea38dbd\",\n  \"restored\": [\n    \"frontend/proxy.conf.cjs\",\n    \"frontend/package.json\",\n    \"frontend/angular.json\",\n    \"frontend/src/app/app.config.ts\",\n    \"frontend/src/app/app.routes.ts\"\n  ],\n  \"removed\": [\n    \"frontend/src/app/core/index.ts\",\n    \"frontend/src/app/core/config/filterx-config.ts\",\n    \"frontend/src/app/core/enums/index.ts\",\n    \"frontend/src/app/core/enums/filter-operation.enum.ts\",\n    \"frontend/src/app/core/enums/sort-order.enum.ts\",\n    \"frontend/src/app/core/interfaces/index.ts\",\n    \"frontend/src/app/core/interfaces/entity-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/field-config.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter.interface.ts\",\n    \"frontend/src/app/core/interfaces/filter-tree.interface.ts\",\n    \"frontend/src/app/core/interfaces/pagination.interface.ts\",\n    \"frontend/src/app/core/interfaces/query-state.interface.ts\",\n    \"frontend/src/app/core/interfaces/saved-filter.interface.ts\",\n    \"frontend/src/app/core/services/index.ts\",\n    \"frontend/src/app/core/services/entity-query.service.ts\",\n    \"frontend/src/app/core/services/filter-state-manager.service.ts\",\n    \"frontend/src/app/core/services/generic-query.service.ts\",\n    \"frontend/src/app/core/services/saved-filter.service.ts\",\n    \"frontend/src/app/shared/index.ts\",\n    \"frontend/src/app/shared/components/index.ts\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.html\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.scss\",\n    \"frontend/src/app/shared/components/advanced-search-panel/advanced-search-panel.component.ts\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.html\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.scss\",\n    \"frontend/src/app/shared/components/data-table/data-table.component.ts\",\n    \"frontend/src/app/shared/components/entity-list/entity-list.component.ts\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.html\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.scss\",\n    \"frontend/src/app/shared/components/filter-builder/filter-builder.component.ts\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.html\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.scss\",\n    \"frontend/src/app/shared/components/pagination/pagination.component.ts\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.html\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.scss\",\n    \"frontend/src/app/shared/components/search-box/search-box.component.ts\",\n    \"frontend/src/app/shared/components/sort-header/sort-header.component.ts\",\n    \"frontend/src/filterx.scss\",\n    \"frontend/src/app/filterx-generated/entities/author.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/author.page.ts\",\n    \"frontend/src/app/filterx-generated/entities/book.config.ts\",\n    \"frontend/src/app/filterx-generated/pages/book.page.ts\",\n    \"frontend/src/app/filterx-generated/routes.ts\",\n    \"frontend/src/app/filterx-generated/entities/index.ts\",\n    \"frontend/src/app/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx-generated/services/filterx-entity-query.service.ts\"\n  ],\n  \"count\": 51\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/17-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "filterx.cli",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T200617.641227Z-79c625a8",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T200617.641227Z-79c625a8\",\n  \"restored\": [\n    \"pom.xml\"\n  ],\n  \"removed\": [\n    \"src/main/java/com/example/filterx/generated/FilterxMetadata.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxDtos.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxRequests.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSecurity.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxSpecifications.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxQueryService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxExportService.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxController.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxConfiguration.java\",\n    \"src/main/java/com/example/filterx/generated/FilterxErrorHandler.java\"\n  ],\n  \"count\": 11\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.25,
+      "log_file": ".filterx/cli-logs/18-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\nremoved 6 packages in 2s\n",
+      "stderr": "",
+      "duration_seconds": 2.469,
+      "log_file": ".filterx/cli-logs/19-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-package",
+      "command": [
+        "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+        "-q",
+        "-DskipTests",
+        "package"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 4.75,
+      "log_file": ".filterx/cli-logs/20-host-before-filterx-package.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-angular-matrix@1.0.0 build\n> ng build\n\n\u001b[33m\u276f\u001b[39m Building...\n\u001b[32m\u2714\u001b[39m Building...\n\u001b[1mInitial chunk files\u001b[22m\u001b[2m | \u001b[22m\u001b[1mNames\u001b[22m        \u001b[2m | \u001b[22m \u001b[1mRaw size\u001b[22m\u001b[2m | \u001b[22m\u001b[1mEstimated transfer size\u001b[22m\n\u001b[32mmain.js\u001b[39m            \u001b[2m | \u001b[22m\u001b[2mmain\u001b[22m         \u001b[2m | \u001b[22m\u001b[36m179.93 kB\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m48.10 kB\u001b[39m\n\u001b[32mstyles.css\u001b[39m         \u001b[2m | \u001b[22m\u001b[2mstyles\u001b[22m       \u001b[2m | \u001b[22m \u001b[36m40 bytes\u001b[39m\u001b[2m | \u001b[22m               \u001b[36m40 bytes\u001b[39m\n\n\u001b[1m \u001b[22m                  \u001b[2m | \u001b[22m\u001b[1mInitial total\u001b[22m\u001b[2m | \u001b[22m\u001b[1m179.97 kB\u001b[22m\u001b[2m | \u001b[22m               \u001b[1m48.14 kB\u001b[22m\n\nApplication bundle generation complete. [2.892 seconds]\n\nOutput location: C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\frontend\\dist\\filterx-host\n\n",
+      "stderr": "",
+      "duration_seconds": 4.594,
+      "log_file": ".filterx/cli-logs/21-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    "filterx.yaml": "6a53486c023ada93450ede7b39787595bf86bebebda2e38599b7a3634a506de3",
+    "frontend/angular.json": "a6850fa50de1d3628ee2e633ab2a8571eec52e0fdc314b65cadd4b7fcd320b71",
+    "frontend/package.json": "1007c83b2fa8e2c45c73cbce8eba8bcb18415a09b9f496aea13e6ead1a1f7467",
+    "frontend/proxy.conf.cjs": "dc7eaf609813511aacc42ba57deb8f4a6d50268cfec140c550116de07fe628df",
+    "frontend/src/app/app.component.ts": "a5566f593bb99d66b8d8c2101f41be24f0cab68362710af000150f56a069aa5d",
+    "frontend/src/app/app.config.ts": "3ccee89cff2cdc1b2186af686ea07ead54cbd9c539f78063b5c04bc9ff2611f5",
+    "frontend/src/app/app.routes.ts": "d3ab096e7850f039afb8ea01ac4259bacada31bad9f4bea5663ab450cbacc5f0",
+    "frontend/src/index.html": "53d3ba4b3d08ed16585db6521206d8bbd1a493c155486a1ef8f269c257bbb0d9",
+    "frontend/src/main.ts": "53843204586c410ba2953494a997de679a3fcfa5d83668605f4b91443c68a8e0",
+    "frontend/src/styles.scss": "3615a642fdb308a6ed9eba627a63049e7067bd003885dc113b077275ac276813",
+    "frontend/tsconfig.app.json": "caa84e8abdba5afa155da8dc22276ae5144efe50508f6c346ecf99e7ad5015f3",
+    "frontend/tsconfig.json": "86cc0cc3a1586ec956c2e477de4ed857c169ab6be8229078eb5f0048b975855d",
+    "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+    "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+    "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+    "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+    "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+    "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+    "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+    "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+  }
+}

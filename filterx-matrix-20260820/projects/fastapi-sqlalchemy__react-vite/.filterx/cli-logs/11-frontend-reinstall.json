@@ -1,0 +1,20 @@
+{
+  "stage": "frontend-reinstall",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\.venv\\Scripts\\filterx.exe",
+    "frontend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"react-vite\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T193040.052776Z-6508d37c\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.36,
+  "log_file": ".filterx/cli-logs/11-frontend-reinstall.json"
+}

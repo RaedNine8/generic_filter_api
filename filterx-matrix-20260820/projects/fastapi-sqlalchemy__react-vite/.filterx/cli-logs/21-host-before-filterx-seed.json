@@ -1,0 +1,13 @@
+{
+  "stage": "host-before-filterx-seed",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\.venv\\Scripts\\python.exe",
+    "seed.py"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 0.625,
+  "log_file": ".filterx/cli-logs/21-host-before-filterx-seed.json"
+}

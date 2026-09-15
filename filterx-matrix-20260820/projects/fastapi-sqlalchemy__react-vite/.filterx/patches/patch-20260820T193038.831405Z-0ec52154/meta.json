@@ -1,0 +1,51 @@
+{
+  "patch_id": "patch-20260820T193038.831405Z-0ec52154",
+  "created_at": "2026-08-20T19:30:38.842594+00:00",
+  "description": "backend.install",
+  "touched_files": [
+    "app/filterx_generated/__init__.py",
+    "app/filterx_generated/entities.py",
+    "app/filterx_generated/metadata.py",
+    "app/filterx_generated/router_factory.py",
+    "app/filterx_generated/router.py",
+    "app/filterx_generated/predicates.py",
+    "app/main.py"
+  ],
+  "backups": [
+    {
+      "relative_path": "app/filterx_generated/__init__.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/filterx_generated/entities.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/filterx_generated/metadata.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/filterx_generated/router_factory.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/filterx_generated/router.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/filterx_generated/predicates.py",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "app/main.py",
+      "existed": true,
+      "backup_path": "backup\\app\\main.py"
+    }
+  ]
+}

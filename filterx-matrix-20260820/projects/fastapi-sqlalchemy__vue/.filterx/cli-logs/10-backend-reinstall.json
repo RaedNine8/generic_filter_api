@@ -1,0 +1,20 @@
+{
+  "stage": "backend-reinstall",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+    "backend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193513.202469Z-ca37c7d6\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.313,
+  "log_file": ".filterx/cli-logs/10-backend-reinstall.json"
+}

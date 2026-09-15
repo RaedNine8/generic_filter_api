@@ -1,11 +1,11 @@
 # FilterX
 
-FilterX injects a generic filtering system into **your existing FastAPI + SQLAlchemy + Angular project**.
+FilterX injects a generic filtering system into an existing application. The default remains **FastAPI + SQLAlchemy + Angular**, with opt-in Express + Prisma, Spring Boot + JPA, React + Vite + TypeScript, Next.js, and Vue + Vite + TypeScript targets.
 
 It generates both sides of the feature:
 
-- a backend API for metadata, search, filtering, grouping, sorting, and pagination
-- an Angular UI with list pages, advanced search, filter trees, grouping, tables, and pagination
+- a backend API for metadata, search, filtering, grouping, sorting, pagination, and secure streaming CSV/XLSX/JSON exports
+- an Angular, React/Vite, Next.js, or Vue UI with list pages, advanced search, filter trees, grouping, tables, pagination, and export controls
 
 Frontend integration is part of the standard flow and is included in the steps below.
 
@@ -23,7 +23,9 @@ The goal is to avoid rebuilding the same filtering/list-screen logic for every m
 
 ## Filter Copilot
 
-FilterX now includes an optional agent layer that can turn a plain-English filter request into the same validated `FilterTreeNode` payload used by the existing filtering API. It previews the generated filter first, validates fields and operations against scanned metadata, and only executes after explicit confirmation. See [AGENT_LAYER_GUIDE.md](AGENT_LAYER_GUIDE.md) for the beginner-friendly architecture walkthrough.
+FilterX includes an optional agent layer that turns plain-English requests into the same validated `FilterTreeNode` payload used by the existing filtering API. It supports Groq, Gemini, and generic OpenAI-compatible endpoints, including local Ollama, LM Studio, LocalAI, and vLLM servers. The FastAPI agent API previews a filter first and requires a short-lived, user-bound confirmation token; actual data access remains in the normal authorized FilterX filtering endpoint. The generated copilot panel currently targets Angular, while other frontends can use the HTTP API directly.
+
+See [AGENT_LAYER_GUIDE.md](AGENT_LAYER_GUIDE.md) for complete `filterx.yaml` examples, free/no-key Ollama setup, Groq and Gemini environment variables, fallback configuration, commands, API tests, and security behavior.
 
 ## Before you start
 
@@ -94,7 +96,7 @@ python -m pip install -e .
 Install the FilterX CLI:
 
 ```bash
-python -m pip install git+https://github.com/RaedNine8/generic_filter_api.git
+python -m pip install "git+https://github.com/RaedNine8/generic_filter_api.git#subdirectory=tools/filterx"
 filterx --help
 ```
 

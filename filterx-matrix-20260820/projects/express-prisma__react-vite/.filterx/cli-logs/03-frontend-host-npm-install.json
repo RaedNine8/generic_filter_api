@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-host-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite\\frontend",
+  "exit_code": 0,
+  "stdout": "\nadded 68 packages in 9s\n",
+  "stderr": "",
+  "duration_seconds": 8.953,
+  "log_file": ".filterx/cli-logs/03-frontend-host-npm-install.json"
+}

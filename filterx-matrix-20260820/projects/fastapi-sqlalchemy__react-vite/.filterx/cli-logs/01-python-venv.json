@@ -1,0 +1,15 @@
+{
+  "stage": "python-venv",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "venv",
+    ".venv"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 13.219,
+  "log_file": ".filterx/cli-logs/01-python-venv.json"
+}

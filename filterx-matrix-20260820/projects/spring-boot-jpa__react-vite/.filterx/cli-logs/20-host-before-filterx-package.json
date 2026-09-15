@@ -1,0 +1,15 @@
+{
+  "stage": "host-before-filterx-package",
+  "command": [
+    "C:/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd",
+    "-q",
+    "-DskipTests",
+    "package"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 5.282,
+  "log_file": ".filterx/cli-logs/20-host-before-filterx-package.json"
+}

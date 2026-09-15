@@ -1,0 +1,17 @@
+{
+  "filterx.yaml": "8b75fc71ea81b7db6e9a744facd28c9a597ca77e28734b99585837ad25d39441",
+  "frontend/next-env.d.ts": "85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6",
+  "frontend/next.config.ts": "4f726d227c9b96a1c232a7c06933d925c5c3a46a57bd4798ee7ae4163125a88a",
+  "frontend/package.json": "c256e72893c49cac0dc742a153b5a1ad493536d208cc495903ace562eaa34b13",
+  "frontend/src/app/layout.tsx": "d98ac855ef79a037c60b7d7cf93c8cc25fedefbb9372eb40fbab42d7503c9027",
+  "frontend/src/app/page.tsx": "cb57483843396030732dd474c6309b1393f68b0a88d504a02c8d788fe8245dad",
+  "frontend/tsconfig.json": "e3ba0bafff04f187ecbea0ecb6cd74002473d4b000881228a98fe3632ff5f30a",
+  "pom.xml": "9258b7005221b46868c2ed2d8ccfa14af043e6ab4a07a220d56430892722f34f",
+  "src/main/java/com/example/FilterxFixtureApplication.java": "1f1659f9fbb3d586cb03be987d81caca18bdd9e0205cacc051a35cc496dcfe09",
+  "src/main/java/com/example/HealthController.java": "9f9dc3f35023b07d08c79560fabcaea05457eeb5dfe171bdfe0ab1e71137bd7a",
+  "src/main/java/com/example/HostSecurityConfiguration.java": "b1978fdd567221093014ff2c3153c398ffdb19e2bb6f328c8f3df5920dfe3ddd",
+  "src/main/java/com/example/model/Author.java": "13e1f4839d7f001b0c2ddcf8f53ef62d03efa83913f9c8000496a8403a7435d1",
+  "src/main/java/com/example/model/Book.java": "3306f8a7e6d3c898cebc21420576cdd7852af1bf699aacf377eb2cf5ea50adc1",
+  "src/main/resources/application.properties": "66115ee114ba0a057d467fa59a00146dbdc9dad577d2f8dde7bcef16b010856d",
+  "src/main/resources/data.sql": "0744d9db0d451b0cdce1f5db959c6e2a89ff031023200f64337bd072396037bc"
+}

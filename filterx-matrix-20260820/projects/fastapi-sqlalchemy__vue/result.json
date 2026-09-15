@@ -1,0 +1,504 @@
+{
+  "name": "fastapi-sqlalchemy__vue",
+  "backend": "fastapi-sqlalchemy",
+  "frontend": "vue",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "python-venv",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        ".venv"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 12.235,
+      "log_file": ".filterx/cli-logs/01-python-venv.json"
+    },
+    {
+      "stage": "python-dependencies",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\tools\\filterx",
+        "fastapi",
+        "sqlalchemy",
+        "uvicorn",
+        "httpx"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "Obtaining file:///C:/Users/raedn/OneDrive/Bureau/FILES/DEV%20FILES/MAIN_PROJECTS/generic_filter_api/tools/filterx\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Getting requirements to build editable: started\n  Getting requirements to build editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nCollecting fastapi\n  Using cached fastapi-0.141.1-py3-none-any.whl (131 kB)\nCollecting sqlalchemy\n  Using cached sqlalchemy-2.0.52-cp310-cp310-win_amd64.whl (2.2 MB)\nCollecting uvicorn\n  Using cached uvicorn-0.52.4-py3-none-any.whl (79 kB)\nCollecting httpx\n  Using cached httpx-0.28.1-py3-none-any.whl (73 kB)\nCollecting pydantic>=2.9.0\n  Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)\nCollecting typing-inspection>=0.4.2\n  Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)\nCollecting starlette>=0.46.0\n  Using cached starlette-1.6.0-py3-none-any.whl (75 kB)\nCollecting annotated-doc>=0.0.2\n  Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)\nCollecting typing-extensions>=4.8.0\n  Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)\nCollecting greenlet>=1\n  Using cached greenlet-3.5.5-cp310-cp310-win_amd64.whl (322 kB)\nCollecting h11>=0.8\n  Using cached h11-0.16.0-py3-none-any.whl (37 kB)\nCollecting click>=7.0\n  Using cached click-8.4.2-py3-none-any.whl (119 kB)\nCollecting idna\n  Using cached idna-3.19-py3-none-any.whl (68 kB)\nCollecting certifi\n  Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)\nCollecting httpcore==1.*\n  Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)\nCollecting anyio\n  Using cached anyio-4.14.2-py3-none-any.whl (125 kB)\nCollecting tree-sitter-groovy==0.1.0\n  Using cached tree_sitter_groovy-0.1.0-cp39-abi3-win_amd64.whl (104 kB)\nCollecting PyYAML>=6.0.0\n  Using cached pyyaml-6.0.3-cp310-cp310-win_amd64.whl (158 kB)\nCollecting tree-sitter==0.25.2\n  Using cached tree_sitter-0.25.2-cp310-cp310-win_amd64.whl (127 kB)\nCollecting tree-sitter-kotlin==1.1.0\n  Using cached tree_sitter_kotlin-1.1.0-cp39-abi3-win_amd64.whl (315 kB)\nCollecting colorama\n  Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)\nCollecting annotated-types>=0.6.0\n  Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)\nCollecting pydantic-core==2.46.4\n  Using cached pydantic_core-2.46.4-cp310-cp310-win_amd64.whl (2.1 MB)\nCollecting exceptiongroup>=1.0.2\n  Using cached exceptiongroup-1.3.1-py3-none-any.whl (16 kB)\nBuilding wheels for collected packages: filterx-cli\n  Building editable for filterx-cli (pyproject.toml): started\n  Building editable for filterx-cli (pyproject.toml): finished with status 'done'\n  Created wheel for filterx-cli: filename=filterx_cli-0.1.0-0.editable-py3-none-any.whl size=6314 sha256=67884c2d3bf3ffda53753471b601e3aa310de61de5860cda91c8dc6dee2003be\n  Stored in directory: C:\\Users\\raedn\\AppData\\Local\\Temp\\pip-ephem-wheel-cache-qu_dhig_\\wheels\\b3\\83\\f8\\ac910e50a23aacf2fd0f131bfe2580bb605b3126c8513e26b5\nSuccessfully built filterx-cli\nInstalling collected packages: typing-extensions, tree-sitter-kotlin, tree-sitter-groovy, tree-sitter, PyYAML, idna, h11, greenlet, colorama, certifi, annotated-types, annotated-doc, typing-inspection, sqlalchemy, pydantic-core, httpcore, filterx-cli, exceptiongroup, click, uvicorn, pydantic, anyio, starlette, httpx, fastapi\n  Attempting uninstall: filterx-cli\n    Found existing installation: filterx-cli 0.1.0\n    Not uninstalling filterx-cli at c:\\users\\raedn\\onedrive\\bureau\\files\\dev files\\main_projects\\generic_filter_api\\tools\\filterx, outside environment C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\n    Can't uninstall 'filterx-cli'. No files were found to uninstall.\nSuccessfully installed PyYAML-6.0.3 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.14.2 certifi-2026.7.22 click-8.4.2 colorama-0.4.6 exceptiongroup-1.3.1 fastapi-0.141.1 filterx-cli-0.1.0 greenlet-3.5.5 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.19 pydantic-2.13.4 pydantic-core-2.46.4 sqlalchemy-2.0.52 starlette-1.6.0 tree-sitter-0.25.2 tree-sitter-groovy-0.1.0 tree-sitter-kotlin-1.1.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.52.4\n",
+      "stderr": "\n[notice] A new release of pip is available: 23.0.1 -> 26.2.1\n[notice] To update, run: C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe -m pip install --upgrade pip\n",
+      "duration_seconds": 27.156,
+      "log_file": ".filterx/cli-logs/02-python-dependencies.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 47 packages in 8s\n",
+      "stderr": "",
+      "duration_seconds": 8.297,
+      "log_file": ".filterx/cli-logs/03-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.812,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-vue-matrix@1.0.0 build\n> vue-tsc -b && vite build\n\n\u001b[36mvite v5.4.21 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 10 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m 0.10 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.11 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-CAKjXaDX.js  \u001b[39m\u001b[1m\u001b[2m61.99 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 24.75 kB\u001b[22m\n\u001b[32m\u2713 built in 1.57s\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 8.125,
+      "log_file": ".filterx/cli-logs/05-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'routes_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\frontend\\\\src\\\\app\\\\app.routes.ts\"\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'app_config_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\frontend\\\\src\\\\app\\\\app.config.ts\"\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2\n}\n",
+      "stderr": "",
+      "duration_seconds": 1.234,
+      "log_file": ".filterx/cli-logs/06-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193512.273391Z-bfdf3c0e\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\",\n    \"app/main.py\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 0,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.312,
+      "log_file": ".filterx/cli-logs/07-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"vue\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T193512.570323Z-a7649347\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.vue\",\n    \"frontend/src/filterx-generated/FilterxFilterBuilder.vue\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/package.json\",\n    \"frontend/src/App.vue\"\n  ],\n  \"applied_ops\": 9,\n  \"skipped_ops\": 0,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.313,
+      "log_file": ".filterx/cli-logs/08-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/09-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193513.202469Z-ca37c7d6\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.313,
+      "log_file": ".filterx/cli-logs/10-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"vue\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T193513.490102Z-47f00e99\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 8,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.344,
+      "log_file": ".filterx/cli-logs/11-frontend-reinstall.json"
+    },
+    {
+      "stage": "host-after-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.563,
+      "log_file": ".filterx/cli-logs/12-host-after-filterx-seed.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 3 packages, and changed 3 packages in 2s\n",
+      "stderr": "",
+      "duration_seconds": 2.343,
+      "log_file": ".filterx/cli-logs/13-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-vue-matrix@1.0.0 build\n> vue-tsc -b && vite build\n\n\u001b[36mvite v6.4.3 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 17 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                 \u001b[39m\u001b[1m\u001b[2m 0.17 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.15 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[35massets/index-Az9atVBU.css  \u001b[39m\u001b[1m\u001b[2m 2.07 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.82 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-COY3xYZI.js   \u001b[39m\u001b[1m\u001b[2m75.03 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 29.08 kB\u001b[22m\n\u001b[32m\u2713 built in 1.06s\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 4.328,
+      "log_file": ".filterx/cli-logs/14-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T193512.273391Z-bfdf3c0e\",\n    \"patch-20260820T193512.570323Z-a7649347\",\n    \"patch-20260820T193513.202469Z-ca37c7d6\",\n    \"patch-20260820T193513.490102Z-47f00e99\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/15-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193513.490102Z-47f00e99",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193513.490102Z-47f00e99\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "log_file": ".filterx/cli-logs/16-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193513.202469Z-ca37c7d6",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193513.202469Z-ca37c7d6\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.282,
+      "log_file": ".filterx/cli-logs/17-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193512.570323Z-a7649347",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193512.570323Z-a7649347\",\n  \"restored\": [\n    \"frontend/package.json\",\n    \"frontend/src/App.vue\"\n  ],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.vue\",\n    \"frontend/src/filterx-generated/FilterxFilterBuilder.vue\",\n    \"frontend/src/filterx-generated/index.ts\"\n  ],\n  \"count\": 9\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.281,
+      "log_file": ".filterx/cli-logs/18-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193512.273391Z-bfdf3c0e",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193512.273391Z-bfdf3c0e\",\n  \"restored\": [\n    \"app/main.py\"\n  ],\n  \"removed\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\"\n  ],\n  \"count\": 7\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/19-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\nremoved 3 packages, and changed 3 packages in 4s\n",
+      "stderr": "",
+      "duration_seconds": 4.515,
+      "log_file": ".filterx/cli-logs/20-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.562,
+      "log_file": ".filterx/cli-logs/21-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-vue-matrix@1.0.0 build\n> vue-tsc -b && vite build\n\n\u001b[36mvite v5.4.21 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\ntransforming...\n\u001b[32m\u2713\u001b[39m 10 modules transformed.\nrendering chunks...\ncomputing gzip size...\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                \u001b[39m\u001b[1m\u001b[2m 0.10 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip:  0.11 kB\u001b[22m\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-CAKjXaDX.js  \u001b[39m\u001b[1m\u001b[2m61.99 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m \u2502 gzip: 24.75 kB\u001b[22m\n\u001b[32m\u2713 built in 743ms\u001b[39m\n",
+      "stderr": "",
+      "duration_seconds": 3.11,
+      "log_file": ".filterx/cli-logs/22-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    "app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/database.py": "f8badcb1048ed39a9ff58c6784c5c43470c0ae81a7baf3c18ca2bc45fd58a716",
+    "app/main.py": "c9e9b60fb37445d8a0ca150f4f924324f137d36772123f12ad4eb7090634f520",
+    "app/models/__init__.py": "6c7551bf40f22f50e5c5967cdb50287a7ab4f18ca54ae4fdaaada0b0a6841a08",
+    "app/models/author.py": "0230b43a556c5c6d28d856d357305154c167dacf8d55f5ff8a71f71d47a1571d",
+    "app/models/book.py": "cbb083129f954772a127ed941a90119f132f2b478bf530e59376ced2d4026a8b",
+    "app/security.py": "eb8dacccc05d76dc364d666c87d5808142177b6444b75b716a8d63611194a39f",
+    "filterx.yaml": "70c0dee1a8f07e5d1134fc1c1c2d2ef7e48371f65fc6bbd081ba7986c22302cd",
+    "frontend/index.html": "6fc21c08748c5994327261461d211675190ec16d6cc435c6124266bd38d6ba6d",
+    "frontend/package.json": "3285514374ec0c8c9d598d707613bd9c120552c0b9b361ddf0a7a7d6abf34455",
+    "frontend/src/App.vue": "7edfcb965e6e2e874e78a75298c8d5920f0eeec991fccd90ee95cb8c703a47bb",
+    "frontend/src/env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "frontend/src/main.ts": "7173bae20eafc58a87988d3d9aeaeae12b06819798905787f6821c2b11b709fa",
+    "frontend/tsconfig.json": "7d1c0e13acfa0903d21b58a51c350eb4bb21320b74e41913612b6a26614d272f",
+    "frontend/tsconfig.tsbuildinfo": "b7dbc27f08c83ef9197d0de092c2820fb42bd3a19b2f0f5fa7e3854e472425f7",
+    "frontend/vite.config.ts": "41b636dff9c7dc1e52e1caf2541b19356715b16e037cb4551c27b4fb8673f2b5",
+    "seed.py": "dc47d14658751f525cae0033d105cf42dab17a0494782b34c355d9282b71d246"
+  }
+}

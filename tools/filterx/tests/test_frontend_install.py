@@ -128,6 +128,27 @@ def _args(project_root: Path, config_path: Path, **overrides: object) -> SimpleN
     return SimpleNamespace(**base)
 
 
+def test_copilot_runtime_is_generated_only_when_enabled() -> None:
+    disabled_ops = frontend._copy_reference_runtime_ops("frontend", copilot_enabled=False)
+    enabled_ops = frontend._copy_reference_runtime_ops("frontend", copilot_enabled=True)
+
+    disabled_by_path = {op.path: op.content for op in disabled_ops}
+    enabled_by_path = {op.path: op.content for op in enabled_ops}
+    service_path = "frontend/src/app/core/services/copilot.service.ts"
+    entity_list_path = "frontend/src/app/shared/components/entity-list/entity-list.component.ts"
+
+    assert service_path not in disabled_by_path
+    assert service_path in enabled_by_path
+    assert "app-copilot-panel" not in disabled_by_path[entity_list_path]
+    assert "app-copilot-panel" in enabled_by_path[entity_list_path]
+
+    entity = {"model": "Book", "table": "books", "fields": [], "relationships": []}
+    _, disabled_page = frontend._build_entity_page_ts(entity, "kebab", copilot_enabled=False)
+    _, enabled_page = frontend._build_entity_page_ts(entity, "kebab", copilot_enabled=True)
+    assert "copilotEnabled" not in disabled_page
+    assert '[copilotEnabled]="true"' in enabled_page
+
+
 def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> None:
     config_path = _write_config(tmp_path)
     _write_scan(tmp_path)
@@ -189,8 +210,42 @@ def test_frontend_install_generates_files_and_patches_routes(tmp_path: Path) -> 
     angular_json = json.loads((tmp_path / "frontend/angular.json").read_text(encoding="utf-8"))
     styles = angular_json["projects"]["frontend"]["architect"]["build"]["options"]["styles"]
     test_styles = angular_json["projects"]["frontend"]["architect"]["test"]["options"]["styles"]
-    assert styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
-    assert test_styles == ["node_modules/primeicons/primeicons.css", "src/styles.css"]
+    assert styles == [
+        "node_modules/primeicons/primeicons.css",
+        "src/filterx.scss",
+        "src/styles.css",
+    ]
+    assert test_styles == [
+        "node_modules/primeicons/primeicons.css",
+        "src/filterx.scss",
+        "src/styles.css",
+    ]
+    assert (tmp_path / "frontend/src/filterx.scss").exists()
+
+
+def test_standalone_config_imports_async_animations_from_minimal_core_import(tmp_path: Path) -> None:
+    app_config = tmp_path / "frontend/src/app/app.config.ts"
+    _write_file(
+        app_config,
+        "import { ApplicationConfig } from '@angular/core';\n"
+        "import { provideRouter } from '@angular/router';\n"
+        "import { routes } from './app.routes';\n"
+        "export const appConfig: ApplicationConfig = { providers: [provideRouter(routes),\n"
+        "  // FILTERX:PROVIDERS\n"
+        "] };\n",
+    )
+
+    patch = frontend._build_app_config_with_primeng(
+        tmp_path,
+        "frontend/src/app/app.config.ts",
+        "// FILTERX:PROVIDERS",
+        angular_major=18,
+    )
+
+    assert patch is not None
+    _, content = patch
+    assert "import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';" in content
+    assert "provideAnimationsAsync()," in content
 
 
 def test_frontend_install_supports_app_routing_module_without_anchor(tmp_path: Path) -> None:

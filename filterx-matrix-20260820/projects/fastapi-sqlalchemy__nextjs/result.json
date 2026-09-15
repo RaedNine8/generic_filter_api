@@ -1,0 +1,502 @@
+{
+  "name": "fastapi-sqlalchemy__nextjs",
+  "backend": "fastapi-sqlalchemy",
+  "frontend": "nextjs",
+  "project_root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+  "status": "passed",
+  "failed_stage": null,
+  "error": null,
+  "commands": [
+    {
+      "stage": "python-venv",
+      "command": [
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "venv",
+        ".venv"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 11.282,
+      "log_file": ".filterx/cli-logs/01-python-venv.json"
+    },
+    {
+      "stage": "python-dependencies",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\tools\\filterx",
+        "fastapi",
+        "sqlalchemy",
+        "uvicorn",
+        "httpx"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "Obtaining file:///C:/Users/raedn/OneDrive/Bureau/FILES/DEV%20FILES/MAIN_PROJECTS/generic_filter_api/tools/filterx\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Getting requirements to build editable: started\n  Getting requirements to build editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nCollecting fastapi\n  Using cached fastapi-0.141.1-py3-none-any.whl (131 kB)\nCollecting sqlalchemy\n  Using cached sqlalchemy-2.0.52-cp310-cp310-win_amd64.whl (2.2 MB)\nCollecting uvicorn\n  Using cached uvicorn-0.52.4-py3-none-any.whl (79 kB)\nCollecting httpx\n  Using cached httpx-0.28.1-py3-none-any.whl (73 kB)\nCollecting typing-inspection>=0.4.2\n  Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)\nCollecting typing-extensions>=4.8.0\n  Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)\nCollecting starlette>=0.46.0\n  Using cached starlette-1.6.0-py3-none-any.whl (75 kB)\nCollecting pydantic>=2.9.0\n  Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)\nCollecting annotated-doc>=0.0.2\n  Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)\nCollecting greenlet>=1\n  Using cached greenlet-3.5.5-cp310-cp310-win_amd64.whl (322 kB)\nCollecting h11>=0.8\n  Using cached h11-0.16.0-py3-none-any.whl (37 kB)\nCollecting click>=7.0\n  Using cached click-8.4.2-py3-none-any.whl (119 kB)\nCollecting idna\n  Using cached idna-3.19-py3-none-any.whl (68 kB)\nCollecting anyio\n  Using cached anyio-4.14.2-py3-none-any.whl (125 kB)\nCollecting httpcore==1.*\n  Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)\nCollecting certifi\n  Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)\nCollecting PyYAML>=6.0.0\n  Using cached pyyaml-6.0.3-cp310-cp310-win_amd64.whl (158 kB)\nCollecting tree-sitter-kotlin==1.1.0\n  Using cached tree_sitter_kotlin-1.1.0-cp39-abi3-win_amd64.whl (315 kB)\nCollecting tree-sitter-groovy==0.1.0\n  Using cached tree_sitter_groovy-0.1.0-cp39-abi3-win_amd64.whl (104 kB)\nCollecting tree-sitter==0.25.2\n  Using cached tree_sitter-0.25.2-cp310-cp310-win_amd64.whl (127 kB)\nCollecting colorama\n  Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)\nCollecting pydantic-core==2.46.4\n  Using cached pydantic_core-2.46.4-cp310-cp310-win_amd64.whl (2.1 MB)\nCollecting annotated-types>=0.6.0\n  Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)\nCollecting exceptiongroup>=1.0.2\n  Using cached exceptiongroup-1.3.1-py3-none-any.whl (16 kB)\nBuilding wheels for collected packages: filterx-cli\n  Building editable for filterx-cli (pyproject.toml): started\n  Building editable for filterx-cli (pyproject.toml): finished with status 'done'\n  Created wheel for filterx-cli: filename=filterx_cli-0.1.0-0.editable-py3-none-any.whl size=6314 sha256=eb84f6add2cc5f61c12bcafccb55c0545c86d5f47fba07178609f0c1a95cd4e7\n  Stored in directory: C:\\Users\\raedn\\AppData\\Local\\Temp\\pip-ephem-wheel-cache-jhedtsv2\\wheels\\b3\\83\\f8\\ac910e50a23aacf2fd0f131bfe2580bb605b3126c8513e26b5\nSuccessfully built filterx-cli\nInstalling collected packages: typing-extensions, tree-sitter-kotlin, tree-sitter-groovy, tree-sitter, PyYAML, idna, h11, greenlet, colorama, certifi, annotated-types, annotated-doc, typing-inspection, sqlalchemy, pydantic-core, httpcore, filterx-cli, exceptiongroup, click, uvicorn, pydantic, anyio, starlette, httpx, fastapi\n  Attempting uninstall: filterx-cli\n    Found existing installation: filterx-cli 0.1.0\n    Not uninstalling filterx-cli at c:\\users\\raedn\\onedrive\\bureau\\files\\dev files\\main_projects\\generic_filter_api\\tools\\filterx, outside environment C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\n    Can't uninstall 'filterx-cli'. No files were found to uninstall.\nSuccessfully installed PyYAML-6.0.3 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.14.2 certifi-2026.7.22 click-8.4.2 colorama-0.4.6 exceptiongroup-1.3.1 fastapi-0.141.1 filterx-cli-0.1.0 greenlet-3.5.5 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.19 pydantic-2.13.4 pydantic-core-2.46.4 sqlalchemy-2.0.52 starlette-1.6.0 tree-sitter-0.25.2 tree-sitter-groovy-0.1.0 tree-sitter-kotlin-1.1.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.52.4\n",
+      "stderr": "\n[notice] A new release of pip is available: 23.0.1 -> 26.2.1\n[notice] To update, run: C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\python.exe -m pip install --upgrade pip\n",
+      "duration_seconds": 24.375,
+      "log_file": ".filterx/cli-logs/02-python-dependencies.json"
+    },
+    {
+      "stage": "frontend-host-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nadded 26 packages in 16s\n",
+      "stderr": "",
+      "duration_seconds": 16.25,
+      "log_file": ".filterx/cli-logs/03-frontend-host-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.703,
+      "log_file": ".filterx/cli-logs/04-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 6.6s\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/4) ...\n   Generating static pages (1/4) \n   Generating static pages (2/4) \n   Generating static pages (3/4) \n \u2713 Generating static pages (4/4)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u2514 \u25cb /_not-found                            993 B         104 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.95 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "",
+      "duration_seconds": 37.782,
+      "log_file": ".filterx/cli-logs/05-host-before-filterx-frontend-build.json"
+    },
+    {
+      "stage": "scan",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "scan",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"wrote_files\": true,\n  \"scan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\.filterx\\\\scan.json\",\n  \"diagnostics_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\.filterx\\\\diagnostics.json\",\n  \"plan_file\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\.filterx\\\\plan.json\",\n  \"diagnostics\": {\n    \"errors\": [],\n    \"warnings\": [\n      {\n        \"code\": \"RELATIONSHIP_CYCLES_DETECTED\",\n        \"message\": \"Relationship cycles were detected in model graph.\",\n        \"context\": {\n          \"cycles\": [\n            [\n              \"Author\",\n              \"Book\",\n              \"Author\"\n            ]\n          ]\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'routes_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\frontend\\\\src\\\\app\\\\app.routes.ts\"\n        }\n      },\n      {\n        \"code\": \"FRONTEND_FILE_NOT_FOUND\",\n        \"message\": \"Frontend target file 'app_config_file' not found.\",\n        \"context\": {\n          \"path\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\frontend\\\\src\\\\app\\\\app.config.ts\"\n        }\n      }\n    ],\n    \"info\": []\n  },\n  \"entity_count\": 2\n}\n",
+      "stderr": "",
+      "duration_seconds": 1.266,
+      "log_file": ".filterx/cli-logs/06-scan.json"
+    },
+    {
+      "stage": "backend-install",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193301.777964Z-1f4e02e3\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\",\n    \"app/main.py\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 0,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.312,
+      "log_file": ".filterx/cli-logs/07-backend-install.json"
+    },
+    {
+      "stage": "frontend-install",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"nextjs\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T193302.072560Z-fbf45be7\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"applied_ops\": 7,\n  \"skipped_ops\": 1,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.297,
+      "log_file": ".filterx/cli-logs/08-frontend-install.json"
+    },
+    {
+      "stage": "validate",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "validate",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"errors\": [],\n  \"warnings\": [],\n  \"error_count\": 0,\n  \"warning_count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/09-validate.json"
+    },
+    {
+      "stage": "backend-reinstall",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "backend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"dry_run\": false,\n  \"check_mode\": false,\n  \"patch_id\": \"patch-20260820T193302.691351Z-1db17af7\",\n  \"generated_root\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\app\\\\filterx_generated\",\n  \"selected_entities\": [\n    \"Author\",\n    \"Book\"\n  ],\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": [],\n  \"conflicts\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.344,
+      "log_file": ".filterx/cli-logs/10-backend-reinstall.json"
+    },
+    {
+      "stage": "frontend-reinstall",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "frontend",
+        "install",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"framework\": \"nextjs\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T193302.984288Z-933299f2\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 8,\n  \"issues\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.328,
+      "log_file": ".filterx/cli-logs/11-frontend-reinstall.json"
+    },
+    {
+      "stage": "host-after-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.562,
+      "log_file": ".filterx/cli-logs/12-host-after-filterx-seed.json"
+    },
+    {
+      "stage": "frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nup to date in 709ms\n",
+      "stderr": "",
+      "duration_seconds": 1.0,
+      "log_file": ".filterx/cli-logs/13-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-after-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 11.5s\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/5) ...\n   Generating static pages (1/5) \n   Generating static pages (2/5) \n   Generating static pages (3/5) \n \u2713 Generating static pages (5/5)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u251c \u25cb /_not-found                            993 B         104 kB\n\u2514 \u25cb /filterx                             2.77 kB         105 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.96 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend\\node_modules\\next\\dist\\build\\webpack\\loaders\\css-loader\\src\\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend\\node_modules\\next\\dist\\build\\webpack\\loaders\\postcss-loader\\src\\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend\\src\\filterx-generated\\filterx.css': No serializer registered for Warning\n<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> Array { 1 items } -> webpack/lib/ModuleWarning -> Warning\n \u26a0 Compiled with warnings in 10.0s\n\n./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css\nWarning\n\n(1:694) autoprefixer: end value has mixed support, consider using flex-end instead\n\nImport trace for requested module:\n./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css\n./src/filterx-generated/filterx.css\n./src/filterx-generated/FilterxApp.tsx\n\n",
+      "duration_seconds": 26.86,
+      "log_file": ".filterx/cli-logs/14-host-after-filterx-frontend-build.json"
+    },
+    {
+      "stage": "rollback-list",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--list",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__nextjs\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T193301.777964Z-1f4e02e3\",\n    \"patch-20260820T193302.072560Z-fbf45be7\",\n    \"patch-20260820T193302.691351Z-1db17af7\",\n    \"patch-20260820T193302.984288Z-933299f2\"\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.328,
+      "log_file": ".filterx/cli-logs/15-rollback-list.json"
+    },
+    {
+      "stage": "rollback-01",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193302.984288Z-933299f2",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193302.984288Z-933299f2\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.297,
+      "log_file": ".filterx/cli-logs/16-rollback-01.json"
+    },
+    {
+      "stage": "rollback-02",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193302.691351Z-1db17af7",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193302.691351Z-1db17af7\",\n  \"restored\": [],\n  \"removed\": [],\n  \"count\": 0\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.266,
+      "log_file": ".filterx/cli-logs/17-rollback-02.json"
+    },
+    {
+      "stage": "rollback-03",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193302.072560Z-fbf45be7",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193302.072560Z-fbf45be7\",\n  \"restored\": [],\n  \"removed\": [\n    \"frontend/src/filterx-generated/types.ts\",\n    \"frontend/src/filterx-generated/entities.ts\",\n    \"frontend/src/filterx-generated/api.ts\",\n    \"frontend/src/filterx-generated/filterx.css\",\n    \"frontend/src/filterx-generated/FilterxApp.tsx\",\n    \"frontend/src/filterx-generated/index.ts\",\n    \"frontend/src/app/filterx/page.tsx\"\n  ],\n  \"count\": 7\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.281,
+      "log_file": ".filterx/cli-logs/18-rollback-03.json"
+    },
+    {
+      "stage": "rollback-04",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\filterx.exe",
+        "rollback",
+        "--patch-id",
+        "patch-20260820T193301.777964Z-1f4e02e3",
+        "--project-root",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+        "--config",
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\filterx.yaml",
+        "--yes",
+        "--json"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "{\n  \"patch_id\": \"patch-20260820T193301.777964Z-1f4e02e3\",\n  \"restored\": [\n    \"app/main.py\"\n  ],\n  \"removed\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\"\n  ],\n  \"count\": 7\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.281,
+      "log_file": ".filterx/cli-logs/19-rollback-04.json"
+    },
+    {
+      "stage": "post-rollback-frontend-npm-install",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\nup to date in 687ms\n",
+      "stderr": "",
+      "duration_seconds": 0.985,
+      "log_file": ".filterx/cli-logs/20-post-rollback-frontend-npm-install.json"
+    },
+    {
+      "stage": "host-before-filterx-seed",
+      "command": [
+        "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\.venv\\Scripts\\python.exe",
+        "seed.py"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.547,
+      "log_file": ".filterx/cli-logs/21-host-before-filterx-seed.json"
+    },
+    {
+      "stage": "host-before-filterx-frontend-build",
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.CMD",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+      "exit_code": 0,
+      "stdout": "\n> filterx-next-matrix@1.0.0 build\n> next build\n\n   \u25b2 Next.js 15.5.23\n\n   Creating an optimized production build ...\n \u2713 Compiled successfully in 1694ms\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/4) ...\n   Generating static pages (1/4) \n   Generating static pages (2/4) \n   Generating static pages (3/4) \n \u2713 Generating static pages (4/4)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                 Size  First Load JS\n\u250c \u25cb /                                      127 B         103 kB\n\u2514 \u25cb /_not-found                            993 B         104 kB\n+ First Load JS shared by all             103 kB\n  \u251c chunks/255-87552e6e05b8e3aa.js       46.4 kB\n  \u251c chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB\n  \u2514 other shared chunks (total)          1.95 kB\n\n\n\u25cb  (Static)  prerendered as static content\n\n",
+      "stderr": "",
+      "duration_seconds": 16.672,
+      "log_file": ".filterx/cli-logs/22-host-before-filterx-frontend-build.json"
+    }
+  ],
+  "checks": [
+    {
+      "check": "host-before-filterx-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "filterx-idempotent-reinstall",
+      "status": "passed"
+    },
+    {
+      "check": "metadata",
+      "status": "passed"
+    },
+    {
+      "check": "row-and-field-security",
+      "status": "passed"
+    },
+    {
+      "check": "alternate-principal-row-security",
+      "status": "passed"
+    },
+    {
+      "check": "url-equality",
+      "status": "passed"
+    },
+    {
+      "check": "url-in",
+      "status": "passed"
+    },
+    {
+      "check": "url-null",
+      "status": "passed"
+    },
+    {
+      "check": "search",
+      "status": "passed"
+    },
+    {
+      "check": "sort-descending",
+      "status": "passed"
+    },
+    {
+      "check": "pagination-boundaries",
+      "status": "passed"
+    },
+    {
+      "check": "nested-filter",
+      "status": "passed"
+    },
+    {
+      "check": "nested-and-or-in-null-filter",
+      "status": "passed"
+    },
+    {
+      "check": "grouping",
+      "status": "passed"
+    },
+    {
+      "check": "filtered-grouping",
+      "status": "passed"
+    },
+    {
+      "check": "hidden-field-grouping-rejected",
+      "status": "passed"
+    },
+    {
+      "check": "json-export",
+      "status": "passed"
+    },
+    {
+      "check": "csv-export",
+      "status": "passed"
+    },
+    {
+      "check": "xlsx-export",
+      "status": "passed"
+    },
+    {
+      "check": "frontend-page-and-proxy",
+      "status": "passed"
+    },
+    {
+      "check": "post-rollback-host-runtime",
+      "status": "passed"
+    },
+    {
+      "check": "rollback-exact-host-restore",
+      "status": "passed"
+    }
+  ],
+  "host_baseline": {
+    "app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/database.py": "f8badcb1048ed39a9ff58c6784c5c43470c0ae81a7baf3c18ca2bc45fd58a716",
+    "app/main.py": "c9e9b60fb37445d8a0ca150f4f924324f137d36772123f12ad4eb7090634f520",
+    "app/models/__init__.py": "6c7551bf40f22f50e5c5967cdb50287a7ab4f18ca54ae4fdaaada0b0a6841a08",
+    "app/models/author.py": "0230b43a556c5c6d28d856d357305154c167dacf8d55f5ff8a71f71d47a1571d",
+    "app/models/book.py": "cbb083129f954772a127ed941a90119f132f2b478bf530e59376ced2d4026a8b",
+    "app/security.py": "eb8dacccc05d76dc364d666c87d5808142177b6444b75b716a8d63611194a39f",
+    "filterx.yaml": "6148ba951e51dd3efc8b2731371d64eabd1cbbb18dab479c7fd64cf25bd2243f",
+    "frontend/next-env.d.ts": "85ae5aee75f011967cf2d25cbc342f62d69314e9d925f7f4aa3456fc2cffcca6",
+    "frontend/next.config.ts": "4f726d227c9b96a1c232a7c06933d925c5c3a46a57bd4798ee7ae4163125a88a",
+    "frontend/package.json": "c256e72893c49cac0dc742a153b5a1ad493536d208cc495903ace562eaa34b13",
+    "frontend/src/app/layout.tsx": "d98ac855ef79a037c60b7d7cf93c8cc25fedefbb9372eb40fbab42d7503c9027",
+    "frontend/src/app/page.tsx": "cb57483843396030732dd474c6309b1393f68b0a88d504a02c8d788fe8245dad",
+    "frontend/tsconfig.json": "e3ba0bafff04f187ecbea0ecb6cd74002473d4b000881228a98fe3632ff5f30a",
+    "seed.py": "dc47d14658751f525cae0033d105cf42dab17a0494782b34c355d9282b71d246"
+  }
+}

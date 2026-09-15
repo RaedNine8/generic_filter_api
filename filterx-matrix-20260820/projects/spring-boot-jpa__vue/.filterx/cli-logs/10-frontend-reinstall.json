@@ -1,0 +1,22 @@
+{
+  "stage": "frontend-reinstall",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "frontend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"vue\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T201303.053632Z-1f807a2a\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 8,\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.359,
+  "log_file": ".filterx/cli-logs/10-frontend-reinstall.json"
+}

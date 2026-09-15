@@ -35,6 +35,7 @@ DEFAULT_APP_MODULE_CANDIDATE = "src/app/app.module.ts"
 
 REFERENCE_RUNTIME_FILES = [
     "core/index.ts",
+    "core/config/filterx-config.ts",
     "core/enums/index.ts",
     "core/enums/filter-operation.enum.ts",
     "core/enums/sort-order.enum.ts",
@@ -76,6 +77,14 @@ REFERENCE_RUNTIME_FILES = [
     "shared/components/search-box/search-box.component.ts",
     "shared/components/sort-header/sort-header.component.ts",
 ]
+
+COPILOT_RUNTIME_FILES = {
+    "core/interfaces/copilot.interface.ts",
+    "core/services/copilot.service.ts",
+    "shared/components/copilot-panel/copilot-panel.component.html",
+    "shared/components/copilot-panel/copilot-panel.component.scss",
+    "shared/components/copilot-panel/copilot-panel.component.ts",
+}
 
 
 def _resolve_dry_run(args: Any, cfg: dict[str, Any]) -> bool:
@@ -722,16 +731,13 @@ def _build_angular_json_with_proxy(project_root: Path, frontend_root: str) -> tu
     if not isinstance(projects, dict):
         return None
 
-    def ensure_primeicons_style(target: dict[str, Any]) -> None:
+    def ensure_filterx_styles(target: dict[str, Any]) -> None:
         nonlocal changed
         options = target.setdefault("options", {})
         if not isinstance(options, dict):
             return
         styles = options.setdefault("styles", [])
         if not isinstance(styles, list):
-            return
-        primeicons_style = "node_modules/primeicons/primeicons.css"
-        if primeicons_style in styles:
             return
         src_style_index = next(
             (
@@ -741,8 +747,14 @@ def _build_angular_json_with_proxy(project_root: Path, frontend_root: str) -> tu
             ),
             0,
         )
-        styles.insert(src_style_index, primeicons_style)
-        changed = True
+        for generated_style in (
+            "node_modules/primeicons/primeicons.css",
+            "src/filterx.scss",
+        ):
+            if generated_style not in styles:
+                styles.insert(src_style_index, generated_style)
+                src_style_index += 1
+                changed = True
 
     changed = False
     for project in projects.values():
@@ -763,7 +775,7 @@ def _build_angular_json_with_proxy(project_root: Path, frontend_root: str) -> tu
 
         build = architect.get("build")
         if isinstance(build, dict):
-            ensure_primeicons_style(build)
+            ensure_filterx_styles(build)
             configurations = build.get("configurations")
             if isinstance(configurations, dict):
                 production = configurations.get("production")
@@ -783,7 +795,7 @@ def _build_angular_json_with_proxy(project_root: Path, frontend_root: str) -> tu
 
         test = architect.get("test")
         if isinstance(test, dict):
-            ensure_primeicons_style(test)
+            ensure_filterx_styles(test)
 
     if not changed:
         return None
@@ -803,12 +815,16 @@ def _build_package_json_with_ui_deps(project_root: Path, frontend_root: str) -> 
     if not isinstance(dependencies, dict):
         return None
     changed = False
+    angular_core = dependencies.get("@angular/core", "^19.0.0")
+    match = re.search(r"(\d+)", angular_core) if isinstance(angular_core, str) else None
+    angular_major = int(match.group(1)) if match else 19
     required = {
-        "@angular/animations": "^19.2.0",
-        "primeng": "^19.1.4",
+        "@angular/animations": angular_core,
+        "primeng": f"^{angular_major}.0.0",
         "primeicons": "^7.0.0",
-        "@primeng/themes": "^19.1.4",
     }
+    if angular_major >= 18:
+        required["@primeng/themes"] = f"^{angular_major}.0.0"
     for name, version in required.items():
         if name not in dependencies:
             dependencies[name] = version
@@ -842,7 +858,12 @@ def _detect_angular_major(project_root: Path, frontend_root: str) -> int | None:
     return int(match.group(1))
 
 
-def _build_app_config_with_primeng(project_root: Path, app_config_file: str, app_config_anchor: str) -> tuple[str, str] | None:
+def _build_app_config_with_primeng(
+    project_root: Path,
+    app_config_file: str,
+    app_config_anchor: str,
+    angular_major: int | None = None,
+) -> tuple[str, str] | None:
     path = project_root / app_config_file
     if not path.exists():
         return None
@@ -853,15 +874,50 @@ def _build_app_config_with_primeng(project_root: Path, app_config_file: str, app
         return None
 
     changed = False
+    if "provideFilterx" not in content:
+        import_line = "import { provideFilterx } from './core/config/filterx-config';"
+        route_import = "import { routes } from './app.routes';"
+        if route_import in content:
+            content = content.replace(route_import, route_import + "\n" + import_line)
+        else:
+            route_import = 'import { routes } from "./app.routes";'
+            content = content.replace(
+                route_import,
+                route_import + '\nimport { provideFilterx } from "./core/config/filterx-config";',
+            )
+        if app_config_anchor in content:
+            content = content.replace(app_config_anchor, app_config_anchor + "\n    provideFilterx(),")
+        else:
+            content = content.replace("  providers: [", "  providers: [\n    provideFilterx(),")
+        changed = True
     if "provideAnimationsAsync" not in content:
-        content = content.replace(
+        updated = content.replace(
             "import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';",
             "import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';\nimport { provideAnimationsAsync } from '@angular/platform-browser/animations/async';",
         ).replace(
             'import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";',
             'import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";\nimport { provideAnimationsAsync } from "@angular/platform-browser/animations/async";',
         )
+        if updated == content:
+            import_line = "import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';\n"
+            core_import = re.search(r"^import\s+\{[^}]*\bApplicationConfig\b[^}]*\}\s+from\s+(['\"])@angular/core\1;\s*$", content, re.MULTILINE)
+            if core_import:
+                updated = content[: core_import.end()] + "\n" + import_line.rstrip("\n") + content[core_import.end() :]
+            else:
+                updated = import_line + content
+        content = updated
         changed = True
+    if angular_major is not None and angular_major < 18:
+        if "provideAnimationsAsync()" not in content:
+            if app_config_anchor in content:
+                content = content.replace(
+                    app_config_anchor,
+                    "    provideAnimationsAsync(),\n    " + app_config_anchor,
+                )
+            else:
+                content = content.replace("  ],", "    provideAnimationsAsync(),\n  ],")
+            changed = True
+        return (app_config_file, content) if changed else None
     if "providePrimeNG" not in content:
         marker = "import { provideRouter } from '@angular/router';"
         if marker in content:
@@ -1280,6 +1336,21 @@ def _legacy_runtime_template(rel: str) -> str | None:
 '''
 
         if rel == "shared/components/filter-builder/filter-builder.component.html":
+                return r'''<section class="filter-builder" aria-label="Advanced search builder">
+    <header class="filter-header"><h4 class="filter-title">Advanced Search Builder</h4><button type="button" class="text-button danger" (click)="clearAll()">Clear all</button></header>
+    <div class="filter-content"><ng-container *ngIf="tree as root"><ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: root, parent: null }"></ng-container></ng-container></div>
+    <footer class="filter-footer" *ngIf="showApplyButton"><button type="button" class="apply-button" (click)="applyFilters()">{{ applyButtonLabel }}</button></footer>
+</section>
+<ng-template #nodeTemplate let-node let-parent="parent">
+    <section *ngIf="node.nodeType === 'operator'; else conditionTemplate" class="filter-group" [class.filter-group-or]="node.operator === 'OR'">
+        <div class="group-header"><button type="button" class="expand-button" (click)="toggleExpanded(node)">{{ node.expanded === false ? '▸' : '▾' }}</button><button type="button" class="operator-button" [class.operator-or]="node.operator === 'OR'" (click)="toggleOperator(node)">{{ node.operator }}</button><span class="operator-description">{{ node.operator === 'AND' ? 'Match every condition' : 'Match any condition' }}</span><div class="group-actions"><button type="button" class="action-button" (click)="addCondition(node)">+ Condition</button><button type="button" class="action-button" (click)="addGroup(node)">+ Group</button><button *ngIf="parent" type="button" class="icon-button danger" (click)="removeNode(parent, node)" [disabled]="!canRemoveChild(parent)">×</button></div></div>
+        <div class="group-children" *ngIf="node.expanded !== false"><ng-container *ngFor="let child of node.children"><ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child, parent: node }"></ng-container></ng-container></div>
+    </section>
+    <ng-template #conditionTemplate><div class="condition-row"><label><span class="sr-only">Field</span><select class="builder-control" [(ngModel)]="node.field" (ngModelChange)="onFieldChange(node)"><option [ngValue]="''" disabled>Choose field</option><option *ngFor="let field of fields" [ngValue]="field.name">{{ field.label }}</option></select></label><label><span class="sr-only">Operation</span><select class="builder-control operation-control" [(ngModel)]="node.operation" (ngModelChange)="onOperationChange(node)"><option *ngFor="let op of getAvailableOperations(node.field || '')" [ngValue]="op">{{ getOpLabel(op) }}</option></select></label><div class="value-control" *ngIf="needsValue(node.operation)"><input class="builder-control" [type]="getInputType(node.field || '')" [(ngModel)]="node.value" (ngModelChange)="onValueChange()" placeholder="Value" /></div><span class="no-value-hint" *ngIf="!needsValue(node.operation)">No value required</span><button type="button" class="icon-button danger" (click)="removeNode(parent, node)" [disabled]="!parent || !canRemoveChild(parent)">×</button></div></ng-template>
+</ng-template>
+'''
+
+        if rel == "shared/components/filter-builder/filter-builder.component.html":
                 return r'''<div class="filter-builder">
     <div class="filter-header">
         <div class="header-left">
@@ -1481,16 +1552,44 @@ def _legacy_runtime_template(rel: str) -> str | None:
         return None
 
 
-def _copy_reference_runtime_ops(frontend_root: str, prefer_legacy_templates: bool = False) -> list[PatchOp]:
+def _copy_reference_runtime_ops(
+    frontend_root: str,
+    prefer_legacy_templates: bool = False,
+    copilot_enabled: bool = False,
+) -> list[PatchOp]:
     source_root = _reference_app_root()
     if source_root is None:
         return []
     ops: list[PatchOp] = []
     for rel in REFERENCE_RUNTIME_FILES:
+        if not copilot_enabled and rel in COPILOT_RUNTIME_FILES:
+            continue
         source = source_root / rel
         if not source.exists():
             continue
         content = source.read_text(encoding="utf-8")
+
+        if not copilot_enabled:
+            if rel == "core/interfaces/index.ts":
+                content = content.replace('export * from "./copilot.interface";\n', "")
+            elif rel == "core/services/index.ts":
+                content = content.replace('export * from "./copilot.service";\n', "")
+            elif rel == "shared/components/index.ts":
+                content = content.replace('export * from "./copilot-panel/copilot-panel.component";\n', "")
+            elif rel == "shared/components/entity-list/entity-list.component.ts":
+                content = content.replace(
+                    'import { CopilotPanelComponent } from "../copilot-panel/copilot-panel.component";\n',
+                    "",
+                )
+                content = content.replace(
+                    "  imports: [\n    CommonModule,\n    AdvancedSearchPanelComponent,\n    CopilotPanelComponent,\n    DataTableComponent,\n  ],",
+                    "  imports: [CommonModule, AdvancedSearchPanelComponent, DataTableComponent],",
+                )
+                content = content.replace(
+                    '        <app-copilot-panel\n          *ngIf="copilotEnabled"\n          [entity]="config.name"\n          (applyFilter)="onTreeChange($event)"\n        ></app-copilot-panel>\n\n',
+                    "",
+                )
+                content = content.replace("\n  @Input() copilotEnabled = false;\n", "")
 
         if prefer_legacy_templates:
             legacy_template = _legacy_runtime_template(rel)
@@ -1500,27 +1599,6 @@ def _copy_reference_runtime_ops(frontend_root: str, prefer_legacy_templates: boo
             content = content.replace(
                 ".get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })",
                 ".get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })",
-            )
-        if rel == "core/services/saved-filter.service.ts":
-            content = content.replace(
-                "import { Observable, throwError } from \"rxjs\";",
-                "import { Observable, of, throwError } from \"rxjs\";",
-            )
-            content = content.replace(
-                "  private readonly baseUrl = \"/api/saved-filters\";",
-                "  private readonly baseUrl = \"/api/saved-filters\";\n  private readonly savedFiltersAvailable = false;",
-            )
-            content = content.replace(
-                "  createFilter(filter: SavedFilterCreate): Observable<SavedFilter> {\n    return this.http\n      .post<SavedFilter>(this.baseUrl, filter)\n      .pipe(catchError(this.handleError));\n  }",
-                "  createFilter(filter: SavedFilterCreate): Observable<SavedFilter> {\n    if (!this.savedFiltersAvailable) {\n      return of({ id: Date.now(), ...filter } as SavedFilter);\n    }\n    return this.http\n      .post<SavedFilter>(this.baseUrl, filter)\n      .pipe(catchError(this.handleError));\n  }",
-            )
-            content = content.replace(
-                "  getFilters(modelName?: string): Observable<SavedFilter[]> {",
-                "  getFilters(modelName?: string): Observable<SavedFilter[]> {\n    if (!this.savedFiltersAvailable) {\n      return of([]);\n    }",
-            )
-            content = content.replace(
-                "  deleteFilter(filterId: number): Observable<void> {\n    return this.http\n      .delete<void>(`${this.baseUrl}/${filterId}`)\n      .pipe(catchError(this.handleError));\n  }",
-                "  deleteFilter(filterId: number): Observable<void> {\n    if (!this.savedFiltersAvailable) {\n      return of(void 0);\n    }\n    return this.http\n      .delete<void>(`${this.baseUrl}/${filterId}`)\n      .pipe(catchError(this.handleError));\n  }",
             )
         ops.append(
             PatchOp(
@@ -1536,10 +1614,10 @@ def _copy_reference_runtime_ops(frontend_root: str, prefer_legacy_templates: boo
         ops.append(
             PatchOp(
                 kind="generated_file",
-                path=f"{frontend_root.rstrip('/')}/src/styles.css",
+                path=f"{frontend_root.rstrip('/')}/src/filterx.scss",
                 content=styles_source.read_text(encoding="utf-8"),
-                owner="host",
-                description="Install FilterX reference global styles",
+                owner="filterx-generated",
+                description="Install isolated FilterX global styles",
             )
         )
     return ops
@@ -1617,13 +1695,14 @@ def _build_entity_config_ts(entity: dict[str, Any], style: str) -> tuple[str, st
     return f"{_styled_name(model_name, style)}.config.ts", content
 
 
-def _build_entity_page_ts(entity: dict[str, Any], style: str) -> tuple[str, str]:
+def _build_entity_page_ts(entity: dict[str, Any], style: str, copilot_enabled: bool = False) -> tuple[str, str]:
     model_name = str(entity.get("model", "Entity"))
     model_slug = _styled_name(model_name, style)
     interface_name = _to_pascal(model_name)
     class_name = f"{interface_name}FilterxPageComponent"
     config_name = f"{_to_snake(model_name).upper()}_GENERATED_CONFIG"
     description = f"Browse and filter {interface_name.lower()} records using the generated FilterX search panel."
+    copilot_binding = '      [copilotEnabled]="true"\n' if copilot_enabled else ""
     content = (
         "import { Component } from '@angular/core';\n"
         "import { EntityListComponent } from '../../shared/components/entity-list/entity-list.component';\n"
@@ -1635,7 +1714,8 @@ def _build_entity_page_ts(entity: dict[str, Any], style: str) -> tuple[str, str]
         "  template: `\n"
         "    <app-entity-list\n"
         "      [config]=\"config\"\n"
-        "      [showHeader]=\"true\"\n"
+        + copilot_binding
+        + "      [showHeader]=\"true\"\n"
         f"      [description]=\"'{description}'\"\n"
         "      [clickableRows]=\"true\"\n"
         "      [onRowClicked]=\"handleRowClick\"\n"
@@ -1715,6 +1795,7 @@ def _run_install_impl(args: Any) -> int:
 
     style = str(getattr(args, "style", None) or cfg["frontend"].get("entity_style", "kebab"))
     frontend_root = str(cfg["frontend"].get("workspace_root", "frontend"))
+    angular_major = _detect_angular_major(project_root, frontend_root)
     generated_root = str(cfg["frontend"]["generated_root"])
     routes_file_arg = getattr(args, "routes_file", None)
     if routes_file_arg:
@@ -1782,7 +1863,12 @@ def _run_install_impl(args: Any) -> int:
         )
     app_config_anchor = str(getattr(args, "app_config_anchor", None) or cfg["frontend"].get("app_config_anchor", ""))
     if app_config_file:
-        app_config_patch = _build_app_config_with_primeng(project_root, app_config_file, app_config_anchor)
+        app_config_patch = _build_app_config_with_primeng(
+            project_root,
+            app_config_file,
+            app_config_anchor,
+            angular_major,
+        )
         if app_config_patch is not None:
             app_config_rel, app_config_content = app_config_patch
             ops.append(
@@ -1795,11 +1881,11 @@ def _run_install_impl(args: Any) -> int:
                 )
             )
 
-    angular_major = _detect_angular_major(project_root, frontend_root)
     ops.extend(
         _copy_reference_runtime_ops(
             frontend_root,
             prefer_legacy_templates=angular_major is not None and angular_major < 17,
+            copilot_enabled=bool(cfg.get("agent", {}).get("enabled", False)),
         )
     )
     ops.extend(
@@ -1825,7 +1911,11 @@ def _run_install_impl(args: Any) -> int:
                 description=f"Generated frontend entity config for {model_name}",
             )
         )
-        page_name, page_content = _build_entity_page_ts(entity, style)
+        page_name, page_content = _build_entity_page_ts(
+            entity,
+            style,
+            copilot_enabled=bool(cfg.get("agent", {}).get("enabled", False)),
+        )
         ops.append(
             PatchOp(
                 kind="generated_file",
@@ -1967,11 +2057,11 @@ def _frontend_remove_candidates(patch_dir: Path) -> list[str]:
     return candidates
 
 
-def run_install(args: Any) -> int:
+def _run_angular_install(args: Any) -> int:
     return _run_install_impl(args)
 
 
-def run_validate(args: Any) -> int:
+def _run_angular_validate(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -2037,7 +2127,7 @@ def run_validate(args: Any) -> int:
     return 0
 
 
-def run_remove(args: Any) -> int:
+def _run_angular_remove(args: Any) -> int:
     project_root = Path(args.project_root).resolve()
     config_path = Path(args.config).resolve() if args.config else None
     effective = load_effective_config(project_root, config_path)
@@ -2099,3 +2189,40 @@ def run_remove(args: Any) -> int:
         print(f"- Removed files: {len(payload['removed'])}")
 
     return 0
+
+
+def _frontend_renderer(args: Any) -> Any:
+    from filterx.renderers import RendererTarget, renderer_registry
+
+    project_root = Path(args.project_root).resolve()
+    config_path = Path(args.config).resolve() if args.config else None
+    cfg = load_effective_config(project_root, config_path).raw
+    return renderer_registry.resolve(
+        RendererTarget.FRONTEND,
+        str(cfg["frontend"].get("framework", "angular")),
+    )
+
+
+def _run_with_renderer(args: Any, action: str) -> int:
+    try:
+        renderer = _frontend_renderer(args)
+    except ValueError as exc:
+        payload = {"errors": [{"code": "FRONTEND_RENDERER_NOT_REGISTERED", "message": str(exc)}]}
+        if getattr(args, "json", False):
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"FilterX frontend {action} failed: {exc}")
+        return 2
+    return int(getattr(renderer, action)(args))
+
+
+def run_install(args: Any) -> int:
+    return _run_with_renderer(args, "install")
+
+
+def run_validate(args: Any) -> int:
+    return _run_with_renderer(args, "validate")
+
+
+def run_remove(args: Any) -> int:
+    return _run_with_renderer(args, "remove")

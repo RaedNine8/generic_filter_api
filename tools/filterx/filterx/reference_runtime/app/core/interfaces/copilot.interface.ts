@@ -11,13 +11,9 @@ export interface CopilotPreviewResponse {
   confirmation_token: string;
 }
 
-export interface CopilotExecuteResponse<T = Record<string, unknown>> {
-  data: T[];
-  meta: {
-    page: number;
-    size: number;
-    total_items: number;
-  };
+export interface CopilotExecuteResponse {
+  entity: string;
+  filter_tree: Record<string, unknown>;
   summary: string;
   explanation: string;
 }

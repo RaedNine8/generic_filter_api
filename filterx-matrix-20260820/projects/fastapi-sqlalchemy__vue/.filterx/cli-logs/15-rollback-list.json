@@ -1,0 +1,20 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\fastapi-sqlalchemy__vue\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T193512.273391Z-bfdf3c0e\",\n    \"patch-20260820T193512.570323Z-a7649347\",\n    \"patch-20260820T193513.202469Z-ca37c7d6\",\n    \"patch-20260820T193513.490102Z-47f00e99\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.266,
+  "log_file": ".filterx/cli-logs/15-rollback-list.json"
+}

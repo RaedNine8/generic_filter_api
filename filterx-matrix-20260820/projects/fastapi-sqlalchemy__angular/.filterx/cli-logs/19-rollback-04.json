@@ -1,0 +1,21 @@
+{
+  "stage": "rollback-04",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T174815.419479Z-0028faac",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T174815.419479Z-0028faac\",\n  \"restored\": [\n    \"app/main.py\"\n  ],\n  \"removed\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\"\n  ],\n  \"count\": 7\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.313,
+  "log_file": ".filterx/cli-logs/19-rollback-04.json"
+}

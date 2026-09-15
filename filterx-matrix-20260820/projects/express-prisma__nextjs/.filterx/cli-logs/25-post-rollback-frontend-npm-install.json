@@ -1,0 +1,15 @@
+{
+  "stage": "post-rollback-frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\frontend",
+  "exit_code": 0,
+  "stdout": "\nup to date in 611ms\n",
+  "stderr": "",
+  "duration_seconds": 0.906,
+  "log_file": ".filterx/cli-logs/25-post-rollback-frontend-npm-install.json"
+}

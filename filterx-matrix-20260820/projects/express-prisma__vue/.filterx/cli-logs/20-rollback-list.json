@@ -1,0 +1,22 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\express-prisma__vue\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T200252.555046Z-2f6d7d79\",\n    \"patch-20260820T200252.853286Z-cd46aaf7\",\n    \"patch-20260820T200253.442699Z-27efcd46\",\n    \"patch-20260820T200253.782168Z-2a9ca8ff\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.218,
+  "log_file": ".filterx/cli-logs/20-rollback-list.json"
+}

@@ -25,9 +25,14 @@ class ValidationPipeline:
 
     def validate(self, entity_name: str, filter_tree: dict[str, Any]) -> list[FilterValidationError]:
         errors: list[FilterValidationError] = []
+        terminal_shape_errors = {
+            "INVALID_SCHEMA_SHAPE",
+            "FILTER_TREE_TOO_DEEP",
+            "FILTER_TREE_TOO_LARGE",
+        }
         for validator in self.validators:
             next_errors = validator.validate(entity_name, filter_tree)
             errors.extend(next_errors)
-            if any(error.code == "INVALID_SCHEMA_SHAPE" for error in next_errors):
+            if any(error.code in terminal_shape_errors for error in next_errors):
                 break
         return errors

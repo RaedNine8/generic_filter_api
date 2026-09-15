@@ -1,0 +1,131 @@
+version: 1
+project:
+  name: spring-boot-jpa__angular
+  root: .
+  backend_root: .
+  frontend_root: frontend
+  alembic_ini: alembic.ini
+python:
+  app_import: app.main:app
+  base_class_import: app.database:Base
+  models_package: app.models
+  session_dependency_import: app.database:get_db
+  sqlalchemy_url_env: DATABASE_URL
+backend:
+  enabled: true
+  framework: spring-boot-jpa
+  api_prefix: /api
+  generated_package: app/filterx_generated
+  mount_file: app/main.py
+  mount_anchor: "# FILTERX:ROUTER_MOUNT"
+  entities:
+    - Author
+    - Book
+  exclude_entities: []
+  auth_dependency_import: null
+  permission_hook_import: null
+  field_visibility_hook_import: null
+  global_predicate_hooks: []
+  entity_predicate_hooks: {}
+  express:
+    generated_root: src/filterx-generated
+    app_file: src/app.ts
+    app_anchor: // FILTERX:ROUTER_MOUNT
+    package_json: package.json
+    tsconfig: tsconfig.json
+    hooks_module: null
+    rate_limit_per_minute: 120
+    max_query_cost: 100
+  spring:
+    module_path: .
+    build_tool: maven
+    maven_command: C:/Users/raedn/OneDrive/Bureau/FILES/DEV FILES/MAIN_PROJECTS/generic_filter_api/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd
+    gradle_command: null
+    source_root: src/main/java
+    generated_package: com.example.filterx.generated
+    application_class: com.example.FilterxFixtureApplication
+    pom_file: pom.xml
+    gradle_file: null
+    use_records: true
+    jpa_provider: hibernate
+    springdoc_version: 2.8.9
+    resilience4j_version: 2.3.0
+    poi_version: 5.4.1
+    rate_limit_per_minute: 120
+    max_query_cost: 100
+    compile_timeout_seconds: 180
+    maven_args: []
+    gradle_args: []
+frontend:
+  enabled: true
+  framework: angular
+  workspace_root: frontend
+  generated_root: frontend/src/app/filterx-generated
+  routes_file: frontend/src/app/app.routes.ts
+  routes_anchor: // FILTERX:ROUTES
+  app_config_file: frontend/src/app/app.config.ts
+  app_config_anchor: // FILTERX:PROVIDERS
+  entity_style: kebab
+  react_vite:
+    workspace_root: frontend
+    generated_root: src/filterx-generated
+    host_file: src/App.tsx
+    host_anchor: // FILTERX:APP
+    api_base_url: /api/filterx
+  nextjs:
+    workspace_root: frontend
+    generated_root: src/filterx-generated
+    api_base_url: /api/filterx
+  vue:
+    workspace_root: frontend
+    generated_root: src/filterx-generated
+    host_file: src/App.vue
+    host_anchor: <!-- FILTERX:APP -->
+    api_base_url: /api/filterx
+database:
+  enabled: false
+  provider: alembic
+  migration_dir: alembic/versions
+  features:
+    saved_filters: true
+    shared_filters: false
+    auditing: false
+scan:
+  framework: jpa
+  emit_ir: false
+  timeout_seconds: 30
+  prisma:
+    schema: prisma/schema.prisma
+    package_json: package.json
+    client_marker: node_modules/.prisma/client/index.js
+    node_command: node
+    allow_stale_client: false
+  jpa:
+    module_path: .
+    build_tool: maven
+    java_command: java
+    maven_command: C:/Users/raedn/OneDrive/Bureau/FILES/DEV FILES/MAIN_PROJECTS/generic_filter_api/filterx-matrix-20260820/_tooling/apache-maven-3.9.11/bin/mvn.cmd
+    gradle_command: null
+    helper_source: null
+    classes_dir: null
+    classpath: null
+    compile_timeout_seconds: 120
+    helper_timeout_seconds: 60
+    maven_args: []
+    gradle_args: []
+  max_relationship_depth: 3
+  include_views: false
+  include_hybrid_properties: false
+  respect_soft_delete: true
+safety:
+  dry_run_default: false
+  require_anchor_comments: true
+  idempotency_manifest: .filterx/manifest.json
+  allow_overwrite_generated: true
+  strict_conflict_mode: true
+output:
+  scan_file: .filterx/scan.json
+  ir_file: .filterx/ir.json
+  plan_file: .filterx/plan.json
+  diagnostics_file: .filterx/diagnostics.json
+  patch_dir: .filterx/patches

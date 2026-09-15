@@ -1,0 +1,440 @@
+{
+  "generated_at": "2026-08-20T19:33:01.368169+00:00",
+  "project": {
+    "name": "fastapi-sqlalchemy__nextjs",
+    "root": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs"
+  },
+  "config_summary": {
+    "backend_enabled": true,
+    "frontend_enabled": true,
+    "database_enabled": false,
+    "api_prefix": "/api"
+  },
+  "entity_scope": {
+    "available": [
+      "Author",
+      "Book"
+    ],
+    "requested": [
+      "Author",
+      "Book"
+    ],
+    "excluded": [],
+    "selected": [
+      "Author",
+      "Book"
+    ],
+    "unknown_requested": [],
+    "unknown_excluded": [],
+    "requested_and_excluded": []
+  },
+  "entities": [
+    {
+      "model": "Author",
+      "module": "app.models.author",
+      "table": "authors",
+      "primary_keys": [
+        "id"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "books",
+          "related_model": "Book",
+          "related_table": "books",
+          "cardinality": "o2m",
+          "uselist": true,
+          "display_field": "id",
+          "related_fields": [
+            {
+              "name": "id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "genre",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "price",
+              "type": "float",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "note",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "author_id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            }
+          ],
+          "back_populates": "author"
+        }
+      ]
+    },
+    {
+      "model": "Book",
+      "module": "app.models.book",
+      "table": "books",
+      "primary_keys": [
+        "id"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "genre",
+          "type": "string",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "price",
+          "type": "float",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "note",
+          "type": "string",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": false,
+          "fk_targets": [],
+          "ops": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ]
+        },
+        {
+          "name": "author_id",
+          "type": "integer",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "is_fk": true,
+          "fk_targets": [
+            "authors.id"
+          ],
+          "ops": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "author",
+          "related_model": "Author",
+          "related_table": "authors",
+          "cardinality": "m2o",
+          "uselist": false,
+          "display_field": "name",
+          "related_fields": [
+            {
+              "name": "id",
+              "type": "integer",
+              "ops": [
+                "eq",
+                "ne",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in",
+                "not_in",
+                "between",
+                "is_null",
+                "is_not_null"
+              ]
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "ops": [
+                "eq",
+                "ne",
+                "like",
+                "ilike",
+                "starts_with",
+                "ends_with",
+                "in",
+                "not_in",
+                "is_null",
+                "is_not_null"
+              ]
+            }
+          ],
+          "back_populates": "books"
+        }
+      ]
+    }
+  ],
+  "relationship_graph": {
+    "Author": [
+      "Book"
+    ],
+    "Book": [
+      "Author"
+    ]
+  },
+  "graph_stats": {
+    "entity_count": 2,
+    "relationship_cycle_count": 1,
+    "max_depth": 1
+  },
+  "routes": [
+    {
+      "path": "/openapi.json",
+      "name": "openapi",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/docs",
+      "name": "swagger_ui_html",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/docs/oauth2-redirect",
+      "name": "swagger_ui_redirect",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/redoc",
+      "name": "redoc_html",
+      "methods": [
+        "GET"
+      ],
+      "type": "Route"
+    },
+    {
+      "path": "/health",
+      "name": "health",
+      "methods": [
+        "GET"
+      ],
+      "type": "APIRoute"
+    }
+  ]
+}

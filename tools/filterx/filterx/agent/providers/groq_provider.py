@@ -49,11 +49,11 @@ class GroqProvider(LLMProvider):
         if response.status_code in {408, 409, 429} or response.status_code >= 500:
             raise LLMRetryableError(f"Groq returned retryable status {response.status_code}.")
         if response.status_code >= 400:
-            raise LLMFatalError(f"Groq returned fatal status {response.status_code}: {response.text}")
+            raise LLMFatalError(f"Groq returned fatal status {response.status_code}.")
 
-        data = response.json()
         try:
+            data = response.json()
             content = str(data["choices"][0]["message"]["content"])
-        except (KeyError, IndexError, TypeError) as exc:
+        except (ValueError, KeyError, IndexError, TypeError) as exc:
             raise LLMFatalError("Groq response did not contain chat content.") from exc
         return LLMResponse(content=content, provider=self.name, model=self.model, raw=data)

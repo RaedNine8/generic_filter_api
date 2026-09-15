@@ -1,6 +1,6 @@
 # Generic Filtering System - Angular Frontend
 
-A portable, reusable Angular frontend implementing a generic filtering system that integrates with the FastAPI backend.
+A portable, reusable Angular frontend implementing a generic filtering system that integrates with the FastAPI backend. List screens can export all rows matching the active filter tree, search, and sort as CSV, XLSX, or JSON without loading the complete result set into the browser.
 
 ## Features
 

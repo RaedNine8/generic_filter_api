@@ -6,7 +6,7 @@ from typing import Any
 
 from filterx.core.config import load_effective_config
 
-from . import backend, db, frontend, scan, validate
+from . import backend, copilot, db, frontend, scan, validate
 
 
 def _as_payload(steps: list[dict[str, Any]], final_code: int) -> dict[str, Any]:
@@ -75,6 +75,19 @@ def run(args: Any) -> int:
     else:
         steps.append({"name": "backend.install", "status": "skipped", "code": 0})
 
+    if cfg.get("agent", {}).get("enabled", False):
+        copilot_code = int(copilot.run_install(args) or 0)
+        steps.append(
+            {
+                "name": "copilot.install",
+                "status": "ok" if copilot_code == 0 else "failed",
+                "code": copilot_code,
+            }
+        )
+        if copilot_code != 0:
+            payload = _as_payload(steps, copilot_code)
+            _print_payload(args, payload)
+            return copilot_code
     if cfg["frontend"].get("enabled", True):
         frontend_code = int(frontend.run_install(args) or 0)
         steps.append(

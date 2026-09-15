@@ -1,0 +1,141 @@
+{
+  "root": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects",
+  "counts": {
+    "passed": 12,
+    "failed": 0
+  },
+  "combinations": [
+    {
+      "name": "fastapi-sqlalchemy__angular",
+      "backend": "fastapi-sqlalchemy",
+      "frontend": "angular",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 22,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__angular\\result.json"
+    },
+    {
+      "name": "fastapi-sqlalchemy__react-vite",
+      "backend": "fastapi-sqlalchemy",
+      "frontend": "react-vite",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 22,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\result.json"
+    },
+    {
+      "name": "fastapi-sqlalchemy__nextjs",
+      "backend": "fastapi-sqlalchemy",
+      "frontend": "nextjs",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 22,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\result.json"
+    },
+    {
+      "name": "fastapi-sqlalchemy__vue",
+      "backend": "fastapi-sqlalchemy",
+      "frontend": "vue",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 22,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\result.json"
+    },
+    {
+      "name": "express-prisma__angular",
+      "backend": "express-prisma",
+      "frontend": "angular",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 29,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\express-prisma__angular\\result.json"
+    },
+    {
+      "name": "express-prisma__react-vite",
+      "backend": "express-prisma",
+      "frontend": "react-vite",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 29,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\express-prisma__react-vite\\result.json"
+    },
+    {
+      "name": "express-prisma__nextjs",
+      "backend": "express-prisma",
+      "frontend": "nextjs",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 29,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\express-prisma__nextjs\\result.json"
+    },
+    {
+      "name": "express-prisma__vue",
+      "backend": "express-prisma",
+      "frontend": "vue",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 29,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\express-prisma__vue\\result.json"
+    },
+    {
+      "name": "spring-boot-jpa__angular",
+      "backend": "spring-boot-jpa",
+      "frontend": "angular",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 21,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__angular\\result.json"
+    },
+    {
+      "name": "spring-boot-jpa__react-vite",
+      "backend": "spring-boot-jpa",
+      "frontend": "react-vite",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 21,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__react-vite\\result.json"
+    },
+    {
+      "name": "spring-boot-jpa__nextjs",
+      "backend": "spring-boot-jpa",
+      "frontend": "nextjs",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 21,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__nextjs\\result.json"
+    },
+    {
+      "name": "spring-boot-jpa__vue",
+      "backend": "spring-boot-jpa",
+      "frontend": "vue",
+      "status": "passed",
+      "failed_stage": null,
+      "error": null,
+      "check_count": 22,
+      "command_count": 21,
+      "result_file": "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\result.json"
+    }
+  ]
+}

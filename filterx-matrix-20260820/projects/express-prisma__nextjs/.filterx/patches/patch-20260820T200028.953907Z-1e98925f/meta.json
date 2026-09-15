@@ -1,0 +1,63 @@
+{
+  "patch_id": "patch-20260820T200028.953907Z-1e98925f",
+  "created_at": "2026-08-20T20:00:28.979480+00:00",
+  "description": "backend.install.express-prisma",
+  "touched_files": [
+    "src/filterx-generated/types.ts",
+    "src/filterx-generated/metadata.ts",
+    "src/filterx-generated/validation.ts",
+    "src/filterx-generated/query.ts",
+    "src/filterx-generated/security.ts",
+    "src/filterx-generated/router.ts",
+    "src/filterx-generated/index.ts",
+    "package.json",
+    "src/app.ts"
+  ],
+  "backups": [
+    {
+      "relative_path": "src/filterx-generated/types.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/metadata.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/validation.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/query.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/security.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/router.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "src/filterx-generated/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "package.json",
+      "existed": true,
+      "backup_path": "backup\\package.json"
+    },
+    {
+      "relative_path": "src/app.ts",
+      "existed": true,
+      "backup_path": "backup\\src\\app.ts"
+    }
+  ]
+}

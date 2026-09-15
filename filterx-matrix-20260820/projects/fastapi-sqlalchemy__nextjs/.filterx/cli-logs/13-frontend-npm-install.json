@@ -1,0 +1,15 @@
+{
+  "stage": "frontend-npm-install",
+  "command": [
+    "C:\\Program Files\\nodejs\\npm.CMD",
+    "install",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__nextjs\\frontend",
+  "exit_code": 0,
+  "stdout": "\nup to date in 709ms\n",
+  "stderr": "",
+  "duration_seconds": 1.0,
+  "log_file": ".filterx/cli-logs/13-frontend-npm-install.json"
+}

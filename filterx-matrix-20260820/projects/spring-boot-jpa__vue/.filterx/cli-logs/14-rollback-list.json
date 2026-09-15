@@ -1,0 +1,22 @@
+{
+  "stage": "rollback-list",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "rollback",
+    "--list",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\spring-boot-jpa__vue",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_dir\": \"C:\\\\filterx-matrix-20260820\\\\projects\\\\spring-boot-jpa__vue\\\\.filterx\\\\patches\",\n  \"patches\": [\n    \"patch-20260820T201301.895971Z-f4104630\",\n    \"patch-20260820T201302.147240Z-39573e61\",\n    \"patch-20260820T201302.781619Z-7e93e03b\",\n    \"patch-20260820T201303.053632Z-1f807a2a\"\n  ]\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.25,
+  "log_file": ".filterx/cli-logs/14-rollback-list.json"
+}

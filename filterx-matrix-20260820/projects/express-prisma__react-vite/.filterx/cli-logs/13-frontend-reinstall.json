@@ -1,0 +1,22 @@
+{
+  "stage": "frontend-reinstall",
+  "command": [
+    "C:\\Users\\raedn\\OneDrive\\Bureau\\FILES\\DEV FILES\\MAIN_PROJECTS\\generic_filter_api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "filterx.cli",
+    "frontend",
+    "install",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\express-prisma__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"framework\": \"react-vite\",\n  \"dry_run\": false,\n  \"patch_id\": \"patch-20260820T195803.079420Z-5510ca12\",\n  \"generated_root\": \"frontend/src/filterx-generated\",\n  \"entity_count\": 2,\n  \"touched_files\": [],\n  \"applied_ops\": 0,\n  \"skipped_ops\": 7,\n  \"issues\": []\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.313,
+  "log_file": ".filterx/cli-logs/13-frontend-reinstall.json"
+}

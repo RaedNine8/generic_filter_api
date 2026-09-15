@@ -19,15 +19,10 @@ import {
   operationNeedsRange,
 } from "../../../core/enums/filter-operation.enum";
 
-import { TreeModule } from "primeng/tree";
-import { TreeNode } from "primeng/api";
-import { ButtonModule } from "primeng/button";
-import { TooltipModule } from "primeng/tooltip";
-
 @Component({
   selector: "app-filter-builder",
   standalone: true,
-  imports: [CommonModule, FormsModule, TreeModule, ButtonModule, TooltipModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: "./filter-builder.component.html",
   styleUrls: ["./filter-builder.component.scss"],
 })
@@ -35,7 +30,6 @@ export class FilterBuilderComponent implements OnInit {
   @Input() fields: FilterableField[] = [];
   @Input() set tree(value: FilterTreeNode | null) {
     this._tree = value;
-    this.refreshPrimeNodes();
   }
   get tree(): FilterTreeNode | null {
     return this._tree;
@@ -49,50 +43,18 @@ export class FilterBuilderComponent implements OnInit {
   @Output() clear = new EventEmitter<void>();
 
   private _tree: FilterTreeNode | null = null;
-  primeNodes: TreeNode[] = [];
   operationLabels = FILTER_OPERATION_LABELS;
 
   ngOnInit(): void {
     if (!this.tree) {
       this.tree = createOperatorNode("AND");
     }
-    this.refreshPrimeNodes();
-  }
-
-  refreshPrimeNodes(): void {
-    if (!this.tree) {
-      this.primeNodes = [];
-      return;
-    }
-    this.primeNodes = [this.mapToTreeNode(this.tree)];
-  }
-
-  private mapToTreeNode(
-    node: FilterTreeNode,
-    parent: FilterTreeNode | null = null,
-  ): TreeNode {
-    const treeNode: TreeNode = {
-      key: node.id,
-      type: node.nodeType,
-      data: { node, parent },
-      expanded: node.expanded !== false,
-      children: [],
-    };
-
-    if (node.nodeType === "operator" && node.children) {
-      treeNode.children = node.children.map((child) =>
-        this.mapToTreeNode(child, node),
-      );
-    }
-
-    return treeNode;
   }
 
   addCondition(node: FilterTreeNode): void {
     if (node.children) {
       const defaultField = this.fields.length > 0 ? this.fields[0].name : "";
       node.children.push(createConditionNode(defaultField));
-      this.refreshPrimeNodes();
       this.emitChange();
     }
   }
@@ -106,7 +68,6 @@ export class FilterBuilderComponent implements OnInit {
           createConditionNode(defaultField),
         ]),
       );
-      this.refreshPrimeNodes();
       this.emitChange();
     }
   }
@@ -119,7 +80,6 @@ export class FilterBuilderComponent implements OnInit {
       const index = parent.children.findIndex((c) => c.id === node.id);
       if (index !== -1) {
         parent.children.splice(index, 1);
-        this.refreshPrimeNodes();
         this.emitChange();
       }
     }
@@ -127,19 +87,17 @@ export class FilterBuilderComponent implements OnInit {
 
   toggleOperator(node: FilterTreeNode): void {
     node.operator = node.operator === "AND" ? "OR" : "AND";
-    this.refreshPrimeNodes();
     this.emitChange();
   }
 
   toggleExpanded(node: FilterTreeNode): void {
     node.expanded = !node.expanded;
-    this.refreshPrimeNodes();
   }
 
   clearAll(): void {
     this.tree = createOperatorNode("AND");
     this.clear.emit();
-    this.refreshPrimeNodes();
+    this.emitChange();
   }
 
   applyFilters(): void {
@@ -191,6 +149,18 @@ export class FilterBuilderComponent implements OnInit {
     this.emitChange();
   }
 
+  multipleValuesText(value: unknown): string {
+    return Array.isArray(value) ? value.join(", ") : String(value ?? "");
+  }
+
+  onMultipleValueChange(node: FilterTreeNode, value: string): void {
+    node.value = value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    this.emitChange();
+  }
+
   getOpLabel(op: any): string {
     if (!op) return "";
     return this.operationLabels[op as FilterOperation] || op;
@@ -222,8 +192,13 @@ export class FilterBuilderComponent implements OnInit {
     }
   }
 
+  getRangeInputType(fieldName: string): string {
+    const type = this.getInputType(fieldName);
+    return type === "text" ? "number" : type;
+  }
+
   canRemoveChild(parent: FilterTreeNode): boolean {
-    return (parent.children?.length || 0) > 2;
+    return (parent.children?.length || 0) > 1;
   }
 
   private emitChange(): void {

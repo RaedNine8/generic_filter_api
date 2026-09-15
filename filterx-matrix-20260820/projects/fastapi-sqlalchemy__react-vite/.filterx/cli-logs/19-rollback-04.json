@@ -1,0 +1,21 @@
+{
+  "stage": "rollback-04",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\.venv\\Scripts\\filterx.exe",
+    "rollback",
+    "--patch-id",
+    "patch-20260820T193038.831405Z-0ec52154",
+    "--project-root",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+    "--config",
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite\\filterx.yaml",
+    "--yes",
+    "--json"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__react-vite",
+  "exit_code": 0,
+  "stdout": "{\n  \"patch_id\": \"patch-20260820T193038.831405Z-0ec52154\",\n  \"restored\": [\n    \"app/main.py\"\n  ],\n  \"removed\": [\n    \"app/filterx_generated/__init__.py\",\n    \"app/filterx_generated/entities.py\",\n    \"app/filterx_generated/metadata.py\",\n    \"app/filterx_generated/router_factory.py\",\n    \"app/filterx_generated/router.py\",\n    \"app/filterx_generated/predicates.py\"\n  ],\n  \"count\": 7\n}\n",
+  "stderr": "",
+  "duration_seconds": 0.281,
+  "log_file": ".filterx/cli-logs/19-rollback-04.json"
+}

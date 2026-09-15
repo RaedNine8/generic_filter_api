@@ -49,6 +49,7 @@ import { DataTableComponent } from "../data-table/data-table.component";
 
       <section class="search-section">
         <app-copilot-panel
+          *ngIf="copilotEnabled"
           [entity]="config.name"
           (applyFilter)="onTreeChange($event)"
         ></app-copilot-panel>
@@ -359,6 +360,8 @@ import { DataTableComponent } from "../data-table/data-table.component";
 })
 export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   @Input() config!: EntityConfig<T>;
+
+  @Input() copilotEnabled = false;
 
   @Input() showHeader = true;
 

@@ -1,0 +1,296 @@
+{
+  "version": "filterx-ir/v1",
+  "source_framework": "prisma",
+  "entities": [
+    {
+      "name": "Author",
+      "identity": {
+        "module": "prisma",
+        "table": "Author",
+        "primary_keys": [
+          "id"
+        ]
+      },
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "source_type": "Int",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "has_default": true,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "source_type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        }
+      ],
+      "relationships": [
+        {
+          "name": "books",
+          "kind": "one-to-many",
+          "target_entity": "Book",
+          "target_table": "Book",
+          "join_path": [
+            "books"
+          ],
+          "depth": 1,
+          "collection": true,
+          "back_populates": "author",
+          "cycle": true
+        }
+      ],
+      "cycle_memberships": [
+        [
+          "Author",
+          "Book",
+          "Author"
+        ]
+      ],
+      "soft_delete": {
+        "respected": false,
+        "field": null
+      }
+    },
+    {
+      "name": "Book",
+      "identity": {
+        "module": "prisma",
+        "table": "Book",
+        "primary_keys": [
+          "id"
+        ]
+      },
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "source_type": "Int",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "has_default": true,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "source_type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "genre",
+          "type": "string",
+          "source_type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "price",
+          "type": "decimal",
+          "source_type": "Decimal",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "note",
+          "type": "string",
+          "source_type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [],
+          "operations": [
+            "eq",
+            "ne",
+            "like",
+            "ilike",
+            "starts_with",
+            "ends_with",
+            "in",
+            "not_in",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        },
+        {
+          "name": "authorId",
+          "type": "integer",
+          "source_type": "Int",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "has_default": false,
+          "foreign_keys": [
+            "Author.id"
+          ],
+          "operations": [
+            "eq",
+            "ne",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "in",
+            "not_in",
+            "between",
+            "is_null",
+            "is_not_null"
+          ],
+          "enum_values": [],
+          "visibility": "public",
+          "permission": null
+        }
+      ],
+      "relationships": [
+        {
+          "name": "author",
+          "kind": "many-to-one",
+          "target_entity": "Author",
+          "target_table": "Author",
+          "join_path": [
+            "author"
+          ],
+          "depth": 1,
+          "collection": false,
+          "back_populates": "books",
+          "cycle": true
+        }
+      ],
+      "cycle_memberships": [
+        [
+          "Author",
+          "Book",
+          "Author"
+        ]
+      ],
+      "soft_delete": {
+        "respected": false,
+        "field": null
+      }
+    }
+  ],
+  "routes": [],
+  "security": {
+    "identity": null,
+    "row_predicates": [],
+    "entity_row_predicates": [],
+    "field_visibility": null
+  },
+  "max_relationship_depth": 1
+}

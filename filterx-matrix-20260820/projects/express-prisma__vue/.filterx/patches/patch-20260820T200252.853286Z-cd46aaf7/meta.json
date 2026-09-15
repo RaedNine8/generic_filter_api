@@ -1,0 +1,63 @@
+{
+  "patch_id": "patch-20260820T200252.853286Z-cd46aaf7",
+  "created_at": "2026-08-20T20:02:52.891274+00:00",
+  "description": "frontend.install.vue",
+  "touched_files": [
+    "frontend/src/filterx-generated/types.ts",
+    "frontend/src/filterx-generated/entities.ts",
+    "frontend/src/filterx-generated/api.ts",
+    "frontend/src/filterx-generated/filterx.css",
+    "frontend/src/filterx-generated/FilterxApp.vue",
+    "frontend/src/filterx-generated/FilterxFilterBuilder.vue",
+    "frontend/src/filterx-generated/index.ts",
+    "frontend/package.json",
+    "frontend/src/App.vue"
+  ],
+  "backups": [
+    {
+      "relative_path": "frontend/src/filterx-generated/types.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/entities.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/api.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/filterx.css",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/FilterxApp.vue",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/FilterxFilterBuilder.vue",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/src/filterx-generated/index.ts",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "frontend/package.json",
+      "existed": true,
+      "backup_path": "backup\\frontend\\package.json"
+    },
+    {
+      "relative_path": "frontend/src/App.vue",
+      "existed": true,
+      "backup_path": "backup\\frontend\\src\\App.vue"
+    }
+  ]
+}

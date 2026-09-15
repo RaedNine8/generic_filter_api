@@ -6,15 +6,21 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "PyYAML>=6.0.0",
+  "tree-sitter==0.25.2",
+  "tree-sitter-groovy==0.1.0",
+  "tree-sitter-kotlin==1.1.0",
 ]
 
 [project.optional-dependencies]
 agent = [
+  "fastapi>=0.100.0",
   "langgraph>=0.2.0",
-  "chromadb>=0.5.0",
-  "sentence-transformers>=3.0.0",
   "tenacity>=8.2.0",
   "httpx>=0.27.0",
+]
+agent-vector = [
+  "chromadb>=0.5.0",
+  "sentence-transformers>=3.0.0",
 ]
 
 [project.scripts]
@@ -32,4 +38,4 @@ include-package-data = true
 include = ["filterx*"]
 
 [tool.setuptools.package-data]
-filterx = ["reference_runtime/**/*"]
+filterx = ["reference_runtime/**/*", "schemas/*.json"]

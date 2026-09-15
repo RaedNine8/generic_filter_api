@@ -1,0 +1,26 @@
+
+> filterx-next-matrix@1.0.0 dev
+> next dev -H 127.0.0.1 -p 3000
+
+   ▲ Next.js 15.5.23
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 1966ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.4s (519 modules)
+ GET / 200 in 2263ms
+ GET / 200 in 45ms
+ GET / 200 in 57ms
+ ○ Compiling /filterx ...
+ ⚠ ./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css
+Warning
+
+(1:694) autoprefixer: end value has mixed support, consider using flex-end instead
+
+Import trace for requested module:
+./src/filterx-generated/filterx.css.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./src/filterx-generated/filterx.css
+./src/filterx-generated/filterx.css
+./src/filterx-generated/FilterxApp.tsx
+ GET /filterx 200 in 1791ms

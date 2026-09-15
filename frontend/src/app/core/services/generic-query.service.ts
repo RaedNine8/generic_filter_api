@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import {
   HttpClient,
   HttpParams,
@@ -21,12 +21,20 @@ import {
 import { FilterOperation } from "../enums/filter-operation.enum";
 import { SortOrder } from "../enums/sort-order.enum";
 import { ApiError, QueryState } from "../interfaces/query-state.interface";
+import { FILTERX_CONFIG, joinFilterxUrl } from "../config/filterx-config";
+
+export type ExportFormat = "csv" | "xlsx" | "json";
 
 @Injectable({
   providedIn: "root",
 })
 export abstract class GenericQueryService<T> {
   protected abstract baseUrl: string;
+  private readonly filterxConfig = inject(FILTERX_CONFIG);
+
+  protected get requestBaseUrl(): string {
+    return joinFilterxUrl(this.filterxConfig.apiBaseUrl, this.baseUrl);
+  }
 
   protected defaultState: QueryState = {
     filterTree: null,
@@ -78,18 +86,18 @@ export abstract class GenericQueryService<T> {
           const treePayload = toBackendPayload(state.filterTree);
           if (!treePayload) {
             return this.http.get<Array<{ key: unknown; count: number }>>(
-              `${this.baseUrl}/group-by/${encodedField}`,
+              `${this.requestBaseUrl}/group-by/${encodedField}`,
               { params },
             );
           }
           return this.http.post<Array<{ key: unknown; count: number }>>(
-            `${this.baseUrl}/group-by/${encodedField}/filter`,
+            `${this.requestBaseUrl}/group-by/${encodedField}/filter`,
             treePayload,
             { params },
           );
         })()
       : this.http.get<Array<{ key: unknown; count: number }>>(
-          `${this.baseUrl}/group-by/${encodedField}`,
+          `${this.requestBaseUrl}/group-by/${encodedField}`,
           { params },
         );
 
@@ -104,9 +112,35 @@ export abstract class GenericQueryService<T> {
     );
   }
 
+  exportWithState(state: QueryState, format: ExportFormat): Observable<Blob> {
+    let params = new HttpParams().set("format", format);
+    if (state.sort?.sort_by) {
+      params = params
+        .set("sort_by", state.sort.sort_by)
+        .set("order", state.sort.order);
+    }
+    if (state.search) {
+      params = params.set("search", state.search);
+    }
+
+    const treePayload = state.filterTree
+      ? toBackendPayload(state.filterTree)
+      : null;
+    const body = treePayload
+      ? { filter_tree: treePayload }
+      : { filters: state.filters || [] };
+
+    return this.http
+      .post(`${this.requestBaseUrl}/export`, body, {
+        params,
+        responseType: "blob",
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   getMetadata(): Observable<any> {
     return this.http
-      .get<any>(`${this.baseUrl}/metadata`)
+      .get<any>(`${this.requestBaseUrl}/metadata`)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
@@ -120,7 +154,7 @@ export abstract class GenericQueryService<T> {
 
     this._loading.next(true);
     return this.http
-      .post<PaginatedResponse<T>>(`${this.baseUrl}/filter`, body, {
+      .post<PaginatedResponse<T>>(`${this.requestBaseUrl}/filter`, body, {
         params: httpParams,
       })
       .pipe(
@@ -142,7 +176,7 @@ export abstract class GenericQueryService<T> {
     this._loading.next(true);
 
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);
@@ -162,7 +196,7 @@ export abstract class GenericQueryService<T> {
     this._loading.next(true);
 
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);
@@ -184,7 +218,7 @@ export abstract class GenericQueryService<T> {
     });
     this._loading.next(true);
     return this.http
-      .get<PaginatedResponse<T>>(this.baseUrl, { params: httpParams })
+      .get<PaginatedResponse<T>>(this.requestBaseUrl, { params: httpParams })
       .pipe(
         tap((response) => {
           this._data.next(response);

@@ -62,22 +62,28 @@ class ResilientLLMClient(LLMProvider):
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
         errors: list[str] = []
+        fatal_errors: list[LLMFatalError] = []
+        retryable_errors: list[LLMRetryableError] = []
         for provider in [self.provider, *self.fallbacks]:
-            if self.circuit_breaker.is_open(provider.name):
-                logger.info("Skipping provider %s because circuit is open.", provider.name)
-                errors.append(f"{provider.name}: circuit open")
+            provider_key = self._provider_key(provider)
+            if self.circuit_breaker.is_open(provider_key):
+                logger.info("Skipping provider %s because circuit is open.", provider_key)
+                errors.append(f"{provider_key}: circuit open")
                 continue
             try:
                 return await self._complete_with_retries(provider, request)
             except LLMFatalError as exc:
-                errors.append(f"{provider.name}: {exc}")
-                self.circuit_breaker.record_failure(provider.name)
-                logger.info("Provider %s failed fatally: %s", provider.name, exc)
+                errors.append(f"{provider_key}: {exc}")
+                fatal_errors.append(exc)
+                logger.info("Provider %s failed fatally: %s", provider_key, exc)
             except LLMRetryableError as exc:
-                errors.append(f"{provider.name}: {exc}")
-                self.circuit_breaker.record_failure(provider.name)
-                logger.info("Provider %s exhausted retryable attempts: %s", provider.name, exc)
+                errors.append(f"{provider_key}: {exc}")
+                retryable_errors.append(exc)
+                self.circuit_breaker.record_failure(provider_key)
+                logger.info("Provider %s exhausted retryable attempts: %s", provider_key, exc)
         detail = "; ".join(errors) if errors else "no providers configured"
+        if fatal_errors and not retryable_errors:
+            raise LLMFatalError(f"All configured LLM providers failed ({detail}).")
         raise LLMRetryableError(f"All configured LLM providers failed after retries ({detail}).")
 
     async def _complete_with_retries(self, provider: LLMProvider, request: LLMRequest) -> LLMResponse:
@@ -103,8 +109,13 @@ class ResilientLLMClient(LLMProvider):
                     raise
                 except LLMProviderError:
                     raise
-                self.circuit_breaker.record_success(provider.name)
+                self.circuit_breaker.record_success(self._provider_key(provider))
                 return response
         if last_error is not None:
             raise last_error
         raise LLMRetryableError(f"Provider {provider.name} did not return a response.")
+
+    @staticmethod
+    def _provider_key(provider: LLMProvider) -> str:
+        base_url = str(getattr(provider, "base_url", ""))
+        return f"{provider.name}:{provider.model}:{base_url}"

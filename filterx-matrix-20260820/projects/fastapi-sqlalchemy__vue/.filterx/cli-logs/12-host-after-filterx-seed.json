@@ -1,0 +1,13 @@
+{
+  "stage": "host-after-filterx-seed",
+  "command": [
+    "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue\\.venv\\Scripts\\python.exe",
+    "seed.py"
+  ],
+  "cwd": "C:\\filterx-matrix-20260820\\projects\\fastapi-sqlalchemy__vue",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 0.563,
+  "log_file": ".filterx/cli-logs/12-host-after-filterx-seed.json"
+}
