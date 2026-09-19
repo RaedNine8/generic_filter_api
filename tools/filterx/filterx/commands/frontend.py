@@ -1,23 +1,29 @@
 from __future__ import annotations
 
 import json
+import posixpath
 import re
 from pathlib import Path
 from typing import Any
 
 from filterx.core.config import load_effective_config
+from filterx.core.frontend_lifecycle import (
+    customization_root,
+    finish_frontend_install,
+    presentation_operations,
+    schema_from_scan,
+)
 from filterx.core.io import load_json
 from filterx.core.patcher import (
     PatchOp,
-    apply_patch_operations,
     list_patch_bundles,
     rollback_patch_bundle,
 )
 
 
 GENERATED_ROUTES_RE = re.compile(
-    r"\n?// FILTERX GENERATED ROUTES START\n.*?// FILTERX GENERATED ROUTES END\n?",
-    re.DOTALL,
+    r"(?:\r?\n)?[ \t]*// FILTERX GENERATED ROUTES START\r?\n.*?^[ \t]*// FILTERX GENERATED ROUTES END(?:\r?\n)?",
+    re.DOTALL | re.MULTILINE,
 )
 
 ROUTES_ARRAY_RE = re.compile(
@@ -36,6 +42,7 @@ DEFAULT_APP_MODULE_CANDIDATE = "src/app/app.module.ts"
 REFERENCE_RUNTIME_FILES = [
     "core/index.ts",
     "core/config/filterx-config.ts",
+    "core/config/filterx-presentation.ts",
     "core/enums/index.ts",
     "core/enums/filter-operation.enum.ts",
     "core/enums/sort-order.enum.ts",
@@ -102,6 +109,14 @@ def _csv_list(raw: str | None) -> list[str]:
 
 def _frontend_rel(frontend_root: str, suffix: str) -> str:
     return f"{frontend_root.rstrip('/')}/{suffix}"
+
+
+def _angular_import(source_file: str, target_module: str) -> str:
+    relative = posixpath.relpath(
+        target_module.replace("\\", "/"),
+        posixpath.dirname(source_file.replace("\\", "/")),
+    )
+    return relative if relative.startswith(".") else f"./{relative}"
 
 
 def _resolve_routes_file(project_root: Path, frontend_root: str, configured_path: str) -> str:
@@ -927,7 +942,7 @@ def _build_app_config_with_primeng(
             content = content.replace(marker, marker + '\nimport { providePrimeNG } from "primeng/config";\nimport Aura from "@primeng/themes/aura";')
         changed = True
     provider_snippet = "    provideAnimationsAsync(),\n    providePrimeNG({\n      theme: {\n        preset: Aura,\n      },\n    }),"
-    if "providePrimeNG({" not in content or "preset: Aura" not in content:
+    if not re.search(r"\bprovidePrimeNG\s*\(", content):
         if app_config_anchor in content:
             content = content.replace(app_config_anchor, provider_snippet + "\n    " + app_config_anchor)
         else:
@@ -947,11 +962,16 @@ def _build_app_config_with_primeng(
 def _build_routes_file_with_generated_block(routes_file: Path, snippet: str, routes_anchor: str) -> str | None:
     if not routes_file.exists():
         return None
-    content = routes_file.read_text(encoding="utf-8")
-    if snippet in content:
-        return None
+    with routes_file.open(encoding="utf-8", newline="") as handle:
+        content = handle.read()
+    newline = "\r\n" if "\r\n" in content else "\n"
+    snippet = snippet.replace("\r\n", "\n").replace("\n", newline)
+    if snippet and snippet in content:
+        return content
     if GENERATED_ROUTES_RE.search(content):
-        return GENERATED_ROUTES_RE.sub("\n" + snippet + "\n", content)
+        return GENERATED_ROUTES_RE.sub(lambda _: newline + snippet + (newline if snippet else ""), content)
+    if not snippet:
+        return content
 
     if routes_anchor and routes_anchor in content:
         lines = content.splitlines(keepends=True)
@@ -959,7 +979,7 @@ def _build_routes_file_with_generated_block(routes_file: Path, snippet: str, rou
             if routes_anchor in line:
                 insert_text = snippet
                 if not insert_text.endswith("\n"):
-                    insert_text += "\n"
+                    insert_text += newline
                 lines.insert(idx + 1, insert_text)
                 return "".join(lines)
 
@@ -970,7 +990,7 @@ def _build_routes_file_with_generated_block(routes_file: Path, snippet: str, rou
     body_start = match.start(2)
     body_end = match.end(2)
     body = content[body_start:body_end]
-    insertion = (body.rstrip() + "\n" if body.strip() else "\n") + snippet + "\n"
+    insertion = (body.rstrip() + newline if body.strip() else newline) + snippet + newline
     return content[:body_start] + insertion + content[body_end:]
 
 
@@ -1589,7 +1609,8 @@ def _copy_reference_runtime_ops(
                     '        <app-copilot-panel\n          *ngIf="copilotEnabled"\n          [entity]="config.name"\n          (applyFilter)="onTreeChange($event)"\n        ></app-copilot-panel>\n\n',
                     "",
                 )
-                content = content.replace("\n  @Input() copilotEnabled = false;\n", "")
+                # Keep the input contract stable so user-owned shells can forward
+                # copilotEnabled even when the optional panel is not installed.
 
         if prefer_legacy_templates:
             legacy_template = _legacy_runtime_template(rel)
@@ -1606,6 +1627,7 @@ def _copy_reference_runtime_ops(
                 path=f"{frontend_root.rstrip('/')}/src/app/{rel}",
                 content=content,
                 owner="filterx-generated",
+                metadata={"layer": "runtime"},
                 description=f"Install FilterX reference UI runtime file {rel}",
             )
         )
@@ -1617,13 +1639,14 @@ def _copy_reference_runtime_ops(
                 path=f"{frontend_root.rstrip('/')}/src/filterx.scss",
                 content=styles_source.read_text(encoding="utf-8"),
                 owner="filterx-generated",
+                metadata={"layer": "runtime"},
                 description="Install isolated FilterX global styles",
             )
         )
     return ops
 
 
-def _build_entity_config_ts(entity: dict[str, Any], style: str) -> tuple[str, str]:
+def _build_entity_config_ts(entity: dict[str, Any], style: str, core_import: str = "../../core") -> tuple[str, str]:
     model_name = str(entity.get("model", "Entity"))
     interface_name = _to_pascal(model_name)
     config_name = f"{_to_snake(model_name).upper()}_GENERATED_CONFIG"
@@ -1658,18 +1681,18 @@ def _build_entity_config_ts(entity: dict[str, Any], style: str) -> tuple[str, st
         group_by_lines.append(f"    {{ field: '{rel_path}', label: '{rel_label}' }},")
 
     content = (
-        "import { SortOrder } from '../../core/enums/sort-order.enum';\n"
+        f"import {{ SortOrder }} from '{core_import}/enums/sort-order.enum';\n"
         "import {\n"
         "  EntityConfig,\n"
         "  createFieldConfig,\n"
         "  createColumnConfig,\n"
-        "} from '../../core/interfaces/entity-config.interface';\n\n"
+        f"}} from '{core_import}/interfaces/entity-config.interface';\n\n"
         f"export interface {interface_name} {{\n"
         + "\n".join(interface_lines)
         + "\n  [key: string]: unknown;"
         + "\n}\n\n"
         f"export const {config_name}: EntityConfig<{interface_name}> = {{\n"
-        f"  name: '{interface_name}',\n"
+        f"  name: '{model_name}',\n"
         f"  pluralLabel: '{route_path.replace('-', ' ').title()}',\n"
         f"  singularLabel: '{interface_name}',\n"
         f"  apiEndpoint: '/api/filterx/{route_path}',\n"
@@ -1695,7 +1718,12 @@ def _build_entity_config_ts(entity: dict[str, Any], style: str) -> tuple[str, st
     return f"{_styled_name(model_name, style)}.config.ts", content
 
 
-def _build_entity_page_ts(entity: dict[str, Any], style: str, copilot_enabled: bool = False) -> tuple[str, str]:
+def _build_entity_page_ts(
+    entity: dict[str, Any],
+    style: str,
+    copilot_enabled: bool = False,
+    shell_import: str = "../../filterx-custom/filterx-shell.component",
+) -> tuple[str, str]:
     model_name = str(entity.get("model", "Entity"))
     model_slug = _styled_name(model_name, style)
     interface_name = _to_pascal(model_name)
@@ -1705,21 +1733,21 @@ def _build_entity_page_ts(entity: dict[str, Any], style: str, copilot_enabled: b
     copilot_binding = '      [copilotEnabled]="true"\n' if copilot_enabled else ""
     content = (
         "import { Component } from '@angular/core';\n"
-        "import { EntityListComponent } from '../../shared/components/entity-list/entity-list.component';\n"
+        f"import {{ FilterxShellComponent }} from '{shell_import}';\n"
         f"import {{ {config_name}, {interface_name} }} from '../entities/{model_slug}.config';\n\n"
         "@Component({\n"
         f"  selector: 'filterx-{model_slug}-page',\n"
         "  standalone: true,\n"
-        "  imports: [EntityListComponent],\n"
+        "  imports: [FilterxShellComponent],\n"
         "  template: `\n"
-        "    <app-entity-list\n"
+        "    <filterx-shell\n"
         "      [config]=\"config\"\n"
         + copilot_binding
         + "      [showHeader]=\"true\"\n"
         f"      [description]=\"'{description}'\"\n"
         "      [clickableRows]=\"true\"\n"
         "      [onRowClicked]=\"handleRowClick\"\n"
-        "    ></app-entity-list>\n"
+        "    ></filterx-shell>\n"
         "  `,\n"
         "})\n"
         f"export class {class_name} {{\n"
@@ -1732,12 +1760,87 @@ def _build_entity_page_ts(entity: dict[str, Any], style: str, copilot_enabled: b
     return f"{model_slug}.page.ts", content
 
 
-def _build_route_entry(entity: dict[str, Any], project_root: Path, frontend_root: str, style: str) -> tuple[str, str, str] | None:
+def _angular_customization_ops(frontend_root: str, generated_root: str, custom_root: str) -> list[PatchOp]:
+    shell_path = f"{custom_root}/filterx-shell.component.ts"
+    core = _angular_import(shell_path, f"{frontend_root}/src/app/core")
+    entity_list = _angular_import(shell_path, f"{frontend_root}/src/app/shared/components/entity-list/entity-list.component")
+    presentation = _angular_import(shell_path, f"{generated_root}/presentation")
+    shell = (
+        "// User-owned: customize layout, header and cell templates here.\n"
+        "// This generic shell intentionally imports no per-entity configs or pages.\n"
+        "import { CommonModule } from '@angular/common';\n"
+        "import { Component, ContentChild, Input, OnChanges, TemplateRef } from '@angular/core';\n"
+        f"import {{ EntityConfig }} from '{core}/interfaces/entity-config.interface';\n"
+        f"import {{ applyFilterxPresentation }} from '{core}/config/filterx-presentation';\n"
+        f"import {{ EntityListComponent }} from '{entity_list}';\n"
+        f"import {{ FILTERX_PRESENTATION }} from '{presentation}';\n\n"
+        "@Component({\n"
+        "  selector: 'filterx-shell',\n"
+        "  standalone: true,\n"
+        "  imports: [CommonModule, EntityListComponent],\n"
+        "  styleUrls: ['./theme.css'],\n"
+        "  template: `\n"
+        "    <section class=\"filterx-custom-shell\">\n"
+        "      <ng-content select=\"[filterxHeader]\"></ng-content>\n"
+        "      <app-entity-list\n"
+        "        [config]=\"displayConfig\"\n"
+        "        [copilotEnabled]=\"copilotEnabled\"\n"
+        "        [showHeader]=\"showHeader\"\n"
+        "        [description]=\"description\"\n"
+        "        [clickableRows]=\"clickableRows\"\n"
+        "        [onRowClicked]=\"onRowClicked\"\n"
+        "        [cellTemplate]=\"cellTemplate || projectedCellTemplate\"\n"
+        "      ></app-entity-list>\n"
+        "      <ng-content select=\"[filterxFooter]\"></ng-content>\n"
+        "    </section>\n"
+        "  `,\n"
+        "})\n"
+        "export class FilterxShellComponent<T extends Record<string, unknown> = Record<string, unknown>> implements OnChanges {\n"
+        "  @Input() config!: EntityConfig<T>;\n"
+        "  @Input() copilotEnabled = false;\n"
+        "  @Input() showHeader = true;\n"
+        "  @Input() description = '';\n"
+        "  @Input() clickableRows = true;\n"
+        "  @Input() onRowClicked?: (item: T) => void;\n"
+        "  // Cell context: let-value, let-row=\"row\", let-column=\"column\".\n"
+        "  @Input() cellTemplate?: TemplateRef<any>;\n"
+        "  @ContentChild('cellTemplate') projectedCellTemplate?: TemplateRef<any>;\n"
+        "  displayConfig!: EntityConfig<T>;\n\n"
+        "  ngOnChanges(): void {\n"
+        "    this.displayConfig = applyFilterxPresentation(this.config, FILTERX_PRESENTATION);\n"
+        "  }\n"
+        "}\n"
+    )
+    return [
+        PatchOp(
+            kind="generated_file", path=shell_path, content=shell,
+            owner="host", write_policy="create_once", metadata={"layer": "custom"},
+            description="Create user-owned generic Angular FilterX shell",
+        ),
+        PatchOp(
+            kind="generated_file", path=f"{custom_root}/theme.css",
+            content=("/* User-owned: override inherited FilterX CSS variables here. */\n"
+                     ":host { display: block; }\n"
+                     ".filterx-custom-shell { min-width: 0; }\n"),
+            owner="host", write_policy="create_once", metadata={"layer": "custom"},
+            description="Create user-owned Angular FilterX theme",
+        ),
+    ]
+
+
+def _build_route_entry(
+    entity: dict[str, Any], project_root: Path, frontend_root: str, style: str,
+    generated_root: str | None = None, routes_file: str | None = None,
+) -> tuple[str, str, str] | None:
     model_name = str(entity.get("model", "Entity"))
     model_slug = _styled_name(model_name, style)
     class_name = f"{_to_pascal(model_name)}FilterxPageComponent"
     route_path = _entity_route_path(entity, style).rstrip("/")
     title = route_path.replace("-", " ").title()
+    host_import = _angular_import(
+        routes_file or f"{frontend_root}/src/app/app.routes.ts",
+        f"{generated_root or f'{frontend_root}/src/app/filterx-generated'}/pages/{model_slug}.page",
+    )
     generated_entry = (
         "  {\n"
         f"    path: '{route_path}',\n"
@@ -1751,7 +1854,7 @@ def _build_route_entry(entity: dict[str, Any], project_root: Path, frontend_root
         "  {\n"
         f"    path: '{route_path}',\n"
         "    loadComponent: () =>\n"
-        f"      import('./filterx-generated/pages/{model_slug}.page').then((m) => m.{class_name}),\n"
+        f"      import('{host_import}').then((m) => m.{class_name}),\n"
         f"    data: {{ entity: '{route_path}', title: '{title}' }},\n"
         f"    title: '{title} - FilterX Generated',\n"
         "  },"
@@ -1772,10 +1875,6 @@ def _run_install_impl(args: Any) -> int:
             print("FilterX frontend install skipped: frontend.enabled is false.")
         return 0
 
-    dry_run = _resolve_dry_run(args, cfg)
-    check_mode = bool(getattr(args, "check", False))
-    strict_conflict_mode = bool(cfg["safety"].get("strict_conflict_mode", True))
-
     scan_path = project_root / cfg["output"]["scan_file"]
     if not scan_path.exists():
         payload = {
@@ -1794,7 +1893,7 @@ def _run_install_impl(args: Any) -> int:
         return 2
 
     style = str(getattr(args, "style", None) or cfg["frontend"].get("entity_style", "kebab"))
-    frontend_root = str(cfg["frontend"].get("workspace_root", "frontend"))
+    frontend_root = str(cfg["frontend"].get("workspace_root", "frontend")).replace("\\", "/").rstrip("/")
     angular_major = _detect_angular_major(project_root, frontend_root)
     generated_root = str(cfg["frontend"]["generated_root"])
     routes_file_arg = getattr(args, "routes_file", None)
@@ -1812,7 +1911,9 @@ def _run_install_impl(args: Any) -> int:
     if allow:
         entities = [entity for entity in entities if entity.get("model") in allow]
 
-    root = Path(generated_root).as_posix().rstrip("/")
+    root = generated_root.replace("\\", "/").rstrip("/")
+    custom_root = customization_root(cfg, "angular").replace("\\", "/").rstrip("/")
+    schema = schema_from_scan({**scan_payload, "entities": entities})
     ops: list[PatchOp] = []
 
     frontend_workspace_root = project_root / frontend_root
@@ -1822,6 +1923,7 @@ def _run_install_impl(args: Any) -> int:
                 kind="generated_file",
                 path=f"{frontend_root}/proxy.conf.cjs",
                 content=_render_proxy_conf_cjs(),
+                metadata={"layer": "runtime"},
                 description="Generated Angular dev proxy for FilterX API calls",
             )
         )
@@ -1888,6 +1990,8 @@ def _run_install_impl(args: Any) -> int:
             copilot_enabled=bool(cfg.get("agent", {}).get("enabled", False)),
         )
     )
+    ops.extend(_angular_customization_ops(frontend_root, root, custom_root))
+    ops.extend(presentation_operations(project_root, cfg, "angular", schema))
     ops.extend(
         [
             PatchOp(kind="delete_file", path=f"{root}/filterx.models.ts", description="Remove legacy generated explorer model contracts"),
@@ -1899,7 +2003,9 @@ def _run_install_impl(args: Any) -> int:
 
     entity_export_lines = []
     for entity in entities:
-        file_name, file_content = _build_entity_config_ts(entity, style)
+        file_name, file_content = _build_entity_config_ts(
+            entity, style, core_import=_angular_import(f"{root}/entities/entity.config.ts", f"{frontend_root}/src/app/core"),
+        )
         model_name = str(entity.get("model", "Entity"))
         export_name = f"{_to_snake(model_name).upper()}_GENERATED_CONFIG"
         entity_export_lines.append(f"export {{ {export_name} }} from './{file_name[:-3]}';")
@@ -1908,6 +2014,7 @@ def _run_install_impl(args: Any) -> int:
                 kind="generated_file",
                 path=f"{root}/entities/{file_name}",
                 content=file_content,
+                metadata={"layer": "schema", "entity": model_name},
                 description=f"Generated frontend entity config for {model_name}",
             )
         )
@@ -1915,12 +2022,14 @@ def _run_install_impl(args: Any) -> int:
             entity,
             style,
             copilot_enabled=bool(cfg.get("agent", {}).get("enabled", False)),
+            shell_import=_angular_import(f"{root}/pages/entity.page.ts", f"{custom_root}/filterx-shell.component"),
         )
         ops.append(
             PatchOp(
                 kind="generated_file",
                 path=f"{root}/pages/{page_name}",
                 content=page_content,
+                metadata={"layer": "schema", "entity": model_name},
                 description=f"Generated FilterX entity page for {model_name}",
             )
         )
@@ -1929,7 +2038,7 @@ def _run_install_impl(args: Any) -> int:
     host_routes_entries: list[str] = []
     existing_paths = _extract_existing_route_paths(project_root / routes_file)
     for entity in entities:
-        route_data = _build_route_entry(entity, project_root, frontend_root, style)
+        route_data = _build_route_entry(entity, project_root, frontend_root, style, generated_root=root, routes_file=routes_file)
         if route_data is None:
             continue
         route_path, generated_route_entry, host_route_entry = route_data
@@ -1949,31 +2058,37 @@ def _run_install_impl(args: Any) -> int:
                 kind="generated_file",
                 path=f"{root}/routes.ts",
                 content=routes_ts,
+                metadata={"layer": "schema"},
                 description="Generated frontend route entries",
             ),
             PatchOp(
                 kind="generated_file",
                 path=f"{root}/entities/index.ts",
-                content=("\n".join(entity_export_lines) + "\n") if entity_export_lines else "",
+                content=("\n".join(entity_export_lines) + "\n") if entity_export_lines else "export {};\n",
+                metadata={"layer": "schema"},
                 description="Generated frontend entities index",
             ),
             PatchOp(
                 kind="generated_file",
                 path=f"{root}/index.ts",
                 content="export * from './routes';\nexport * from './entities';\n",
+                metadata={"layer": "runtime"},
                 description="Generated frontend root index",
             ),
             PatchOp(
                 kind="generated_file",
                 path=f"{root}/services/filterx-entity-query.service.ts",
-                content="export { EntityQueryService as FilterxEntityQueryService } from '../../core/services/entity-query.service';\n",
+                content=("export { EntityQueryService as FilterxEntityQueryService } from '"
+                         + _angular_import(f"{root}/services/filterx-entity-query.service.ts", f"{frontend_root}/src/app/core/services/entity-query.service")
+                         + "';\n"),
+                metadata={"layer": "runtime"},
                 description="Generated frontend query service alias",
             ),
         ]
     )
 
-    if include_route_patch and host_routes_entries:
-        snippet = "// FILTERX GENERATED ROUTES START\n" + "\n".join(host_routes_entries) + "\n// FILTERX GENERATED ROUTES END"
+    if include_route_patch:
+        snippet = ("// FILTERX GENERATED ROUTES START\n" + "\n".join(host_routes_entries) + "\n// FILTERX GENERATED ROUTES END") if host_routes_entries else ""
         replaced_routes = _build_routes_file_with_generated_block(project_root / routes_file, snippet, routes_anchor)
         if replaced_routes is not None:
             ops.append(
@@ -1982,10 +2097,11 @@ def _run_install_impl(args: Any) -> int:
                     path=routes_file,
                     content=replaced_routes,
                     owner="host",
+                    metadata={"layer": "schema"},
                     description="Replace generated routes in app.routes.ts",
                 )
             )
-        else:
+        elif snippet:
             ops.append(
                 PatchOp(
                     kind="anchor_insert",
@@ -1994,52 +2110,19 @@ def _run_install_impl(args: Any) -> int:
                     snippet=snippet,
                     insert_mode="after",
                     owner="host",
+                    metadata={"layer": "schema"},
                     description="Insert generated routes into app.routes.ts",
                 )
             )
 
-    manifest_path = project_root / cfg["safety"]["idempotency_manifest"]
-    patch_dir = project_root / cfg["output"]["patch_dir"]
-    result = apply_patch_operations(
-        project_root=project_root,
-        operations=ops,
-        manifest_path=manifest_path,
-        patch_dir=patch_dir,
-        dry_run=dry_run,
-        check_mode=check_mode,
-        strict_conflict_mode=strict_conflict_mode,
-        description="frontend.install",
-    )
-
     payload = {
-        "dry_run": result.dry_run,
-        "check_mode": check_mode,
-        "patch_id": result.patch_id,
+        "framework": "angular",
         "generated_root": str((project_root / generated_root).resolve()),
+        "customization_root": custom_root,
         "entity_count": len(entities),
         "generated_route_count": len(host_routes_entries),
-        "touched_files": result.touched_files,
-        "applied_ops": result.applied_ops,
-        "skipped_ops": result.skipped_ops,
-        "issues": [
-            {"code": issue.code, "message": issue.message, "context": issue.context}
-            for issue in result.issues
-        ],
     }
-
-    if args.json:
-        print(json.dumps(payload, indent=2))
-    else:
-        print("FilterX frontend install completed.")
-        print(f"- Dry run: {payload['dry_run']}")
-        print(f"- Applied ops: {payload['applied_ops']}")
-        print(f"- Skipped ops: {payload['skipped_ops']}")
-
-    if result.has_conflicts:
-        return 3
-    if getattr(args, "fail_on_warning", False) and result.issues:
-        return 3
-    return 0
+    return finish_frontend_install(args, cfg, ops, schema, payload)
 
 
 def _frontend_remove_candidates(patch_dir: Path) -> list[str]:
@@ -2052,7 +2135,7 @@ def _frontend_remove_candidates(patch_dir: Path) -> list[str]:
             meta = load_json(meta_path)
         except Exception:
             continue
-        if meta.get("description") == "frontend.install":
+        if meta.get("description") in {"frontend.install", "frontend.install.angular"}:
             candidates.append(patch_id)
     return candidates
 
@@ -2213,7 +2296,12 @@ def _run_with_renderer(args: Any, action: str) -> int:
         else:
             print(f"FilterX frontend {action} failed: {exc}")
         return 2
-    return int(getattr(renderer, action)(args))
+    try:
+        return int(getattr(renderer, action)(args))
+    except (ValueError, OSError) as exc:
+        payload = {"errors": [{"code": "FRONTEND_INPUT_INVALID", "message": str(exc)}]}
+        print(json.dumps(payload, indent=2) if getattr(args, "json", False) else f"FilterX frontend {action} failed: {exc}")
+        return 2
 
 
 def run_install(args: Any) -> int:

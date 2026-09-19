@@ -1,0 +1,84 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "FilterX Repo: start Angular frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "start", "--", "--host", "127.0.0.1", "--port", "4200"],
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "filterx-angular",
+        "pattern": { "regexp": "^(.*)$", "message": 1 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".+",
+          "endsPattern": "Application bundle generation complete|Compiled successfully"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "FilterX Matrix: build Express backend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build"],
+      "options": {
+        "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite"
+      },
+      "problemMatcher": ["$tsc"],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "FilterX Matrix: start React/Vite frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev", "--", "--host", "127.0.0.1", "--port", "5173"],
+      "options": {
+        "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "filterx-vite",
+        "pattern": { "regexp": "^(.*)$", "message": 1 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".+",
+          "endsPattern": "Local:.*https?://|Ready in"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "FilterX Matrix: start Vue frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev", "--", "--host", "127.0.0.1", "--port", "5173"],
+      "options": {
+        "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/spring-boot-jpa__vue/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "filterx-vite",
+        "pattern": { "regexp": "^(.*)$", "message": 1 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".+",
+          "endsPattern": "Local:.*https?://|Ready in"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "FilterX Repo: CLI tests",
+      "type": "shell",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "pytest", "tests", "-q"],
+      "options": { "cwd": "${workspaceFolder}/tools/filterx" },
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}

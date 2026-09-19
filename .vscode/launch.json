@@ -1,0 +1,196 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FilterX Repo: CLI validate matrix project",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "filterx.cli",
+      "args": [
+        "validate",
+        "--project-root",
+        "${workspaceFolder}/filterx-matrix-20260820/projects/fastapi-sqlalchemy__angular",
+        "--config",
+        "${workspaceFolder}/filterx-matrix-20260820/projects/fastapi-sqlalchemy__angular/filterx.yaml",
+        "--json"
+      ],
+      "cwd": "${workspaceFolder}/tools/filterx",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "FilterX Repo: CLI scan matrix project",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "filterx.cli",
+      "args": [
+        "scan",
+        "--project-root",
+        "${workspaceFolder}/filterx-matrix-20260820/projects/fastapi-sqlalchemy__angular",
+        "--config",
+        "${workspaceFolder}/filterx-matrix-20260820/projects/fastapi-sqlalchemy__angular/filterx.yaml",
+        "--json"
+      ],
+      "cwd": "${workspaceFolder}/tools/filterx",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "FilterX Repo: all CLI tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests", "-vv", "-s", "--tb=long"],
+      "cwd": "${workspaceFolder}/tools/filterx",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "FilterX Repo: current pytest file",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["${file}", "-vv", "-s", "--tb=long"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "FilterX Repo: FastAPI backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--host", "127.0.0.1", "--port", "8000"],
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}" },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "subProcess": true
+    },
+    {
+      "name": "FilterX Repo: Angular frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:4200",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "FilterX Repo: start Angular frontend",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "FilterX Matrix: Express backend",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite/dist/server.js",
+      "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite",
+      "preLaunchTask": "FilterX Matrix: build Express backend",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite/dist/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/**/node_modules/**"
+      ]
+    },
+    {
+      "name": "FilterX Matrix: React/Vite frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5173",
+      "webRoot": "${workspaceFolder}/filterx-matrix-20260820/projects/express-prisma__react-vite/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "FilterX Matrix: start React/Vite frontend"
+    },
+    {
+      "name": "FilterX Matrix: Spring Boot backend",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.example.FilterxFixtureApplication",
+      "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/spring-boot-jpa__vue",
+      "args": "--server.port=8000",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "FilterX Matrix: Vue frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5173",
+      "webRoot": "${workspaceFolder}/filterx-matrix-20260820/projects/spring-boot-jpa__vue/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "FilterX Matrix: start Vue frontend"
+    },
+    {
+      "name": "FilterX Matrix: Next.js frontend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "-p", "3000"],
+      "cwd": "${workspaceFolder}/filterx-matrix-20260820/projects/fastapi-sqlalchemy__nextjs/frontend",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/**/node_modules/**"
+      ],
+      "serverReadyAction": {
+        "pattern": "- Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    },
+    {
+      "name": "FilterX: Attach Python (5678)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "justMyCode": false
+    },
+    {
+      "name": "FilterX: Attach Node (9229)",
+      "type": "node",
+      "request": "attach",
+      "address": "127.0.0.1",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "FilterX: Attach Java (5005)",
+      "type": "java",
+      "request": "attach",
+      "hostName": "127.0.0.1",
+      "port": 5005
+    }
+  ],
+  "compounds": [
+    {
+      "name": "FilterX Repo: FastAPI + Angular",
+      "configurations": [
+        "FilterX Repo: FastAPI backend",
+        "FilterX Repo: Angular frontend"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "FilterX Matrix: Express + React",
+      "configurations": [
+        "FilterX Matrix: Express backend",
+        "FilterX Matrix: React/Vite frontend"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "FilterX Matrix: Spring + Vue",
+      "configurations": [
+        "FilterX Matrix: Spring Boot backend",
+        "FilterX Matrix: Vue frontend"
+      ],
+      "stopAll": true
+    }
+  ]
+}

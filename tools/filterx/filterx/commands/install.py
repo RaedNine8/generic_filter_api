@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import copy
+import io
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +61,21 @@ def run(args: Any) -> int:
         payload = _as_payload(steps, scan_code)
         _print_payload(args, payload)
         return scan_code
+
+    # Detect frontend conflicts before applying any backend/agent/DB changes.
+    # The scan above is the only artifact-producing step before this preflight.
+    if cfg["frontend"].get("enabled", True) and (project_root / cfg["output"]["scan_file"]).exists():
+        preview_args = copy.copy(args)
+        preview_args.dry_run = True
+        preview_args.json = True
+        output = io.StringIO()
+        with redirect_stdout(output):
+            preview_code = frontend.run_install(preview_args)
+        if preview_code:
+            print(output.getvalue(), end="")
+            steps.append({"name": "frontend.preflight", "status": "failed", "code": preview_code})
+            _print_payload(args, _as_payload(steps, preview_code))
+            return preview_code
 
     if cfg["backend"].get("enabled", True):
         backend_code = int(backend.run_install(args) or 0)

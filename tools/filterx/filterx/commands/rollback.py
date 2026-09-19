@@ -38,7 +38,12 @@ def run(args: Any) -> int:
         print(f"Patch id '{patch_id}' not found.")
         return 2
 
-    result = rollback_patch_bundle(project_root, patch_dir, patch_id)
+    try:
+        result = rollback_patch_bundle(project_root, patch_dir, patch_id)
+    except ValueError as exc:
+        payload = {"errors": [{"code": "CONFLICT_ROLLBACK_MODIFIED", "message": str(exc)}]}
+        print(json.dumps(payload, indent=2) if args.json else str(exc))
+        return 3
     if args.json:
         print(json.dumps(result, indent=2))
     else:

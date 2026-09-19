@@ -268,6 +268,9 @@ def _validate(cfg: Dict[str, Any]) -> None:
             raise ConfigValidationError(f"{section}.framework must be a non-empty string")
 
     global_hooks = backend_cfg.get("global_predicate_hooks")
+    custom_root = cfg["frontend"].get("customization_root")
+    if custom_root is not None and (not isinstance(custom_root, str) or not custom_root.strip()):
+        raise ConfigValidationError("frontend.customization_root must be a non-empty project-relative path")
     if not isinstance(global_hooks, list):
         raise ConfigValidationError("backend.global_predicate_hooks must be a list")
     for index, hook in enumerate(global_hooks):

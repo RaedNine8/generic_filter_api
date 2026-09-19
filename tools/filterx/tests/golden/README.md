@@ -1,5 +1,14 @@
 # FilterX legacy golden outputs
 
+The original six snapshots remain authoritative for scan and backend generation.
+The customizable frontend intentionally changes wrapper pages, runtime template
+extension points, ownership state, diagnostics and guarded rollback metadata.
+`frontend_v2_digests.json` records SHA-256 hashes of the complete normalized
+`capture_scenario` results for this new lifecycle, avoiding another copy of the
+large backend/runtime snapshots. Tests compare original scan/backend output
+exactly and compare the full new lifecycle digest; changed hashes require an
+explicit file/command difference audit, not an automatic acceptance.
+
 These snapshots capture the current pre-refactor behavior required by Section 0 and Step 1 of `filterx-multibackend-spec.md`.
 
 Covered scenarios:

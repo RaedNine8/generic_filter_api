@@ -1,0 +1,958 @@
+You are the lead engineer and product/OSS maintainer responsible for preparing this project for a serious open-source launch and eventual Hacker News / Reddit / Lobsters exposure.
+
+Repository:
+https://github.com/RaedNine8/generic_filter_api
+
+Agent-layer PR:
+https://github.com/RaedNine8/generic_filter_api/pull/2
+
+## PRIMARY OBJECTIVE
+
+Turn the current project into a technically coherent, polished, credible open-source project that is ready to showcase publicly.
+
+The project must NOT be positioned as a CRUD generator, CRUD framework, or basic CRUD tooling.
+
+The intended concept is a generic, extensible query/filtering layer that can integrate into existing applications across multiple backend and frontend ecosystems, with an optional natural-language "Filter Copilot" that compiles natural language into the same structured filtering representation used by the application.
+
+The project is intentionally framework-flexible.
+
+Target backends:
+
+* FastAPI + SQLAlchemy
+* Express.js + Prisma
+* Spring Boot + JPA
+
+Target frontends:
+
+* React
+* Next.js
+* Angular
+* Vue
+
+Do not incorrectly narrow the product to FastAPI + Angular.
+
+The default/reference implementation may currently be FastAPI + SQLAlchemy + Angular, but the architecture and product positioning must clearly communicate the broader multi-stack design.
+
+---
+
+# PHASE 1 — DEEPLY AUDIT THE PROJECT BEFORE CHANGING IT
+
+Read and understand:
+
+* the complete main repository
+* the full agent-layer PR
+* all README/documentation
+* `filterx-multibackend-spec.md`
+* CLI architecture
+* backend generators
+* frontend generators
+* model scanning / metadata system
+* filtering/query representation
+* generated files and patch/anchor system
+* rollback behavior
+* configuration system
+* tests
+* examples
+* package/dependency structure
+* agent/provider implementation
+* validation logic
+* LangGraph workflow
+* provider fallback/retry/circuit-breaker behavior
+* generated copilot router/configuration
+* current demo/example applications
+
+Do not assume the repository's current README accurately reflects the architecture.
+
+Create an internal architectural model before modifying anything.
+
+Identify:
+
+1. What is genuinely implemented.
+2. What is partially implemented.
+3. What is experimental.
+4. What is planned/spec-only.
+5. Which backend/frontend adapters are actually usable today.
+6. Which features should NOT be advertised as production-ready.
+
+Do not invent capabilities or exaggerate support.
+
+---
+
+# PHASE 2 — MERGE AND CLEAN THE AGENT LAYER
+
+Review PR #2 carefully and integrate it into the main branch only after making it launch-quality.
+
+The agent layer must remain optional.
+
+The project must work without an LLM.
+
+Clearly separate:
+
+CORE FILTERX:
+
+* schema/model scanning
+* structured filtering/query model
+* validation
+* query generation/execution
+* backend integrations
+* frontend integrations
+
+OPTIONAL FILTER COPILOT:
+
+* natural-language interpretation
+* structured filter generation
+* validation/retry
+* preview
+* explicit execution confirmation
+* configurable LLM providers
+
+Do NOT make "AI" the core product identity.
+
+Clean up the PR before merging.
+
+In particular, remove committed generated/cache/local artifacts such as:
+
+* `.angular/cache`
+* Vite generated dependency caches
+* local build artifacts
+* unnecessary generated `.js`
+* unnecessary `.map`
+* node_modules
+* temporary/editor artifacts
+* machine-specific files
+
+Verify `.gitignore` properly protects these files.
+
+Review all newly introduced dependencies and remove anything unnecessary.
+
+Make sure the generated Copilot configuration does not create confusion around disabled/enabled behavior.
+
+The resulting documentation must clearly state:
+
+"Core FilterX works without an LLM. Filter Copilot is optional."
+
+---
+
+# PHASE 3 — MAKE THE GENERIC / MULTI-STACK ARCHITECTURE EXPLICIT
+
+The biggest documentation/product weakness is that the project can currently look more FastAPI/Angular-specific than it really is.
+
+Fix that.
+
+The architecture should visibly communicate:
+
+```
+                     FILTERX
+                        |
+            -------------------------
+            |                       |
+      Backend adapters         Frontend adapters
+            |                       |
+   -------------------       -------------------------
+   |        |        |       |       |       |       |
+```
+
+FastAPI   Express   Spring   React   Next   Angular  Vue
+SQLAlchemy  Prisma     JPA
+
+The common filtering/query semantics should be treated as the core abstraction, while framework-specific generators/adapters implement it.
+
+Review `filterx-multibackend-spec.md` and use it to determine what should become the canonical architecture.
+
+Do not claim every adapter is equally mature.
+
+Create an explicit support matrix such as:
+
+| Integration          | Status | Notes |
+| -------------------- | ------ | ----- |
+| FastAPI + SQLAlchemy | ...    | ...   |
+| Express + Prisma     | ...    | ...   |
+| Spring Boot + JPA    | ...    | ...   |
+| React                | ...    | ...   |
+| Next.js              | ...    | ...   |
+| Angular              | ...    | ...   |
+| Vue                  | ...    | ...   |
+
+Use honest statuses such as:
+
+* Stable
+* Experimental
+* Partial
+* Planned
+
+only where justified by the code.
+
+---
+
+# PHASE 4 — ELEVATE THE FILTER AST / QUERY REPRESENTATION
+
+This is one of the most important technical improvements.
+
+Treat `FilterTreeNode` or the project's equivalent structured filter representation as a first-class architectural concept rather than an internal detail.
+
+Determine whether the current representation is suitable to become the common intermediate representation across:
+
+* API input
+* frontend filter UI
+* backend query execution
+* natural-language Filter Copilot
+* future adapters
+
+If necessary, refactor it so that there is a clear canonical representation.
+
+Document:
+
+* logical operators
+* nested AND/OR
+* field references
+* operators
+* values
+* type semantics
+* relationships
+* null handling
+* sorting
+* grouping
+* pagination
+* validation
+* field capabilities
+
+The architecture should conceptually be:
+
+Natural language ----
+Frontend UI ----------- > Filter AST / Query Spec -> validation -> execution
+REST/API --------------/
+
+The important idea is:
+
+Different interfaces compile into the same query representation.
+
+Do not allow the natural-language agent to directly generate arbitrary SQL.
+
+---
+
+# PHASE 5 — STRENGTHEN THE NATURAL-LANGUAGE LAYER
+
+Keep Filter Copilot deliberately constrained.
+
+The architecture should be:
+
+Natural language
+↓
+LLM
+↓
+structured Filter AST
+↓
+schema validation
+↓
+semantic validation
+↓
+authorization/capability validation
+↓
+human-readable preview
+↓
+explicit approval
+↓
+existing FilterX execution engine
+
+Do NOT present this as an autonomous unrestricted database agent.
+
+Describe it as a constrained agentic workflow / natural-language compiler.
+
+Strengthen validation so the system rejects:
+
+* nonexistent fields
+* unsupported operators
+* invalid types
+* unsupported relationship paths
+* unsupported operations
+* inaccessible fields
+* invalid values
+* malformed filter trees
+
+Where practical, add explicit field capabilities such as:
+
+* filterable
+* sortable
+* groupable
+* searchable
+* exposed-to-agent
+
+Example:
+
+fields:
+User.email:
+filter: true
+sort: true
+group: false
+agent: true
+
+User.salary:
+filter: false
+sort: false
+group: false
+agent: false
+
+Do not expose every database field automatically to the agent.
+
+---
+
+# PHASE 6 — ADD EXPLAINABLE PREVIEW
+
+The Filter Copilot should not just return "query executed."
+
+It should be able to show:
+
+User request:
+"Books published after 2020 with more than 500 pages by French authors."
+
+Interpreted filter:
+
+published_at >= 2020-01-01
+AND pages > 500
+AND author.country = "France"
+
+Then:
+
+[ Execute ] [ Cancel ]
+
+Use the project's existing confirmation workflow if possible.
+
+The key product principle should be:
+
+AI proposes.
+FilterX validates.
+The application controls what is allowed.
+The user approves.
+The existing query engine executes.
+
+---
+
+# PHASE 7 — ADD A SERIOUS EVALUATION / BENCHMARK SUITE
+
+Do not rely on "the model seems to work."
+
+Create a test/evaluation suite for the natural-language compiler.
+
+Include cases for:
+
+* basic filters
+* nested AND/OR
+* numeric ranges
+* date ranges
+* enums
+* null semantics
+* relationships
+* sorting
+* grouping
+* pagination
+* ambiguous requests
+* invalid fields
+* unsupported operators
+* unauthorized fields
+* adversarial requests
+
+Create a reproducible evaluation set, ideally around 50–100 representative prompts.
+
+Measure things such as:
+
+* valid AST generation
+* exact/correct AST generation
+* invalid-field rejection
+* invalid-operator rejection
+* unauthorized-field rejection
+* validation/retry success
+* provider consistency
+
+Do not fabricate impressive metrics.
+
+Only report metrics produced by the actual evaluation.
+
+Document methodology and limitations.
+
+---
+
+# PHASE 8 — CREATE A REAL LIVE DEMO
+
+This is mandatory before public launch.
+
+Build a self-contained demo application with realistic seeded data.
+
+The demo should allow someone to immediately experience the core idea without configuring PostgreSQL, installing multiple frameworks, or modifying an existing application.
+
+The ideal experience:
+
+1. Open demo.
+2. See real data.
+3. Use structured filters.
+4. Type a natural-language request.
+5. See Filter Copilot translate it into a structured filter.
+6. See the human-readable interpretation.
+7. Confirm.
+8. See results.
+
+The demo should clearly demonstrate that:
+
+structured UI filtering
+and
+natural-language filtering
+
+produce the same underlying filter representation.
+
+Use realistic entities such as:
+
+* Books
+* Authors
+* Orders
+* Customers
+
+or another technically convincing dataset.
+
+Include deliberately interesting examples involving relationships and compound conditions.
+
+The first meaningful interaction should take seconds.
+
+If actual deployment infrastructure/credentials are available, deploy the demo and record the real URL.
+
+If deployment is not possible, create a complete deployable demo and provide deterministic deployment instructions.
+
+NEVER invent a demo URL.
+
+---
+
+# PHASE 9 — CREATE A VISUAL ARCHITECTURE EXPLANATION
+
+Add one clean architecture diagram to the README/documentation.
+
+It should show:
+
+Models
+↓
+FilterX schema/metadata
+↓
+common query/filter representation
+├── Backend adapters
+├── Frontend adapters
+└── Filter Copilot
+
+The diagram should make the architecture understandable in under 15 seconds.
+
+Prefer a clean SVG/diagram over a giant screenshot.
+
+---
+
+# PHASE 10 — COMPLETELY REWORK THE README
+
+Rewrite the README around the actual product rather than around setup instructions.
+
+NEVER use "CRUD" as the central product description.
+
+Do not describe FilterX as:
+
+* a CRUD generator
+* a basic CRUD framework
+* generic CRUD tooling
+* a CRUD replacement
+
+The README should open approximately around this concept:
+
+"FilterX is a framework-independent query/filtering layer that can be integrated into existing applications across FastAPI, Express, Spring Boot and modern frontend stacks. It can generate the integration from application models and optionally compile natural-language requests into validated structured filters."
+
+This is only a direction; write the final wording based on the actual implementation.
+
+Recommended README order:
+
+1. Project name
+2. One-sentence value proposition
+3. Live Demo
+4. Documentation
+5. GitHub / package links
+6. Visual demo / GIF
+7. 30-second example
+8. Architecture
+9. Why FilterX
+10. Multi-stack support matrix
+11. Core features
+12. Filter AST / query specification
+13. Filter Copilot
+14. Validation/security model
+15. Installation
+16. Configuration
+17. Examples
+18. Benchmarks/evaluation
+19. Project maturity/status
+20. Roadmap
+21. Contributing
+22. License
+
+Do not put a massive installation procedure before explaining why the project exists.
+
+---
+
+# PHASE 11 — CLEARLY EXPLAIN THE DIFFERENCE FROM NL→SQL
+
+This is essential.
+
+The README should explicitly explain that FilterX is NOT simply:
+
+Natural language → arbitrary SQL
+
+Instead:
+
+Natural language
+↓
+validated Filter AST
+↓
+existing application query semantics
+↓
+backend adapter
+↓
+database
+
+Explain the advantages of this design:
+
+* constrained field vocabulary
+* operator validation
+* type validation
+* application-defined capabilities
+* relationship validation
+* authorization boundaries
+* human-readable preview
+* reuse of existing query semantics
+* LLM/provider independence
+
+Be technically precise and avoid unsupported security claims.
+
+---
+
+# PHASE 12 — CREATE A COMPETITOR / ALTERNATIVES SECTION
+
+Add an honest "How FilterX differs" section.
+
+Mention relevant categories rather than pretending there are no alternatives:
+
+* query/filter libraries
+* admin/data UI generators
+* natural-language-to-SQL systems
+* framework-specific filtering libraries
+
+Examples to investigate and compare include projects such as:
+
+* fastapi-filter
+* fastapi-querybuilder
+* sqlalchemy-filterset
+* FastCRUD
+* SQLAdmin
+* CRUDAdmin
+* Refine
+* Dataherald
+* QueryWeaver
+* LangChain text-to-SQL tooling
+
+Do not claim superiority without evidence.
+
+Explain the architectural difference:
+
+FilterX aims to combine:
+
+* common query/filter semantics
+* model/schema introspection
+* generated backend integration
+* generated frontend integration
+* multiple framework adapters
+* natural-language compilation into the same query representation
+
+---
+
+# PHASE 13 — ADD REAL EXAMPLES FOR EACH ECOSYSTEM
+
+Create concise examples for:
+
+FastAPI + SQLAlchemy
+
+Express + Prisma
+
+Spring Boot + JPA
+
+React
+
+Next.js
+
+Angular
+
+Vue
+
+Examples should demonstrate the same conceptual filter/query behavior across stacks.
+
+Do not create fake examples that do not actually work.
+
+Where a target integration is experimental/partial, label it accordingly.
+
+---
+
+# PHASE 14 — IMPROVE PROJECT STRUCTURE / OSS POLISH
+
+Review and improve:
+
+* `.gitignore`
+* LICENSE
+* CONTRIBUTING.md
+* issue templates if appropriate
+* pull request template if appropriate
+* versioning
+* releases
+* changelog
+* dependency pinning/compatibility
+* test organization
+* example organization
+* documentation organization
+
+Remove dead code and stale files.
+
+Run formatting/linting/type checks/tests where applicable.
+
+Do not perform broad refactors purely for aesthetics; prioritize correctness and clarity.
+
+---
+
+# PHASE 15 — PACKAGE / RELEASE READINESS
+
+Determine how the project is expected to be consumed.
+
+Where appropriate:
+
+* publish proper package artifacts
+* create GitHub release
+* create version tags
+* ensure package metadata is correct
+* ensure installation commands in README are actually valid
+* ensure examples use the released version
+* ensure generated artifacts are deterministic
+
+Do not claim package availability if it is not actually published.
+
+---
+
+# PHASE 16 — MAKE THE GITHUB REPOSITORY SELF-EXPLANATORY
+
+Optimize:
+
+Repository description:
+It should communicate the cross-stack query/filtering concept immediately.
+
+Topics:
+Use accurate ecosystem and concept tags.
+
+Repository landing page:
+A visitor should understand the project within 20–30 seconds.
+
+README:
+Live Demo and architecture should be visible above the fold.
+
+Add:
+
+* badges only where meaningful
+* release badge if real
+* package badges if real
+* CI badge if real
+* license badge if real
+
+Do not use meaningless badge spam.
+
+---
+
+# PHASE 17 — CREATE HN-SPECIFIC LAUNCH MATERIAL
+
+Prepare, but do not post automatically.
+
+Create:
+
+1. Three possible Show HN titles.
+2. One recommended title based on actual project strengths.
+3. A concise HN submission body.
+4. A substantive first author comment.
+5. Answers to likely technical objections/questions.
+
+The title must NOT contain hype such as:
+
+* revolutionary
+* game-changing
+* next-generation
+* AI-powered miracle
+* the future of databases
+
+Possible positioning directions to evaluate:
+
+"Show HN: FilterX – Turn natural-language requests into validated application filters"
+
+"Show HN: FilterX – A framework-independent query layer for FastAPI, Spring Boot and Express"
+
+"Show HN: FilterX – Compile natural language into a typed query/filter AST"
+
+Choose the title only after evaluating what the final implementation/demo actually makes compelling.
+
+---
+
+# PHASE 18 — PREPARE FOR HN OBJECTIONS
+
+Create strong technical answers to questions such as:
+
+"Why not just use SQLAlchemy filters?"
+
+"Why not just use natural-language-to-SQL?"
+
+"Why not use Dataherald?"
+
+"Why not use a generic query builder?"
+
+"Why not use GraphQL?"
+
+"Why do you need an LLM?"
+
+"Why LangGraph?"
+
+"Is this really an agent?"
+
+"What happens when the model hallucinates a field?"
+
+"Can the LLM access unauthorized columns?"
+
+"Why generate files instead of using a runtime framework?"
+
+"Why not simply build this around one backend?"
+
+"Which integrations are actually production-ready?"
+
+"How does performance compare?"
+
+"How is relationship filtering handled?"
+
+"How do you prevent invalid filters?"
+
+"Can the LLM execute arbitrary SQL?"
+
+Every answer must be factual and grounded in the actual code.
+
+---
+
+# PHASE 19 — CREATE A TECHNICAL ARTICLE AS A SECOND DISTRIBUTION ASSET
+
+Write one strong technical article based on the actual architecture.
+
+Possible theme:
+
+"Why I don't let an LLM generate SQL directly"
+
+or:
+
+"Designing a typed intermediate representation for natural-language database filters"
+
+or:
+
+"Building a framework-independent query layer across FastAPI, Spring Boot and Express"
+
+The article should contain real architecture, code, examples, tradeoffs and limitations.
+
+It should end naturally with a link to the project.
+
+Do not turn it into marketing copy.
+
+---
+
+# PHASE 20 — CREATE A SHORT DEMO VIDEO / GIF
+
+Produce a short visual demonstration showing:
+
+1. Existing models
+2. FilterX integration/generation
+3. Structured filtering
+4. Natural-language request
+5. generated Filter AST
+6. validation
+7. confirmation
+8. result
+
+Use the resulting asset in:
+
+* README
+* documentation
+* technical article
+* community posts
+
+---
+
+# PHASE 21 — PREPARE THE DISTRIBUTION STRATEGY
+
+After the repository is genuinely ready, prepare platform-specific launch material for:
+
+Primary:
+
+* Hacker News
+* Reddit
+* Lobsters
+* GitHub
+
+Secondary:
+
+* Dev.to
+* Hashnode
+* Product Hunt
+* Indie Hackers
+
+Long-term:
+
+* relevant Awesome lists
+* technical newsletters
+* developer publications
+* YouTube
+* search-oriented documentation/tutorials
+
+Do NOT recommend or use:
+
+* LinkedIn
+* Twitter/X
+
+Do not spam identical posts into multiple communities.
+
+Adapt the technical angle to each ecosystem.
+
+Examples:
+
+FastAPI community:
+focus on schema/model introspection and generated filtering infrastructure.
+
+Spring Boot community:
+focus on JPA integration and framework-independent query semantics.
+
+Node/Prisma community:
+focus on integration and generated query capabilities.
+
+AI community:
+focus on constrained natural-language → typed query compilation, not generic "AI database chat."
+
+Frontend communities:
+focus on the shared filter/query model powering different UI frameworks.
+
+---
+
+# PHASE 22 — SEO / LONG-TAIL DOCUMENTATION
+
+Create useful documentation/tutorial pages around real developer problems, such as:
+
+* dynamic filtering with SQLAlchemy
+* dynamic filtering with FastAPI
+* dynamic filtering with Spring Boot/JPA
+* dynamic filtering with Prisma
+* React query/filter UI
+* Angular query/filter UI
+* Vue query/filter UI
+* natural-language filtering
+* natural-language query compilation
+* typed filter/query AST
+
+Do NOT create low-quality keyword pages.
+
+Each page must genuinely teach something technical and link naturally to FilterX.
+
+---
+
+# PHASE 23 — WHAT NOT TO DO
+
+Do NOT:
+
+* call FilterX a CRUD project
+* reduce the project to FastAPI + Angular
+* claim unsupported integrations are stable
+* describe it as an arbitrary NL→SQL agent
+* market LangGraph as the product
+* use generic AI hype
+* fabricate benchmarks
+* fabricate compatibility
+* fabricate demo URLs
+* commit generated cache files
+* overstuff the README with every feature
+* pretend there are no alternatives
+* claim to be "the first" without exhaustive evidence
+* ask people to artificially upvote GitHub/HN
+* create fake engagement
+* submit spammy identical posts across communities
+* prioritize superficial branding over technical clarity
+
+---
+
+# PHASE 24 — DEFINITION OF DONE
+
+Do not consider this task complete until all of the following are true:
+
+[ ] Main repository fully audited
+[ ] Agent-layer PR reviewed and merged cleanly
+[ ] Generated/cache artifacts removed
+[ ] `.gitignore` corrected
+[ ] Core vs optional Filter Copilot clearly separated
+[ ] Multi-backend architecture clearly documented
+[ ] Multi-frontend architecture clearly documented
+[ ] Support/maturity matrix added
+[ ] Canonical Filter AST/query specification documented
+[ ] Filter AST used consistently where practical
+[ ] Natural-language compiler flow clearly documented
+[ ] Validation strengthened
+[ ] Field/operator/type validation verified
+[ ] Optional field capability/authorization model considered/implemented where appropriate
+[ ] Human-readable preview implemented
+[ ] Explicit confirmation flow verified
+[ ] Natural-language evaluation suite added
+[ ] Real benchmark/evaluation results generated if technically meaningful
+[ ] Cross-stack examples added
+[ ] Live demo created
+[ ] Live demo actually tested
+[ ] Architecture diagram added
+[ ] README completely rewritten
+[ ] Competitor/alternative positioning documented
+[ ] Installation instructions verified from a clean environment
+[ ] Tests/lint/type checks pass where applicable
+[ ] Release/package state cleaned up
+[ ] GitHub metadata/topics/description improved
+[ ] HN title candidates written
+[ ] HN submission prepared
+[ ] HN first author comment prepared
+[ ] HN objection/FAQ document prepared
+[ ] Technical launch article prepared
+[ ] Demo GIF/video prepared
+[ ] Reddit/Lobsters/community launch angles prepared
+[ ] SEO-oriented technical documentation prepared
+
+---
+
+# IMPORTANT WORKING RULE
+
+Do not blindly implement every idea above if the existing architecture makes a particular implementation inappropriate.
+
+For every change:
+
+1. Inspect current code.
+2. Preserve working functionality.
+3. Prefer incremental architectural improvements.
+4. Avoid unnecessary rewrites.
+5. Keep framework-specific code isolated behind adapters/interfaces where appropriate.
+6. Keep the core abstraction framework-independent.
+7. Do not introduce needless dependencies.
+8. Add tests for meaningful behavioral changes.
+9. Update documentation to reflect what actually exists.
+10. Clearly separate implemented features from roadmap items.
+
+At the end, provide:
+
+A. Summary of what you changed.
+B. Files changed.
+C. Architectural changes.
+D. New/modified tests.
+E. Demo location or exact deployment instructions.
+F. What remains experimental.
+G. Final recommended HN positioning.
+H. Remaining weaknesses that should be addressed before launch.
+I. A concise "launch readiness" assessment based only on the final state of the repository.
+
+The goal is not merely to make the repository look polished.
+
+The goal is to make the underlying technical idea immediately understandable:
+
+**FilterX provides a common, structured query/filter layer that can integrate across multiple backend and frontend ecosystems, while allowing structured UI/API inputs and natural language to compile into the same validated query representation.**

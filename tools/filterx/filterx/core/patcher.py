@@ -38,6 +38,8 @@ class PatchOp:
     description: str = ""
     structured_format: Optional[StructuredFormat] = None
     merge: Mapping[str, Any] = field(default_factory=dict)
+    write_policy: Literal["managed", "create_once"] = "managed"
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -194,6 +196,8 @@ def apply_patch_operations(
     issues: List[PatchIssue] = []
 
     manifest: ManifestState = load_manifest(manifest_path)
+    frontend_bundle = description.startswith("frontend.install")
+    manifest_before = json.loads(json.dumps(manifest.data)) if frontend_bundle else None
 
     bundle_root = patch_dir / patch_id
     backups: List[Dict[str, str | bool]] = []
@@ -263,8 +267,11 @@ def apply_patch_operations(
         rel = _project_relative_path(project_root, target)
 
         if op.kind == "generated_file":
+            if op.write_policy == "create_once" and target.exists():
+                skipped_ops += 1
+                continue
             new_content = op.content
-            if target.exists() and target.read_text(encoding="utf-8") == new_content:
+            if target.exists() and target.read_bytes().decode("utf-8") == new_content:
                 skipped_ops += 1
                 continue
 
@@ -275,14 +282,14 @@ def apply_patch_operations(
 
             backups.append(_backup_file(project_root, bundle_root, target))
             ensure_parent_dir(target)
-            target.write_text(new_content, encoding="utf-8")
+            target.write_text(new_content, encoding="utf-8", newline="")
             set_entry(
                 manifest,
                 relative_path=rel,
                 kind="generated_file",
                 sha256=_sha256_text(new_content),
                 patch_id=patch_id,
-                metadata={"owner": op.owner},
+                metadata={"owner": op.owner, **({"write_policy": op.write_policy} if op.write_policy != "managed" else {}), **op.metadata},
             )
 
         elif op.kind == "anchor_insert":
@@ -312,7 +319,7 @@ def apply_patch_operations(
                 kind="anchor_insert",
                 sha256=_sha256_text(new_content),
                 patch_id=patch_id,
-                metadata={"anchor": op.anchor, "snippet_hash": _sha256_text(op.snippet)},
+                metadata={"anchor": op.anchor, "snippet_hash": _sha256_text(op.snippet), **op.metadata},
             )
 
         elif op.kind == "delete_file":
@@ -361,7 +368,7 @@ def apply_patch_operations(
                 kind="structured_merge",
                 sha256=_sha256_text(new_content),
                 patch_id=patch_id,
-                metadata={"owner": op.owner, "format": op.structured_format},
+                metadata={"owner": op.owner, "format": op.structured_format, **op.metadata},
             )
 
     if not (dry_run or check_mode):
@@ -374,6 +381,15 @@ def apply_patch_operations(
                 "description": description,
                 "touched_files": touched_files,
                 "backups": backups,
+                **({
+                    "manifest_path": _project_relative_path(project_root, manifest_path),
+                    "manifest_before": manifest_before,
+                    "post_hashes": {
+                        str(item["relative_path"]): hashlib.sha256(_resolve(project_root, str(item["relative_path"])).read_bytes()).hexdigest()
+                        if _resolve(project_root, str(item["relative_path"])).exists() else None
+                        for item in backups
+                    },
+                } if frontend_bundle else {}),
             },
         )
         append_patch_history(
@@ -412,6 +428,14 @@ def rollback_patch_bundle(project_root: Path, patch_dir: Path, patch_id: str) ->
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
     backups = meta.get("backups", [])
 
+    # New frontend bundles refuse a destructive rollback if any target changed
+    # since the install. Preflight every file before restoring even one backup.
+    for rel, expected_hash in meta.get("post_hashes", {}).items():
+        target = _resolve(project_root, rel)
+        actual_hash = hashlib.sha256(target.read_bytes()).hexdigest() if target.exists() else None
+        if actual_hash != expected_hash:
+            raise ValueError(f"CONFLICT_ROLLBACK_MODIFIED: '{rel}' changed after installation. Preserve/merge those edits before rollback.")
+
     restored: List[str] = []
     removed: List[str] = []
 
@@ -430,6 +454,18 @@ def rollback_patch_bundle(project_root: Path, patch_dir: Path, patch_id: str) ->
             if target.exists():
                 target.unlink(missing_ok=True)
                 removed.append(rel)
+
+    if "manifest_before" in meta:
+        manifest = load_manifest(_resolve(project_root, meta["manifest_path"]))
+        prior_entries = meta["manifest_before"].get("entries", {})
+        for item in backups:
+            rel = item["relative_path"]
+            if rel in prior_entries:
+                manifest.data["entries"][rel] = prior_entries[rel]
+            else:
+                delete_entry(manifest, rel)
+        manifest.data["patch_history"] = [entry for entry in manifest.data["patch_history"] if entry["patch_id"] != patch_id]
+        save_manifest(manifest)
 
     return {
         "patch_id": patch_id,

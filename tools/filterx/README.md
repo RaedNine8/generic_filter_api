@@ -53,6 +53,15 @@ Check command:
 filterx --help
 ```
 
+Generate VS Code debugger definitions for the frameworks selected by `filterx.yaml`:
+
+```powershell
+filterx debug install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx debug validate --project-root . --config filterx.yaml --json
+```
+
+Auto mode writes `.vscode` debugger files only when the host does not already own them; otherwise it creates an isolated `filterx-debug.code-workspace`. Existing settings are never edited. See [the complete debugging guide](../../docs/debugging.md) for FastAPI, Express, Spring Boot, Angular, React/Vite, Next.js, Vue, attach workflows, ports, and safe removal.
+
 For the optional agent layer, install the extra instead:
 
 ```powershell
@@ -198,9 +207,26 @@ frontend:
     api_base_url: /api/filterx
 ```
 
-`nextjs` generates `src/app/filterx/page.tsx` and uses `frontend.nextjs.workspace_root`, `generated_root`, and `api_base_url`. `vue` uses `frontend.vue.workspace_root`, `generated_root`, `host_file`, `host_anchor` (`<!-- FILTERX:APP -->` by default), and `api_base_url`. React/Vite and Vue require their host anchor; Next.js owns only its generated route. Package dependencies are structurally merged into the existing package manifest and remain rollback-safe.
+`nextjs` creates a user-owned `src/app/filterx/page.tsx` once and uses `frontend.nextjs.workspace_root`, `generated_root`, `host_file`, and `api_base_url`. `vue` uses `frontend.vue.workspace_root`, `generated_root`, `host_file`, `host_anchor` (`<!-- FILTERX:APP -->` by default), and `api_base_url`. React/Vite and Vue use their host anchor to mount the user-owned shell. Missing package dependencies are structurally merged; existing host versions are preserved.
 
 Real build checks are opt-in in the contributor suite with `FILTERX_RUN_WEB_E2E=1`.
+
+## Managed frontend files and customizations
+
+All four frontend renderers use the same ownership and update lifecycle:
+
+- User-owned shell, theme and presentation JSON: created once, never replaced by reinstall.
+- Generated schema/configs/pages: updated from the current scan/IR and presentation settings.
+- Generated query/UI runtime: schema-independent; unchanged files are not rewritten.
+- Locally modified generator-owned files: block the entire frontend write, including stale-file deletion. `--force` does not bypass this protection.
+
+Use `filterx frontend diff` for proposed file diffs and `filterx frontend doctor` for update diagnostics. Both are read-only and accept `--project-root`, `--config`, `--json`, and `--fail-on-warning`. They use the existing scan/IR; run `filterx scan` first after changing models.
+
+Defaults are `frontend/src/app/filterx-custom` for Angular and `frontend/src/filterx-custom` for React, Next.js, and Vue (relative to the configured workspace). Override with project-relative `frontend.customization_root` before installation. Keep generated and customization roots separate.
+
+Schema changes require backend regeneration too: use the orchestrated `filterx install`, followed by `filterx validate` and your host build/tests. New frontend patch bundles refuse rollback if affected files changed afterwards and restore ownership hashes when rolled back safely.
+
+See [the customization guide](../../docs/frontend_customization.md) for Angular templates, React/Next render props, Vue slots, schema evolution, and legacy migration limitations. Backend authorization always remains authoritative; presentation settings cannot change endpoints or query keys.
 
 ## Streaming exports
 

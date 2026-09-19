@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, OnDestroy, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  TemplateRef,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Subject } from "rxjs";
 import { takeUntil, finalize } from "rxjs/operators";
@@ -135,6 +142,7 @@ import { DataTableComponent } from "../data-table/data-table.component";
         <app-data-table
           [data]="data"
           [columns]="columns"
+          [cellTemplateOverride]="cellTemplate"
           [loading]="loading"
           [pagination]="pagination"
           [sortField]="sortField"
@@ -370,6 +378,8 @@ export class EntityListComponent<T = unknown> implements OnInit, OnDestroy {
   @Input() clickableRows = true;
 
   @Input() onRowClicked?: (item: T) => void;
+
+  @Input() cellTemplate?: TemplateRef<any>;
 
   protected entityQueryService =
     inject<EntityQueryService<T>>(EntityQueryService);

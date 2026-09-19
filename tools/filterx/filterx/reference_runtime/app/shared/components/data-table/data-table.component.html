@@ -91,13 +91,14 @@
               >
                 <ng-container
                   *ngIf="
-                    column.type === 'custom' && cellTemplate;
+                    cellTemplateOverride ||
+                      (column.type === 'custom' && cellTemplate);
                     else defaultCell
                   "
                 >
                   <ng-container
                     *ngTemplateOutlet="
-                      cellTemplate;
+                      cellTemplateOverride || cellTemplate || null;
                       context: {
                         $implicit: getCellValue(row, column),
                         row: row,

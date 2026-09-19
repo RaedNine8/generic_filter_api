@@ -232,6 +232,28 @@ def test_orchestrated_install_includes_enabled_copilot(tmp_path: Path) -> None:
     assert "filterx_copilot_router" in main_content
 
 
+def test_orchestrated_update_preflights_frontend_before_backend(tmp_path: Path) -> None:
+    from filterx.commands import frontend
+
+    root = _setup_synthetic_project(tmp_path)
+    config = root / "filterx.yaml"
+    _enable_frontend_in_config(config)
+    _write_file(root / "frontend/package.json", '{"dependencies":{"@angular/core":"^18.0.0"}}')
+    _write_file(root / "frontend/src/app/app.routes.ts", "import {Routes} from '@angular/router';\nexport const routes: Routes = [\n// FILTERX:ROUTES\n];\n")
+    args = _args(root, config)
+    assert scan.run(args) == 0
+    assert backend.run_install(args) == 0
+    assert frontend.run_install(args) == 0
+    backend_before = {p: p.read_bytes() for p in (root / "app/filterx_generated").rglob("*.py")}
+    runtime = root / "frontend/src/app/core/services/generic-query.service.ts"
+    runtime.write_bytes(runtime.read_bytes() + b"\n// local customization\n")
+    model = root / "app/models/book.py"
+    _write_file(model, model.read_text().replace("    title =", "    isbn = Column(String, nullable=True)\n    title ="))
+    assert install.run(args) == 3
+    assert all(p.read_bytes() == content for p, content in backend_before.items())
+    assert b"// local customization" in runtime.read_bytes()
+
+
 def test_backend_install_blocks_on_route_path_conflict(tmp_path: Path) -> None:
     project_root = _setup_synthetic_project(tmp_path, include_anchor=True, add_route_conflict=True)
     config_path = project_root / "filterx.yaml"

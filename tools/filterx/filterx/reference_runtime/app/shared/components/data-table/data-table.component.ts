@@ -62,6 +62,10 @@ export class DataTableComponent<T = any> {
 
   @ContentChild("cellTemplate") cellTemplate?: TemplateRef<any>;
 
+  // Wrappers can pass a template without changing generated column metadata.
+  // Direct consumers keep the existing projected custom-column template API.
+  @Input() cellTemplateOverride?: TemplateRef<any>;
+
   @Output() sortChange = new EventEmitter<{
     field: string;
     order: SortOrder;

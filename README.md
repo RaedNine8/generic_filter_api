@@ -9,6 +9,41 @@ It generates both sides of the feature:
 
 Frontend integration is part of the standard flow and is included in the steps below.
 
+## Debugging
+
+The repository includes VS Code launchers for the FilterX CLI, pytest, the main FastAPI/Angular application, representative Express/React and Spring/Vue matrix hosts, Next.js, and Python/Node/Java attach workflows. Integrated projects can generate framework-aware debugger definitions without changing an existing `.vscode/settings.json`:
+
+```powershell
+filterx debug install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx debug validate --project-root . --config filterx.yaml --json
+```
+
+If a project already owns VS Code launch/task files, auto mode creates an isolated `filterx-debug.code-workspace` instead of rewriting them. See [the debugging guide](docs/debugging.md) for every backend/frontend, ports, breakpoints, attach mode, extension requirements, secret handling, and safe removal.
+
+## Frontend customization and regeneration
+
+**Angular, React/Vite, Next.js, and Vue all support customization-safe updates.** Each frontend separates:
+
+- **User-owned presentation:** a create-once shell, theme, and JSON display settings. Customize these freely; reinstall preserves their bytes.
+- **Generated schema:** entity types/configs, pages/routes where applicable, and validated presentation projections. These track model changes.
+- **Generated runtime:** query/filter/export logic and reusable UI. Model-only changes do not rewrite unchanged runtime files.
+
+Modified generator-owned files block the frontend install rather than being overwritten. Unchanged obsolete files recorded as generator-owned are pruned; user-owned files are not. Existing host dependency versions and Angular PrimeNG theme choices are preserved.
+
+After applying your application's own model/database migration:
+
+```powershell
+filterx scan --project-root . --config filterx.yaml --no-dry-run --json
+filterx frontend diff --project-root . --config filterx.yaml --json
+filterx frontend doctor --project-root . --config filterx.yaml --json
+filterx install --project-root . --config filterx.yaml --no-dry-run --yes --json
+filterx validate --project-root . --config filterx.yaml --json
+```
+
+`diff` and `doctor` never write, even with `--no-dry-run`. They report file ownership/actions, conflicts, schema changes, and stale display settings. The full installer preflights frontend conflicts before changing backend files. Rebuild and test the host afterwards.
+
+Preserving custom source does not automatically repair custom code or saved filters that reference renamed/removed fields. See [the all-framework customization guide](docs/frontend_customization.md) for extension APIs, conflict resolution, migration limits, and rollback safety.
+
 ## What FilterX does
 
 FilterX is a generator, not a framework replacement.

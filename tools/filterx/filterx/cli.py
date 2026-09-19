@@ -4,7 +4,7 @@ import argparse
 import sys
 from typing import Sequence
 
-from filterx.commands import backend, copilot, db, frontend, install, rollback, scan, validate
+from filterx.commands import backend, copilot, db, debug, frontend, install, rollback, scan, validate
 
 
 def _add_global_options(parser: argparse.ArgumentParser) -> None:
@@ -61,9 +61,13 @@ def build_parser() -> argparse.ArgumentParser:
     frontend_install.add_argument("--app-config-file", default=None, help="Override frontend app config file path")
     frontend_install.add_argument("--app-config-anchor", default=None, help="Override frontend app config anchor")
     frontend_install.add_argument("--style", default=None, help="Entity naming style: kebab, camel, snake")
-    frontend_install.add_argument("--force", action="store_true", help="Allow overwrite of changed generated files")
+    frontend_install.add_argument("--force", action="store_true", help="Include Angular routes that collide with host routes; never bypass edited-file protection")
     frontend_install.add_argument("--no-route-patch", action="store_true", help="Generate files without patching routes file")
     frontend_install.set_defaults(handler=frontend.run_install)
+    for diagnostic in ("diff", "doctor"):
+        command = frontend_sub.add_parser(diagnostic, help="Preview frontend updates and diagnose customization/schema conflicts (no writes)")
+        _add_global_options(command)
+        command.set_defaults(handler=frontend.run_install)
     frontend_validate = frontend_sub.add_parser("validate", help="Validate frontend integration")
     _add_global_options(frontend_validate)
     frontend_validate.set_defaults(handler=frontend.run_validate)
@@ -103,6 +107,22 @@ def build_parser() -> argparse.ArgumentParser:
     _add_global_options(copilot_remove)
     copilot_remove.add_argument("--patch-id", default=None, help="Explicit copilot patch id to rollback")
     copilot_remove.set_defaults(handler=copilot.run_remove)
+
+    debug_p = sub.add_parser("debug", help="VS Code debugger integration commands")
+    _add_global_options(debug_p)
+    debug_sub = debug_p.add_subparsers(dest="debug_command", required=True)
+    debug_install = debug_sub.add_parser("install", help="Generate safe debugger launch configurations")
+    _add_global_options(debug_install)
+    debug_install.add_argument("--mode", choices=("auto", "vscode", "workspace"), default="auto", help="Write .vscode files or an isolated .code-workspace; auto preserves existing debugger files")
+    debug_install.add_argument("--backend-port", type=int, default=8000, help="Backend application port")
+    debug_install.add_argument("--frontend-port", type=int, default=None, help="Frontend dev-server port override")
+    debug_install.set_defaults(handler=debug.run_install)
+    debug_validate = debug_sub.add_parser("validate", help="Validate installed debugger definitions")
+    _add_global_options(debug_validate)
+    debug_validate.set_defaults(handler=debug.run_validate)
+    debug_remove = debug_sub.add_parser("remove", help="Safely remove generated debugger definitions")
+    _add_global_options(debug_remove)
+    debug_remove.set_defaults(handler=debug.run_remove)
 
     install_p = sub.add_parser("install", help="Orchestrated install")
     _add_global_options(install_p)
